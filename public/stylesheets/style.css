@@ -1,0 +1,27 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif; }
+
+a {
+  color: #00B7FF; }
+
+#roomlist {
+  float: right; }
+
+#stage {
+  display: none;
+  width: 900px;
+  height: 540px;
+  position: relative;
+  border: 2px solid black; }
+
+canvas {
+  position: absolute; }
+
+#canvas {
+  z-index: 2; }
+
+#background-canvas {
+  z-index: 1; }
+
+/*# sourceMappingURL=style.css.map */

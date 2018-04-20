@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>soket</title>
+    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div id="stage">
+<canvas id="canvas" width="900" height="540"></canvas>
+  <canvas id="background-canvas" width="900" height="540"></canvas>
+</div>
+    <h1 id="t">current room: none</h1>
+    <div id="roomlist">
+      <h1>room list</h1>
+      <ul>
+      </ul>
+    </div>
+    <ul id="messages"></ul>
+    <form id="form" action="">
+      <input id="name" value="anon"/>
+      <input id="input"/>
+      <button>Send</button>
+    </form>
+    <div id="buttons">
+    <button id="createroom">create room</button>
+  </div>
+    <script
+			  src="https://code.jquery.com/jquery-3.3.1.min.js"
+			  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+			  crossorigin="anonymous"></script>
+    <script src="/javascripts/client.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+
+
+
+      $(() => {
+
+        let socket = io();
+        $('#form').submit(() => {
+          socket.emit('message', $('#name').val()+": "+$('#input').val());
+
+          $('#messages').append($('<li>').text($('#name').val()+": "+$('#input').val()));
+          $('#input').val('');
+          return false;
+        });
+
+        socket.on('message', (msg) => {
+          $('#messages').append($('<li>').text(msg));
+        });
+
+        $("#createroom").click(() => {
+          socket.emit("room_create", $('#name').val());
+        });
+
+        socket.on("room_created", (msg) => {
+
+          let li = $('<li>').text("join "+msg.name+"'s room ("+msg.roomNumber+")");
+          li.attr("id", msg.roomNumber);
+          li.css('cursor','pointer');
+          li.on("click", () => {
+            socket.emit("room_join", msg);
+          });
+          $('#roomlist').find("ul").append(li);
+        });
+
+
+
+        socket.on("room_joined", (msg) => {
+          $('#messages').find("li").remove();
+
+
+          $("#roomlist").hide();
+          $("#createroom").hide();
+          $("#stage").css("display", "block");
+
+          if (msg.host) {
+            $("#buttons").append($("<button>", {
+              text: "start game",
+              id: "startgame",
+              click: () => {
+                start();
+              }
+            }));
+          }
+
+          $("#t").text("current room: "+msg.name+"'s room ("+msg.roomNumber+")");
+        });
+
+        socket.on("game_start", (data) => {
+          run();
+          colorize(data.tiles, data.playerCount);
+          sendInput(socket);
+        })
+
+        socket.on("draw", (drawables) => {
+          draw(drawables);
+        })
+
+        const sendInput = (socket) => {
+          const FPS = 60;
+          setInterval(() => {
+            socket.emit("control", {g: gPressed, h: hPressed, ctrl: ctrl, cursorPos: cursorPos});
+          }, 1000/FPS);
+        }
+
+        const start = () => {
+
+          $("#startgame").hide();
+          socket.emit("start_game");
+
+        }
+      });
+
+
+
+    </script>
+
+  </body>
+</html>
