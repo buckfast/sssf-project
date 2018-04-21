@@ -1,14 +1,14 @@
 const PlaceableTypes = require("./PlaceableTypes");
 
 class Placeables {
-	constructor(startBlock, island, tiles) {
+	constructor(startBlock, island, tiles, tileSize) {
 		this.island = island;
 		this.wallBlockTypes = [];
 		this.cannonTypes = [];
 		this.currentWallBlock = startBlock;
     this.tiles = tiles;
 
-    this.placeableTypes = new PlaceableTypes(island.id);
+    this.placeableTypes = new PlaceableTypes(island.id, tileSize);
     this.wallBlockTypes.push(this.placeableTypes.block2);
     this.wallBlockTypes.push(this.placeableTypes.block1);
     this.wallBlockTypes.push(this.placeableTypes.block3);
@@ -40,8 +40,12 @@ class Placeables {
 			this.island.placeCannon({type: 0, tiles: cannonTiles});
 		}
 	}
-	drawWallBlock() {
-		this.wallBlockTypes[this.currentWallBlock].draw(context, cursorPos);
+
+	//drawWallBlock() {
+	getWallBlock(cursorPos) {
+		//this.wallBlockTypes[this.currentWallBlock].draw(context, cursorPos);
+		return this.wallBlockTypes[this.currentWallBlock].getBlockTilePositions(cursorPos);
+
 	}
 	drawCannon() {
 		this.cannonTypes[0].draw(context, cursorPos);

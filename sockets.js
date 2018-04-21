@@ -42,9 +42,17 @@ module.exports.listen = (http) => {
         if (err == null) {
           //console.log("data: ",data);
           game = new Game(players);
-          game.run((drawables) => {
-            io.in(getRoom(socket)).emit("draw", drawables);
-          });
+          game.run(
+            (drawables) => {
+              io.in(getRoom(socket)).emit("draw", drawables);
+            },
+            (err, socketid, wallBlock) => {
+              if (err == null) {
+                //console.log(socketid);
+                io.to(socketid).emit("setPlaceable", wallBlock);
+              }
+            }
+          );
           //socket.emit("game_start", game.tiles);
           io.in(getRoom(socket)).emit("game_start", {'tiles': game.tiles, 'playerCount': players.length});
         }
@@ -57,6 +65,10 @@ module.exports.listen = (http) => {
       if (game!=undefined) {
         game.updateUserControls(socket.id, controls);
       }
+    })
+
+    socket.on("click", (pos) => {
+      console.log(socket.id, pos);
     })
   });
 

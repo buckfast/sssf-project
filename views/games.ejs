@@ -91,18 +91,20 @@
           run();
           colorize(data.tiles, data.playerCount);
           sendInput(socket);
+          canvas.addEventListener("click", () => {
+            clicked(socket);
+          });
         })
 
         socket.on("draw", (drawables) => {
           draw(drawables);
         })
 
-        const sendInput = (socket) => {
-          const FPS = 60;
-          setInterval(() => {
-            socket.emit("control", {g: gPressed, h: hPressed, ctrl: ctrl, cursorPos: cursorPos});
-          }, 1000/FPS);
-        }
+        socket.on("setPlaceable", (wallBlock) => {
+          setTempPlaceable(wallBlock);
+        })
+
+
 
         const start = () => {
 

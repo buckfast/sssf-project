@@ -12,9 +12,12 @@ class Game {
 		this.POINTS = players.length;
 
 		this.islandIndexofSocket = {};
+		this.socketofIslandIndex = {};
 
 		for (let i=0; i<players.length; i++) {
 			this.islandIndexofSocket[players[i]] = i;
+			this.socketofIslandIndex[i] = players[i];
+
 		}
 		console.log(this.islandIndexofSocket);
 
@@ -384,7 +387,7 @@ class Game {
 		for (let i=1; i<=points; i++) {
 			let island = new Island(i, tiles);
 			this.islands.push(island);
-			this.controls.push({});
+			this.controls.push({g: false, h: false, ctrl: 0, cursorPos: {x: (Math.floor(this.WIDTH/2)), y: (Math.floor(this.HEIGHT/2))}});
 			// let y = getRandomArbitrary(0,this.HEIGHT-1);
 			// let x = getRandomArbitrary(0,this.WIDTH-1);
 			//{'x': x, 'y': y}
@@ -606,7 +609,7 @@ class Game {
 	createPlaceableContainers(tiles) {
 		for (let i=0; i<this.islands.length; i++) {
 			//this.placeableTypes.push(new PlaceableTypes());
-			this.placeables.push(new Placeables(u.getRandomArbitrary(0,9), this.islands[i], tiles));
+			this.placeables.push(new Placeables(u.getRandomArbitrary(0,9), this.islands[i], tiles, this.TILE_SIZE));
 		}
 	}
 
@@ -644,10 +647,19 @@ class Game {
 		}
 	}
 
-	drawPlaceable(index) {
+	drawPlaceable(index, cb) {
 
 		if (this.state == 0) {
-			this.placeables[index].drawWallBlock(this.controls[index]);
+
+			//this.placeables[index].drawWallBlock(this.controls[index]);
+			//console.log(index+": "+this.controls[index].cursorPos.x+", "+this.controls[index].cursorPos.y);
+			if (this.controls[index].cursorPos.x != undefined && this.controls[index].cursorPos.y != undefined) {
+				cb(null, this.socketofIslandIndex[index], this.placeables[index].getWallBlock(this.controls[index].cursorPos));
+				//console.log(index, "fuck");
+			} else {
+				cb ("nocursorpos");
+			}
+
 		} else if (this.state == 1) {
 			this.placeables[index].drawCannon();
 		} else if (this.state == 2) {
@@ -667,10 +679,11 @@ class Game {
 	}
 
 	updateUserControls(socketid, newControls) {
+		//console.log(newControls);
 		this.controls[this.islandIndexofSocket[socketid]] = newControls;
 	}
 
-	run(drawCallback) {
+	run(drawCallback, placeableCallback) {
 		this.tiles = this.determineZones(this.POINTS);
 		this.createPlaceableContainers(this.tiles);
 		//this.colorais(this.tiles);
@@ -688,8 +701,7 @@ class Game {
 			drawCallback(drawables);
 			//this.drawPlaceable(0);
 			for (let i=0; i<this.POINTS; i++) {
-				//this.drawPlaceable(i);
-				//console.log("controls "+i+": ", this.controls[i]);
+				this.drawPlaceable(i, placeableCallback);
 			}
 		}, 1000/FPS);
 	}

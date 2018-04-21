@@ -10,6 +10,8 @@
     let contextbg = undefined;
     const TILE_SIZE = 18;
 
+    let tempPlaceable = undefined;
+
 const run = () => {
   canvas = document.getElementById("canvas");
   context = canvas.getContext("2d");
@@ -31,9 +33,7 @@ const run = () => {
 
 
 
-  canvas.addEventListener("click", () => {
-    console.log(cursorPos);
-  });
+
 
   document.addEventListener("keydown", (e) => {
   if (e.repeat) {return;}
@@ -70,6 +70,9 @@ const draw = (drawables) => {
     drawWalls(drawables[i]["walls"]);
     drawCannons(drawables[i]["cannons"]);
   }
+  if (tempPlaceable != undefined) {
+    drawPlaceable(tempPlaceable);
+  }
 }
 
 const drawWalls = (walls) => {
@@ -86,6 +89,28 @@ const drawCannons = (cannons) => {
       context.fillRect(t.x*TILE_SIZE-TILE_SIZE, t.y*TILE_SIZE-TILE_SIZE, TILE_SIZE, TILE_SIZE);
     }
   }
+}
+
+const setTempPlaceable = (wallBlock) => {
+  tempPlaceable = wallBlock;
+}
+
+const drawPlaceable = (coords) => {
+  for (let i=0; i<coords.length; i++) {
+    context.beginPath();
+    context.rect(
+    coords[i].x,
+    coords[i].y,
+    TILE_SIZE,
+    TILE_SIZE);
+
+    context.fillStyle = "#FFFFFF";
+    context.fill();
+    context.closePath();
+    //console.log(JSON.stringify(coords));
+
+  }
+  //console.log("\n");
 }
 
 
@@ -153,4 +178,13 @@ const colorize = (tiles, players) => {
       contextbg.fill();
       contextbg.closePath();
     }
+}
+const sendInput = (socket) => {
+    const FPS = 60;
+    setInterval(() => {
+      socket.emit("control", {g: gPressed, h: hPressed, ctrl: ctrl, cursorPos: cursorPos});
+    }, 1000/FPS);
+}
+const clicked = (socket) => {
+  socket.emit("click", cursorPos); // TODO: maybe server position rather than client?
 }

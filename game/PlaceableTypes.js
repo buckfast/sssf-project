@@ -2,7 +2,7 @@ const Block = require("./Block");
 const Cannon = require("./Cannon");
 
 class PlaceableTypes {
-  constructor(id) {
+  constructor(id, tileSize) {
     this.block1 = new Block(
     				"i",
     				{
@@ -15,6 +15,7 @@ class PlaceableTypes {
     				2,
     				{x: 2, y: 2},
             id,
+            tileSize,
     				);
     this.block2 = new Block(
     				"o",
@@ -25,6 +26,7 @@ class PlaceableTypes {
     				1,
     				{x: 2, y: 2},
             id,
+            tileSize,
     				);
     this.block3 = new Block(
     				"s",
@@ -36,6 +38,7 @@ class PlaceableTypes {
     				2,
     				{x: 2, y: 1},
             id,
+            tileSize,
     				);
     this.block4 = new Block(
     				"z",
@@ -47,6 +50,7 @@ class PlaceableTypes {
     				2,
     				{x: 2, y: 1},
             id,
+            tileSize,
     				);
     this.block5 = new Block(
     				"l",
@@ -60,6 +64,7 @@ class PlaceableTypes {
     				4,
     				{x: 2, y: 1},
             id,
+            tileSize,
     				);
     this.block6 = new Block(
     				"j",
@@ -73,6 +78,7 @@ class PlaceableTypes {
     				4,
     				{x: 2, y: 1},
             id,
+            tileSize,
     				);
     this.block7 = new Block(
     				"t",
@@ -86,6 +92,7 @@ class PlaceableTypes {
     				4,
     				{x: 2, y: 1},
             id,
+            tileSize,
     				);
     this.block8 = new Block(
     				"c",
@@ -99,6 +106,7 @@ class PlaceableTypes {
     				4,
     				{x: 3, y: 2},
             id,
+            tileSize,
     				);
     this.block9 = new Block(
     				"-",
@@ -110,6 +118,7 @@ class PlaceableTypes {
     				2,
     				{x: 2, y: 1},
             id,
+            tileSize,
     				);
     this.block10 = new Block(
     				"+",
@@ -120,6 +129,7 @@ class PlaceableTypes {
     				1,
     				{x: 2, y: 1},
             id,
+            tileSize,
     				);
     this.cannon = new Cannon(
     				"cannon",
@@ -130,6 +140,7 @@ class PlaceableTypes {
     				2,
     				{x: 1, y: 1},
             id,
+            tileSize,
     				);
   }
 }
