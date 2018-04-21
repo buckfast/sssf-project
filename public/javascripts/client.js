@@ -71,7 +71,25 @@ const run = () => {
   }, false);
 }
 
+const drawCannonballs=(balls)=> {
+  contextfg.clearRect(0, 0, canvasfg.width, canvasfg.height);
 
+  for (let s=0; s<balls.length; s++) {
+    //if (balls[i] != undefined) {
+    for (let i=0; i<balls[s].length; i++) {
+      contextfg.beginPath();
+      contextfg.arc(balls[s][i].posx_pixels, balls[s][i].posy_pixels, 2, 0, 2 * Math.PI, false);
+      contextfg.fillStyle = '#000000';
+      contextfg.fill();
+      contextfg.lineWidth = 5;
+      contextfg.strokeStyle = '#003300';
+      contextfg.stroke();
+      contextfg.closePath();
+
+    }
+    //}
+  }
+}
 const drawPlaced = (drawables) => {
   context.clearRect(0, 0, canvas.width, canvas.height);
   for (let i=0; i<drawables.length; i++) {
@@ -116,8 +134,8 @@ const drawPlaceable = (coords) => {
     // contextfg.closePath();
     contextfg.fillRect(coords[i].x, coords[i].y, TILE_SIZE, TILE_SIZE);
     //console.log(JSON.stringify(coords));
-
   }
+
   //console.log("\n");
 }
 
@@ -186,7 +204,7 @@ const drawInnerTiles = (tiles) => {
 }
 
 const sendInput = (socket) => {
-    const FPS = 60;
+    const FPS = 30;
     setInterval(() => {
       //console.log(cursorPos);
       socket.emit("control", {g: gPressed, h: hPressed, ctrl: ctrl, cursorPos: cursorPos});

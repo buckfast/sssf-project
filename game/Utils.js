@@ -14,6 +14,15 @@ const nthProp = exports.nthProp = (obj, n) => {
 const scaleBetween = exports.scaleBetween = (unscaledNum, minAllowed, maxAllowed, min, max) => {
   return (maxAllowed - minAllowed) * (unscaledNum - min) / (max - min) + minAllowed;
 }
+const isEmpty = exports.isEmpty = (a) => {
+	let res = true;
+	for (let i=0; i<a.length; i++) {
+		if (a[i].length > 0) {
+			res = false;
+		}
+	}
+	return res;
+}
 const clone = exports.clone = (o) => {
 	let output, v, key;
 	output = Array.isArray(o) ? [] : {};

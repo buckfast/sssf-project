@@ -1,13 +1,13 @@
 class Cannonball {
-	constructor(pos, cursorPos) {
+	constructor(pos, cursorPos, tileSize) {
 		//console.log(pos);
 		this.pos = pos;
-		this.vx;
-		this.vy;
+
 		this.cursorPos = cursorPos;
 		this.speed = 4;
-		this.posx_pixels = (this.pos.x*TILE_SIZE-TILE_SIZE);
-		this.posy_pixels = (this.pos.y*TILE_SIZE-TILE_SIZE);
+		this.posx_pixels = (this.pos.x*tileSize-tileSize);
+		this.posy_pixels = (this.pos.y*tileSize-tileSize);
+
 	}
 
 	update() {
@@ -29,6 +29,10 @@ class Cannonball {
 				// const posy_world = Math.floor(posy/TILE_SIZE)+1;
 				return true;
 			}
+	}
+
+	getPos() {
+		return {x: this.posx_pixels, y: this.posy_pixels}
 	}
 
 	draw() {

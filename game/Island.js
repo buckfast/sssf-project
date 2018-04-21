@@ -1,7 +1,8 @@
 const u = require("./Utils");
+const Cannonball = require("./Cannonball");
 
 class Island {
-	constructor(id, tiles) {
+	constructor(id, tiles, tileSize) {
 
     this.tiles = tiles;
 		this.id = id;
@@ -18,6 +19,7 @@ class Island {
 		this.cannons = {};
 		this.innerTiles = new Set();
 		this.floodCheckName = "";
+		this.tileSize = tileSize;
 
 		this.tilePlaceableIdCounter = {"wall": 0, "cannon": 0};
 		this.cannonToFire = 0;
@@ -86,13 +88,13 @@ class Island {
 
 
 
-	fireCannon() {
+	fireCannon(cursorPos) {
 		const cannons = Object.keys(this.cannons).length;
 		if (cannons > 0) {
 			//console.log(nthProp(this.cannons, this.cannonToFire));
-			let currentCannon = nthProp(this.cannons, this.cannonToFire);
+			let currentCannon = u.nthProp(this.cannons, this.cannonToFire);
       if (currentCannon != undefined) {
-			     let ball = new Cannonball({x:currentCannon.tiles[3].x, y:currentCannon.tiles[3].y}, clone(cursorPos));
+			    let ball = new Cannonball({x:currentCannon.tiles[3].x, y:currentCannon.tiles[3].y}, u.clone(cursorPos), this.tileSize);
 			   this.cannonballs.push(ball);
       }
 			this.cannonToFire++;
@@ -105,13 +107,18 @@ class Island {
 			this.cannonballs[i].draw();
 		}
 	}
+	getCannonballs() {
+		return this.cannonballs;
+	}
+
 	updateCannonballs(hit_cb) {
 		let i = this.cannonballs.length
 		while (i--) {
 		    if (this.cannonballs[i].update() == true) {
-						const posx_world = Math.floor(this.cannonballs[i].posx_pixels/TILE_SIZE)+1;
-						const posy_world = Math.floor(this.cannonballs[i].posy_pixels/TILE_SIZE)+1;
-						const hitTile = this.tiles[posy_world][posx_world];
+						const posx_world = Math.floor(this.cannonballs[i].posx_pixels/this.tileSize)+1;
+						const posy_world = Math.floor(this.cannonballs[i].posy_pixels/this.tileSize)+1;
+
+						const hitTile = this.tiles[posy_world][posx_world]; 
 						this.cannonballs.splice(i, 1);
 
 						if (hitTile.placeable != undefined) {

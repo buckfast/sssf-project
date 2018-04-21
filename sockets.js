@@ -5,7 +5,7 @@ const Game = require("./game/Game");
 module.exports.listen = (http) => {
   const io = new SocketServer(http);
 
-  let game = undefined;
+  let games = {};
   let roomNumber = 0;
 
 
@@ -41,14 +41,23 @@ module.exports.listen = (http) => {
     usersInRoom(getRoom(socket), (err, players) => {
         if (err == null) {
           //console.log("data: ",data);
-          game = new Game(players);
-          game.run(
+          const game = new Game(players, 900, 540, 18);
+          games[getRoom(socket)] = game;
 
-            (err, socketid, wallBlock) => {
+          game.run(
+            (err, socketid, placeable) => {
               if (err == null) {
                 //console.log(socketid);
-                io.to(socketid).emit("drawPlaceable", wallBlock);
+                io.to(socketid).emit("drawPlaceable", placeable);
               }
+            },
+            (cannonballs) => {
+              if (cannonballs != null) {
+                io.in(getRoom(socket)).emit("drawCannonballs", cannonballs);
+              }
+            },
+            (drawable) => {
+                io.in(getRoom(socket)).emit("updateDrawable", drawable);
             }
           );
           //socket.emit("game_start", game.tiles);
@@ -60,15 +69,15 @@ module.exports.listen = (http) => {
 
     socket.on("control", (controls) => {
       //console.log(control);
-      if (game!=undefined) {
-        game.updateUserControls(socket.id, controls);
+      if (games[getRoom(socket)]!=undefined) {
+        games[getRoom(socket)].updateUserControls(socket.id, controls);
       }
     })
 
     socket.on("click", (pos) => {
-      if (game != undefined) {
-        let obj = game.clicked(socket.id, pos);
-          io.in(getRoom(socket)).emit("clicked", obj);
+      if (games[getRoom(socket)] != undefined) {
+        let obj = games[getRoom(socket)].clicked(socket.id, pos);
+          io.in(getRoom(socket)).emit("updateDrawable", obj);
       }
     })
   });

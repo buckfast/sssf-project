@@ -8,7 +8,7 @@ const Queue = require("./Queue");
 const Placeables = require("./Placeables");
 
 class Game {
-	constructor(players) {
+	constructor(players, width, height, tileSize) {
 		this.POINTS = players.length;
 
 		this.islandIndexofSocket = {};
@@ -22,10 +22,11 @@ class Game {
 		console.log(this.islandIndexofSocket);
 
 this.drawables = [];
+this.cannonballs =[];
 
-		this.TILE_SIZE = 18;
-		this.WIDTH = /*canvas.width*/900/this.TILE_SIZE;
-		this.HEIGHT = /*canvas.height*/540/this.TILE_SIZE;
+		this.TILE_SIZE = tileSize;
+		this.WIDTH = width/this.TILE_SIZE;
+		this.HEIGHT = height/this.TILE_SIZE;
 
 		this.state = 0;
 		this.tiles = null;
@@ -386,7 +387,7 @@ this.drawables = [];
 		}
 
 		for (let i=1; i<=points; i++) {
-			let island = new Island(i, tiles);
+			let island = new Island(i, tiles, this.TILE_SIZE);
 			this.islands.push(island);
 			this.controls.push({g: false, h: false, ctrl: 0, cursorPos: {x: (Math.floor(this.WIDTH/2)), y: (Math.floor(this.HEIGHT/2))}});
 			// let y = getRandomArbitrary(0,this.HEIGHT-1);
@@ -616,35 +617,59 @@ this.drawables = [];
 
 
 
-	update(i) {
-		if (this.controls[i].g) {
-			this.placeables[i].rotate(0);
-			this.controls[i].g = false;
+	update(i, hitCallback) {
+		if (this.controls[0].ctrl == 0) {
+			this.state = 0;
 		}
-		if (this.controls[i].h) {
-			this.placeables[i].rotate(1);
-			this.controls[i].h = false;
+		if (this.controls[0].ctrl == 1) {
+			this.state = 1;
 		}
-		if (this.state == 2) {
+		if  ( this.controls[0].ctrl == 2) {
+			this.state = 2;
+		}
+
+		if (this.state != 2) {
+			if (this.controls[i].g) {
+				this.placeables[i].rotate(0);
+				this.controls[i].g = false;
+			}
+			if (this.controls[i].h) {
+				this.placeables[i].rotate(1);
+				this.controls[i].h = false;
+			}
+		} else if (this.state == 2) {
 			this.islands[i].updateCannonballs((hitTile) => {
 				//console.log(hitTile.placeable);
 				if (hitTile.placeable.type == "wall") {
-					this.islands[hitTile.zone-1].removeWallTile(hitTile);
+					this.islands[hitTile.zone-1].removeWallTile(hitTile); // TODO: update maxcoords
 				} else if (hitTile.placeable.type == "cannon") {
 					this.islands[hitTile.zone-1].removeCannon(hitTile);
 				}
+				this.updateDrawables(hitCallback);
+				console.log("osuu tie");
+
 			});
 		}
 	}
 
-	setDrawables(drawables) {
+	updateDrawables(cb) {
+		this.setDrawables();
+		cb({drawables: this.drawables});
+	}
 
+	setDrawables() {
 	//	context.clearRect(0, 0, canvas.width, canvas.height);
 		for (let i=0; i<this.islands.length; i++) {
 			//this.islands[i].drawWalls();
 			//this.islands[i].drawCannons();
-			drawables[i]["walls"] = this.islands[i].walls;
-			drawables[i]["cannons"] = this.islands[i].cannons;
+			this.drawables[i]["walls"] = this.islands[i].walls;
+			this.drawables[i]["cannons"] = this.islands[i].cannons;
+		}
+	}
+
+	setCannonballs() {
+		for (let i=0; i<this.islands.length; i++) {
+			this.cannonballs[i] = this.islands[i].getCannonballs();
 		}
 	}
 
@@ -663,34 +688,50 @@ this.drawables = [];
 			} else {
 				cb ("nocursorpos");
 			}
-		} else if (this.state == 2) {
-			this.islands[index].drawCannonballs();
+		}
+		// else if (this.state == 2) {
+		// 	this.islands[index].getCannonballs();
+		// }
+	}
+
+	drawCannonballs(cb) {
+		if (this.state == 2) {
+			this.setCannonballs();
+			if (u.isEmpty(this.cannonballs)) {
+				cb(null)
+			} else {
+				cb(this.cannonballs);
+			}
 		}
 	}
+
 
 	clicked(socketid, pos) {
 		//client pos not used
 
 		if (this.state == 0) {
 			this.placeables[this.islandIndexofSocket[socketid]].placeWallBlock(this.controls[this.islandIndexofSocket[socketid]].cursorPos);
-			this.setDrawables(this.drawables);
+			this.setDrawables();
 			return {innerTiles: Array.from(this.islands[this.islandIndexofSocket[socketid]].innerTiles), drawables:this.drawables};
 		} else if (this.state == 1) {
 			//this.placeables[i].placeCannon();
 			this.placeables[this.islandIndexofSocket[socketid]].placeCannon(this.controls[this.islandIndexofSocket[socketid]].cursorPos);
-			this.setDrawables(this.drawables);
+			this.setDrawables();
 			return {drawables: this.drawables};
 		} else if (this.state == 2) {
-			this.islands[i].fireCannon();
+			this.islands[this.islandIndexofSocket[socketid]].fireCannon(this.controls[this.islandIndexofSocket[socketid]].cursorPos);
+			return undefined;
 		}
 	}
+
+
 
 	updateUserControls(socketid, newControls) {
 		//console.log(newControls);
 		this.controls[this.islandIndexofSocket[socketid]] = newControls;
 	}
 
-	run(placeableCallback) {
+	run(placeableCallback, cannonballCallback, hitCallback) {
 		this.tiles = this.determineZones(this.POINTS);
 		this.createPlaceableContainers(this.tiles);
 		//this.colorais(this.tiles);
@@ -699,9 +740,10 @@ this.drawables = [];
 
 		for (let i=0; i<this.POINTS; i++) {
 			this.drawables[i] = {};
+			this.cannonballs[i] = undefined;
 		}
 
-		this.setDrawables(this.drawables);
+		this.setDrawables();
 		//drawCallback(drawables);
 		const FPS = 60;
 		setInterval(() => {
@@ -709,9 +751,10 @@ this.drawables = [];
 
 			//this.drawPlaceable(0);
 			for (let i=0; i<this.POINTS; i++) {
-				this.update(i);
+				this.update(i,hitCallback);
 				this.drawPlaceable(i, placeableCallback);
 			}
+			this.drawCannonballs(cannonballCallback);
 		}, 1000/FPS);
 	}
 }

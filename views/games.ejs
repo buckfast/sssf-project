@@ -104,17 +104,22 @@
           drawPlaced(drawables);
         })
 
-        socket.on("clicked", (obj) => {
-          drawPlaced(obj.drawables);
-          if (obj.innerTiles != undefind) {
-          drawInnerTiles(obj.innerTiles);
-        }
+        socket.on("updateDrawable", (obj) => { //todo: rename stuff
+          if (obj != null) {
+            drawPlaced(obj.drawables);
+            if (obj.innerTiles != undefined) {
+              drawInnerTiles(obj.innerTiles);
+            }
+          }
         });
 
-        socket.on("drawPlaceable", (wallBlock) => {
-          drawPlaceable(wallBlock);
+        socket.on("drawPlaceable", (placeable) => {
+          drawPlaceable(placeable);
         })
 
+        socket.on("drawCannonballs", (balls) => {
+          drawCannonballs(balls);
+        })
 
 
         const start = () => {
