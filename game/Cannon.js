@@ -6,8 +6,8 @@ class Cannon extends Placeable {
 		this.currentTiles = [];
 		for (let i=0; i<this.coords[this.currentRotation].length; i++) {
 				let tilePos = this.calculateTileWorldPosition(i, cursorPosition);
-				tilePos.x /= TILE_SIZE ;
-				tilePos.y /= TILE_SIZE ;
+				tilePos.x /= this.tileSize ;
+				tilePos.y /= this.tileSize ;
 				tilePos.x+=1;
 				tilePos.y+=1;
 

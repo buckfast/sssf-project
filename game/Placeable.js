@@ -1,5 +1,5 @@
 class Placeable {
-	constructor(name, coords, width, rotations, center, id, tileSize) {
+	constructor(name, coords, width, rotations, center, id, tileSize, mWidth, mHeight) {
 		this.name=name;
 		this.coords = coords;
 		this.currentRotation = 0;
@@ -9,6 +9,8 @@ class Placeable {
 		this.currentTiles = [];
     this.islandID = id;
 		this.tileSize = tileSize;
+		this.mWidth = mWidth;
+		this.mHeight = mHeight;
 	}
 
 

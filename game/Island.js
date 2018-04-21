@@ -227,6 +227,7 @@ class Island {
 		console.log({x: this.minCoords.x-1, y: this.minCoords.y-1});
 		console.log({x: this.maxCoords.x+1, y: this.maxCoords.y+1});
 		*/
+		return innerAreaFound;
 	}
 
 	sumCoords(x,y) {

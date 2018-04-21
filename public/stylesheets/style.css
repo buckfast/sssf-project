@@ -18,10 +18,13 @@ a {
 canvas {
   position: absolute; }
 
-#canvas {
+#foreground-canvas {
   z-index: 2; }
 
-#background-canvas {
+#canvas {
   z-index: 1; }
+
+#background-canvas {
+  z-index: 0; }
 
 /*# sourceMappingURL=style.css.map */

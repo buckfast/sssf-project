@@ -21,6 +21,7 @@ class Game {
 		}
 		console.log(this.islandIndexofSocket);
 
+this.drawables = [];
 
 		this.TILE_SIZE = 18;
 		this.WIDTH = /*canvas.width*/900/this.TILE_SIZE;
@@ -609,20 +610,20 @@ class Game {
 	createPlaceableContainers(tiles) {
 		for (let i=0; i<this.islands.length; i++) {
 			//this.placeableTypes.push(new PlaceableTypes());
-			this.placeables.push(new Placeables(u.getRandomArbitrary(0,9), this.islands[i], tiles, this.TILE_SIZE));
+			this.placeables.push(new Placeables(u.getRandomArbitrary(0,9), this.islands[i], tiles, this.TILE_SIZE, this.WIDTH, this.HEIGHT));
 		}
 	}
 
 
 
 	update(i) {
-		if (gPressed) {
+		if (this.controls[i].g) {
 			this.placeables[i].rotate(0);
-			gPressed = false;
+			this.controls[i].g = false;
 		}
-		if (hPressed) {
+		if (this.controls[i].h) {
 			this.placeables[i].rotate(1);
-			hPressed = false;
+			this.controls[i].h = false;
 		}
 		if (this.state == 2) {
 			this.islands[i].updateCannonballs((hitTile) => {
@@ -650,29 +651,35 @@ class Game {
 	drawPlaceable(index, cb) {
 
 		if (this.state == 0) {
-
-			//this.placeables[index].drawWallBlock(this.controls[index]);
-			//console.log(index+": "+this.controls[index].cursorPos.x+", "+this.controls[index].cursorPos.y);
 			if (this.controls[index].cursorPos.x != undefined && this.controls[index].cursorPos.y != undefined) {
 				cb(null, this.socketofIslandIndex[index], this.placeables[index].getWallBlock(this.controls[index].cursorPos));
-				//console.log(index, "fuck");
 			} else {
 				cb ("nocursorpos");
 			}
-
 		} else if (this.state == 1) {
-			this.placeables[index].drawCannon();
+			//this.placeables[index].drawCannon();
+			if (this.controls[index].cursorPos.x != undefined && this.controls[index].cursorPos.y != undefined) {
+				cb(null, this.socketofIslandIndex[index], this.placeables[index].getCannon(this.controls[index].cursorPos));
+			} else {
+				cb ("nocursorpos");
+			}
 		} else if (this.state == 2) {
 			this.islands[index].drawCannonballs();
 		}
 	}
 
-	clicked(i) {
+	clicked(socketid, pos) {
+		//client pos not used
+
 		if (this.state == 0) {
-			this.placeables[i].placeWallBlock();
-			//this.colorais(this.tiles);
+			this.placeables[this.islandIndexofSocket[socketid]].placeWallBlock(this.controls[this.islandIndexofSocket[socketid]].cursorPos);
+			this.setDrawables(this.drawables);
+			return {innerTiles: Array.from(this.islands[this.islandIndexofSocket[socketid]].innerTiles), drawables:this.drawables};
 		} else if (this.state == 1) {
-			this.placeables[i].placeCannon();
+			//this.placeables[i].placeCannon();
+			this.placeables[this.islandIndexofSocket[socketid]].placeCannon(this.controls[this.islandIndexofSocket[socketid]].cursorPos);
+			this.setDrawables(this.drawables);
+			return {drawables: this.drawables};
 		} else if (this.state == 2) {
 			this.islands[i].fireCannon();
 		}
@@ -683,24 +690,26 @@ class Game {
 		this.controls[this.islandIndexofSocket[socketid]] = newControls;
 	}
 
-	run(drawCallback, placeableCallback) {
+	run(placeableCallback) {
 		this.tiles = this.determineZones(this.POINTS);
 		this.createPlaceableContainers(this.tiles);
 		//this.colorais(this.tiles);
 		this.findBorders(this.tiles);
 
-		let drawables = [];
+
 		for (let i=0; i<this.POINTS; i++) {
-			drawables[i] = {};
+			this.drawables[i] = {};
 		}
 
+		this.setDrawables(this.drawables);
+		//drawCallback(drawables);
 		const FPS = 60;
 		setInterval(() => {
 			//this.update(0);
-			this.setDrawables(drawables);
-			drawCallback(drawables);
+
 			//this.drawPlaceable(0);
 			for (let i=0; i<this.POINTS; i++) {
+				this.update(i);
 				this.drawPlaceable(i, placeableCallback);
 			}
 		}, 1000/FPS);

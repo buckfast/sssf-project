@@ -2,7 +2,7 @@ const Block = require("./Block");
 const Cannon = require("./Cannon");
 
 class PlaceableTypes {
-  constructor(id, tileSize) {
+  constructor(id, tileSize, WIDTH, HEIGHT) {
     this.block1 = new Block(
     				"i",
     				{
@@ -16,6 +16,8 @@ class PlaceableTypes {
     				{x: 2, y: 2},
             id,
             tileSize,
+            WIDTH,
+            HEIGHT,
     				);
     this.block2 = new Block(
     				"o",
@@ -27,6 +29,8 @@ class PlaceableTypes {
     				{x: 2, y: 2},
             id,
             tileSize,
+            WIDTH,
+            HEIGHT,
     				);
     this.block3 = new Block(
     				"s",
@@ -39,6 +43,8 @@ class PlaceableTypes {
     				{x: 2, y: 1},
             id,
             tileSize,
+            WIDTH,
+            HEIGHT,
     				);
     this.block4 = new Block(
     				"z",
@@ -51,6 +57,8 @@ class PlaceableTypes {
     				{x: 2, y: 1},
             id,
             tileSize,
+            WIDTH,
+            HEIGHT,
     				);
     this.block5 = new Block(
     				"l",
@@ -65,6 +73,8 @@ class PlaceableTypes {
     				{x: 2, y: 1},
             id,
             tileSize,
+            WIDTH,
+            HEIGHT,
     				);
     this.block6 = new Block(
     				"j",
@@ -79,6 +89,8 @@ class PlaceableTypes {
     				{x: 2, y: 1},
             id,
             tileSize,
+            WIDTH,
+            HEIGHT,
     				);
     this.block7 = new Block(
     				"t",
@@ -93,6 +105,8 @@ class PlaceableTypes {
     				{x: 2, y: 1},
             id,
             tileSize,
+            WIDTH,
+            HEIGHT,
     				);
     this.block8 = new Block(
     				"c",
@@ -107,6 +121,8 @@ class PlaceableTypes {
     				{x: 3, y: 2},
             id,
             tileSize,
+            WIDTH,
+            HEIGHT,
     				);
     this.block9 = new Block(
     				"-",
@@ -119,6 +135,8 @@ class PlaceableTypes {
     				{x: 2, y: 1},
             id,
             tileSize,
+            WIDTH,
+            HEIGHT,
     				);
     this.block10 = new Block(
     				"+",
@@ -130,6 +148,8 @@ class PlaceableTypes {
     				{x: 2, y: 1},
             id,
             tileSize,
+            WIDTH,
+            HEIGHT,
     				);
     this.cannon = new Cannon(
     				"cannon",
@@ -141,6 +161,8 @@ class PlaceableTypes {
     				{x: 1, y: 1},
             id,
             tileSize,
+            WIDTH,
+            HEIGHT,
     				);
   }
 }

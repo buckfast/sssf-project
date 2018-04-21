@@ -1,14 +1,15 @@
 const PlaceableTypes = require("./PlaceableTypes");
+const u = require("./Utils");
 
 class Placeables {
-	constructor(startBlock, island, tiles, tileSize) {
+	constructor(startBlock, island, tiles, tileSize, WIDTH, HEIGHT) {
 		this.island = island;
 		this.wallBlockTypes = [];
 		this.cannonTypes = [];
 		this.currentWallBlock = startBlock;
     this.tiles = tiles;
 
-    this.placeableTypes = new PlaceableTypes(island.id, tileSize);
+    this.placeableTypes = new PlaceableTypes(island.id, tileSize, WIDTH, HEIGHT);
     this.wallBlockTypes.push(this.placeableTypes.block2);
     this.wallBlockTypes.push(this.placeableTypes.block1);
     this.wallBlockTypes.push(this.placeableTypes.block3);
@@ -22,18 +23,21 @@ class Placeables {
     this.cannonTypes.push(this.placeableTypes.cannon);
 	}
 
-	placeWallBlock() {
+	placeWallBlock(cursorPos) {
+		let innerAreaFound = false;
 		const blockTiles = this.wallBlockTypes[this.currentWallBlock].place(cursorPos, this.tiles);
 		if (blockTiles != undefined) {
 		//	console.log(blockTiles);
 			this.island.updateTilePlaceableStatus(blockTiles, "wall", true, true);
 			this.island.updateFloodBoundary(blockTiles, this.tiles);
-			this.island.findInnerAreas(this.tiles);
+			innerAreaFound = this.island.findInnerAreas(this.tiles);
 			//colorais(this.tiles);
 			this.currentWallBlock = this.getRandomBlock();
 		}
+		return innerAreaFound;
 	}
-	placeCannon() {
+
+	placeCannon(cursorPos) {
 		const cannonTiles = this.cannonTypes[0].place(cursorPos, this.tiles);
 		//console.log(cannonTiles);
 		if (cannonTiles != undefined) {
@@ -47,15 +51,16 @@ class Placeables {
 		return this.wallBlockTypes[this.currentWallBlock].getBlockTilePositions(cursorPos);
 
 	}
-	drawCannon() {
-		this.cannonTypes[0].draw(context, cursorPos);
+	//drawCannon() {
+	getCannon(cursorPos) {
+		return this.cannonTypes[0].getBlockTilePositions(cursorPos);
 	}
 
 	rotate(dir) {
 		this.wallBlockTypes[this.currentWallBlock].rotate(dir);
 	}
 	getRandomBlock() {
-		return getRandomArbitrary(0,this.wallBlockTypes.length-1);
+		return u.getRandomArbitrary(0,this.wallBlockTypes.length-1);
 	}
 }
 

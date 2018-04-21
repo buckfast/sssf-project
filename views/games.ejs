@@ -6,8 +6,11 @@
   </head>
   <body>
     <div id="stage">
-<canvas id="canvas" width="900" height="540"></canvas>
+
   <canvas id="background-canvas" width="900" height="540"></canvas>
+  <canvas id="canvas" width="900" height="540"></canvas>
+  <canvas id="foreground-canvas" width="900" height="540"></canvas>
+
 </div>
     <h1 id="t">current room: none</h1>
     <div id="roomlist">
@@ -90,18 +93,26 @@
         socket.on("game_start", (data) => {
           run();
           colorize(data.tiles, data.playerCount);
+          initPlaceables(data.drawables);
           sendInput(socket);
-          canvas.addEventListener("click", () => {
+          canvasfg.addEventListener("click", () => {
             clicked(socket);
           });
         })
 
-        socket.on("draw", (drawables) => {
-          draw(drawables);
+        socket.on("drawPlaced", (drawables) => {
+          drawPlaced(drawables);
         })
 
-        socket.on("setPlaceable", (wallBlock) => {
-          setTempPlaceable(wallBlock);
+        socket.on("clicked", (obj) => {
+          drawPlaced(obj.drawables);
+          if (obj.innerTiles != undefind) {
+          drawInnerTiles(obj.innerTiles);
+        }
+        });
+
+        socket.on("drawPlaceable", (wallBlock) => {
+          drawPlaceable(wallBlock);
         })
 
 

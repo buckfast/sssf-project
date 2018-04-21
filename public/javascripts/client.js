@@ -8,9 +8,14 @@
 
     let canvasbg = undefined;
     let contextbg = undefined;
-    const TILE_SIZE = 18;
 
-    let tempPlaceable = undefined;
+    let canvasfg = undefined;
+    let contextfg = undefined;
+
+    const TILE_SIZE = 18;
+    const HEIGHT = 540/TILE_SIZE+2;
+    const WIDTH = 900/TILE_SIZE+2;
+    let currentPlaceableCoords = undefined;
 
 const run = () => {
   canvas = document.getElementById("canvas");
@@ -19,17 +24,20 @@ const run = () => {
   canvasbg = document.getElementById("background-canvas");
   contextbg = canvasbg.getContext("2d");
 
+  canvasfg = document.getElementById("foreground-canvas");
+  contextfg = canvasfg.getContext("2d");
 
-  canvas.addEventListener('mousemove', (event) => {
-  	cursorPos = getCursorPosition(canvas, event);
-  }, false);
-
-  const getCursorPosition = (canvas, event) => {
-  	const rect = canvas.getBoundingClientRect();
+  const getCursorPosition = (event) => {
+  	const rect = canvasfg.getBoundingClientRect();
   	return {x: event.clientX - rect.left,
   		y: event.clientY - rect.top,
   		};
   }
+
+  canvasfg.addEventListener('mousemove', (event) => {
+  	cursorPos = getCursorPosition(event);
+  }, false);
+
 
 
 
@@ -64,20 +72,17 @@ const run = () => {
 }
 
 
-const draw = (drawables) => {
+const drawPlaced = (drawables) => {
   context.clearRect(0, 0, canvas.width, canvas.height);
   for (let i=0; i<drawables.length; i++) {
     drawWalls(drawables[i]["walls"]);
     drawCannons(drawables[i]["cannons"]);
   }
-  if (tempPlaceable != undefined) {
-    drawPlaceable(tempPlaceable);
-  }
 }
 
 const drawWalls = (walls) => {
     for (let i=0; i<walls.length; i++) {
-      context.fillStyle = "rgba(223, 0, 0, 0.7)";
+      context.fillStyle = "rgba(255, 255, 255, 0.7)";
       context.fillRect(walls[i].x*TILE_SIZE+1-TILE_SIZE, walls[i].y*TILE_SIZE+1-TILE_SIZE, TILE_SIZE-2, TILE_SIZE-2);
     }
 }
@@ -91,34 +96,41 @@ const drawCannons = (cannons) => {
   }
 }
 
-const setTempPlaceable = (wallBlock) => {
-  tempPlaceable = wallBlock;
+const setCurrentPlaceable = (wallBlock) => {
+  currentPlaceableCoords = wallBlock;
 }
 
 const drawPlaceable = (coords) => {
-  for (let i=0; i<coords.length; i++) {
-    context.beginPath();
-    context.rect(
-    coords[i].x,
-    coords[i].y,
-    TILE_SIZE,
-    TILE_SIZE);
+  contextfg.clearRect(0, 0, canvasfg.width, canvasfg.height);
 
-    context.fillStyle = "#FFFFFF";
-    context.fill();
-    context.closePath();
+  for (let i=0; i<coords.length; i++) {
+    // contextfg.beginPath();
+    // contextfg.rect(
+    // coords[i].x,
+    // coords[i].y,
+    // TILE_SIZE,
+    // TILE_SIZE);
+    //
+     contextfg.fillStyle = "#FFFFFF";
+    // contextfg.fill();
+    // contextfg.closePath();
+    contextfg.fillRect(coords[i].x, coords[i].y, TILE_SIZE, TILE_SIZE);
     //console.log(JSON.stringify(coords));
 
   }
   //console.log("\n");
 }
 
-
-const colorize = (tiles, players) => {
-  console.log("kutsuttu colorize");
+const initPlaceables = (drawables) => {
   context.clearRect(0, 0, canvas.width, canvas.height);
-  const HEIGHT = 540/TILE_SIZE+2;
-  const WIDTH = 900/TILE_SIZE+2;
+  for (let i=0; i<drawables.length; i++) {
+    drawWalls(drawables[i]["walls"]);
+    drawCannons(drawables[i]["cannons"]);
+  }
+}
+const colorize = (tiles, players) => {
+  contextbg.clearRect(0, 0, canvas.width, canvas.height);
+
   const PLAYERS = players;
 
   for (let i=0; i<HEIGHT; i++) {
@@ -147,23 +159,8 @@ const colorize = (tiles, players) => {
               if (tiles[i][j].inner[k] === true ) {
                 //if (tiles[i][j].zone == 1) {
                   contextbg.fillStyle = "#e0a33a";
-                  contextbg.fillRect(j*TILE_SIZE-TILE_SIZE, i*TILE_SIZE-TILE_SIZE, j+TILE_SIZE, i+TILE_SIZE);
-                // } else if (tiles[i][j].zone == 2) {
-                // 	contextbg.fillStyle = "#e0a33a";
-                // 	contextbg.fillRect(j*TILE_SIZE-TILE_SIZE, i*TILE_SIZE-TILE_SIZE, j+TILE_SIZE, i+TILE_SIZE);
-                // }
-                // else if (tiles[i][j].zone == 3) {
-                // 	contextbg.fillStyle = "#e0a33a";
-                // 	contextbg.fillRect(j*TILE_SIZE-TILE_SIZE, i*TILE_SIZE-TILE_SIZE, j+TILE_SIZE, i+TILE_SIZE);
-                // }
-                // else if (tiles[i][j].zone == 4) {
-                // 	contextbg.fillStyle = "#e0a33a";
-                // 	contextbg.fillRect(j*TILE_SIZE-TILE_SIZE, i*TILE_SIZE-TILE_SIZE, j+TILE_SIZE, i+TILE_SIZE);
-                // }
-                // else if (tiles[i][j].zone == 5) {
-                // 	contextbg.fillStyle = "#e0a33a";
-                // 	contextbg.fillRect(j*TILE_SIZE-TILE_SIZE, i*TILE_SIZE-TILE_SIZE, j+TILE_SIZE, i+TILE_SIZE);
-                // }
+                  contextbg.fillRect(j*TILE_SIZE-TILE_SIZE+2, i*TILE_SIZE-TILE_SIZE+2, j+TILE_SIZE-2, i+TILE_SIZE-2);
+
               }
             }
             contextbg.beginPath();
@@ -179,9 +176,19 @@ const colorize = (tiles, players) => {
       contextbg.closePath();
     }
 }
+
+const drawInnerTiles = (tiles) => {
+  //contextbg.clearRect(0, 0, canvasbg.width, canvasbg.height);
+  for (let i=0; i<tiles.length; i++) {
+        contextbg.fillStyle = "#e0a33a";
+        contextbg.fillRect(tiles[i].x*TILE_SIZE-TILE_SIZE+2, tiles[i].y*TILE_SIZE-TILE_SIZE+2, TILE_SIZE-2, TILE_SIZE-2);
+  }
+}
+
 const sendInput = (socket) => {
     const FPS = 60;
     setInterval(() => {
+      //console.log(cursorPos);
       socket.emit("control", {g: gPressed, h: hPressed, ctrl: ctrl, cursorPos: cursorPos});
     }, 1000/FPS);
 }

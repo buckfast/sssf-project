@@ -6,15 +6,15 @@ class Block extends Placeable {
 		for (let i=0; i<this.coords[this.currentRotation].length; i++) {
 			if (this.coords[this.currentRotation][i] == 1) {
 				let tilePos = this.calculateTileWorldPosition(i, cursorPosition);
-				tilePos.x /= TILE_SIZE ;
-				tilePos.y /= TILE_SIZE ;
+				tilePos.x /= this.tileSize;
+				tilePos.y /= this.tileSize;
 				tilePos.x+=1;
 				tilePos.y+=1;
 				//console.log(tilePos.x+", "+tilePos.y);
-				console.log(tiles[tilePos.y][tilePos.x].placeable);
+				//console.log(tiles[tilePos.y][tilePos.x].placeable);
 
 				if (tiles[tilePos.y][tilePos.x].placeable != undefined || tiles[tilePos.y][tilePos.x].zone != this.islandID
-				|| tilePos.x<1 || tilePos.x > WIDTH || tilePos.y <1 || tilePos.y > HEIGHT) {
+				|| tilePos.x<1 || tilePos.x > this.mWidth || tilePos.y <1 || tilePos.y > this.mHeight) {
 					return undefined;
 				}
 

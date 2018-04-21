@@ -17,5 +17,7 @@ a {
         border: 2px solid black
       }
   canvas { position: absolute; }
-  #canvas { z-index: 2 }
-  #background-canvas { z-index: 1 }
+  #foreground-canvas { z-index: 2 }
+
+  #canvas { z-index: 1 }
+  #background-canvas { z-index: 0 }
