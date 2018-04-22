@@ -12,7 +12,8 @@ class Cannon extends Placeable {
 				tilePos.y+=1;
 
 				if (tiles[tilePos.y][tilePos.x].inner[this.islandID-1] == false || tiles[tilePos.y][tilePos.x].zone != this.islandID
-				|| tiles[tilePos.y][tilePos.x].placeable != undefined) {
+				|| tiles[tilePos.y][tilePos.x].placeable != undefined
+				|| tiles[tilePos.y][tilePos.x].castle == true) {
 					return undefined;
 				}
 				this.currentTiles.push(tiles[tilePos.y][tilePos.x]);

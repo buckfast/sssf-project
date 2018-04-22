@@ -29,6 +29,8 @@ this.cannonballs =[];
 		this.HEIGHT = height/this.TILE_SIZE;
 
 		this.state = 0;
+		this.stateChange = false;
+
 		this.tiles = null;
 
 		this.islands = [];
@@ -313,6 +315,8 @@ this.cannonballs =[];
 				this.islands[i].center.y = this.HEIGHT-6;
 				//console.log(islands[i].id+": y1");
 			}
+
+			this.islands[i].setCastleTiles();
 		}
 	}
 
@@ -509,7 +513,6 @@ this.cannonballs =[];
 			}
 
 			if (s==3) {
-
 					for (let i=0; i<points; i++) {
 						// for (let j=0; j<points; j++) {
 						// 	if (j!=i) {
@@ -619,7 +622,7 @@ this.cannonballs =[];
 
 	update(i, hitCallback) {
 		if (this.controls[0].ctrl == 0) {
-			this.state = 0;
+			this.state = 0;	
 		}
 		if (this.controls[0].ctrl == 1) {
 			this.state = 1;
@@ -627,6 +630,7 @@ this.cannonballs =[];
 		if  ( this.controls[0].ctrl == 2) {
 			this.state = 2;
 		}
+
 
 		if (this.state != 2) {
 			if (this.controls[i].g) {

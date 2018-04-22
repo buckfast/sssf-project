@@ -8,6 +8,7 @@
     <div id="stage">
 
   <canvas id="background-canvas" width="900" height="540"></canvas>
+  <canvas id="background-canvas2" width="900" height="540"></canvas>
   <canvas id="canvas" width="900" height="540"></canvas>
   <canvas id="foreground-canvas" width="900" height="540"></canvas>
 
@@ -121,6 +122,9 @@
           drawCannonballs(balls);
         })
 
+        socket.on("tiles", (data) => {
+          colorize(data.tiles, data.playerCount);
+        });
 
         const start = () => {
 

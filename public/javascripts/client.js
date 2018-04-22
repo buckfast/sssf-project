@@ -178,8 +178,11 @@ const colorize = (tiles, players) => {
                 //if (tiles[i][j].zone == 1) {
                   contextbg.fillStyle = "#e0a33a";
                   contextbg.fillRect(j*TILE_SIZE-TILE_SIZE+2, i*TILE_SIZE-TILE_SIZE+2, j+TILE_SIZE-2, i+TILE_SIZE-2);
-
               }
+            }
+            if (tiles[i][j].castle == true) {
+              contextbg.fillStyle = "#404040";
+              contextbg.fillRect(j*TILE_SIZE-TILE_SIZE+2, i*TILE_SIZE-TILE_SIZE+2, j+TILE_SIZE-2, i+TILE_SIZE-2);
             }
             contextbg.beginPath();
             contextbg.rect(j*TILE_SIZE, 0, 1, HEIGHT*TILE_SIZE);
@@ -193,13 +196,18 @@ const colorize = (tiles, players) => {
       contextbg.fill();
       contextbg.closePath();
     }
+
+
 }
+
 
 const drawInnerTiles = (tiles) => {
   //contextbg.clearRect(0, 0, canvasbg.width, canvasbg.height);
   for (let i=0; i<tiles.length; i++) {
+    if (tiles[i].castle != true) {
         contextbg.fillStyle = "#e0a33a";
         contextbg.fillRect(tiles[i].x*TILE_SIZE-TILE_SIZE+2, tiles[i].y*TILE_SIZE-TILE_SIZE+2, TILE_SIZE-2, TILE_SIZE-2);
+      }
   }
 }
 

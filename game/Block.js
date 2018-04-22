@@ -14,7 +14,8 @@ class Block extends Placeable {
 				//console.log(tiles[tilePos.y][tilePos.x].placeable);
 
 				if (tiles[tilePos.y][tilePos.x].placeable != undefined || tiles[tilePos.y][tilePos.x].zone != this.islandID
-				|| tilePos.x<1 || tilePos.x > this.mWidth || tilePos.y <1 || tilePos.y > this.mHeight) {
+				|| tilePos.x<1 || tilePos.x > this.mWidth || tilePos.y <1 || tilePos.y > this.mHeight
+				|| tiles[tilePos.y][tilePos.x].castle == true) {
 					return undefined;
 				}
 

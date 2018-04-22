@@ -24,11 +24,16 @@ class Island {
 		this.tilePlaceableIdCounter = {"wall": 0, "cannon": 0};
 		this.cannonToFire = 0;
 		this.cannonballs = [];
+
 	}
 
 	static sortBySize(a, b) {
 			return a.totalTiles - b.totalTiles;
 	}
+
+
+
+
 
 	updateTilePlaceableStatus(tile, type, multi, multiWithOwnIds) {
 		if (multi) {
@@ -118,7 +123,7 @@ class Island {
 						const posx_world = Math.floor(this.cannonballs[i].posx_pixels/this.tileSize)+1;
 						const posy_world = Math.floor(this.cannonballs[i].posy_pixels/this.tileSize)+1;
 
-						const hitTile = this.tiles[posy_world][posx_world]; 
+						const hitTile = this.tiles[posy_world][posx_world];
 						this.cannonballs.splice(i, 1);
 
 						if (hitTile.placeable != undefined) {
@@ -151,6 +156,35 @@ class Island {
     }
 
   }
+
+	setCastleTiles() {
+		this.tiles[this.center.y][this.center.x].castle = true;
+		this.tiles[this.center.y-1][this.center.x].castle = true;
+		this.tiles[this.center.y-1][this.center.x+1].castle = true;
+		this.tiles[this.center.y][this.center.x+1].castle = true;
+	}
+	// getCastleTiles() {
+	// 	let castleTiles = [];
+	// 	castleTiles.push(this.tiles[this.center.y][this.center.x]);
+	// 	this.tiles[this.center.y-1][this.center.x].castle = true;
+	// 	this.tiles[this.center.y-1][this.center.x+1].castle = true;
+	// 	this.tiles[this.center.y][this.center.x+1].castle = true;
+	// }
+
+	isTileOnCastle(tiles, tile) {
+			let castleTiles = [];
+			castleTiles.push(tiles[this.center.y][this.center.x]);
+			castleTiles.push(tiles[this.center.y][this.center.x+1]);
+			castleTiles.push(tiles[this.center.y+1][this.center.x]);
+			castleTiles.push(tiles[this.center.y+1][this.center.x+1]);
+
+		for (let i=0; i<castleTiles.length; i++) {
+			if (tile === castleTiles[i]) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	updateFloodBoundary(currentTiles, tiles) { //tätä funkkaria vois hajottaa pienemmäksi
 		let updateMinMax = (currentCoords, minCoords, maxCoords) => {
@@ -196,9 +230,11 @@ class Island {
 
 	findInnerAreas(tiles) {
 
-		//console.log("ogffuck");
-		//console.log("mimcroods: x: "+(this.minCoords.x-1)+", y: "+(this.minCoords.y-1));
-		//console.log("maxcroods: x: "+(this.maxCoords.x+1)+", y: "+(this.maxCoords.y+1));
+ 		// this happens on state 0
+		// this.innerTiles.forEach((e) => {
+		// e.inner[(this.id-1)] = false;
+		// })
+		// this.innerTiles = new Set();
 
 		let totalFlooded = u.floodFill(
 			{x: this.minCoords.x-1, y: this.minCoords.y-1},
@@ -214,6 +250,9 @@ class Island {
 		let ylength = (this.maxCoords.y+2) - (this.minCoords.y-1);
 		let xlength = (this.maxCoords.x+2) - (this.minCoords.x-1);
 		let innerAreaFound = (totalFlooded+this.walls.length) < (ylength*xlength);
+
+
+
 
 		for (let i=this.minCoords.y-1; i<this.maxCoords.y+2; i++) {
 			for (let j=this.minCoords.x-1; j<this.maxCoords.x+2; j++) {

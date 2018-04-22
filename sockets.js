@@ -78,6 +78,8 @@ module.exports.listen = (http) => {
       if (games[getRoom(socket)] != undefined) {
         let obj = games[getRoom(socket)].clicked(socket.id, pos);
           io.in(getRoom(socket)).emit("updateDrawable", obj);
+          //io.in(getRoom(socket)).emit("tiles", {"tiles":games[getRoom(socket)].tiles, "playerCount":games[getRoom(socket)].POINTS});
+
       }
     })
   });
