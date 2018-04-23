@@ -70,6 +70,7 @@ module.exports.listen = (http) => {
     socket.on("control", (controls) => {
       //console.log(control);
       if (games[getRoom(socket)]!=undefined) {
+
         games[getRoom(socket)].updateUserControls(socket.id, controls);
       }
     })

@@ -28,8 +28,11 @@ this.cannonballs =[];
 		this.WIDTH = width/this.TILE_SIZE;
 		this.HEIGHT = height/this.TILE_SIZE;
 
-		this.state = 0;
-		this.stateChange = false;
+		this.state = 1;
+		this.stateChangeCount = 5;
+		this.roundCount = 15;
+		this.stateRoundCounts = [20, 12, 15];
+		this.stateChange = true;
 
 		this.tiles = null;
 
@@ -393,7 +396,7 @@ this.cannonballs =[];
 		for (let i=1; i<=points; i++) {
 			let island = new Island(i, tiles, this.TILE_SIZE);
 			this.islands.push(island);
-			this.controls.push({g: false, h: false, ctrl: 0, cursorPos: {x: (Math.floor(this.WIDTH/2)), y: (Math.floor(this.HEIGHT/2))}});
+			this.controls.push({g: false, h: false, cursorPos: {x: (Math.floor(this.WIDTH/2)), y: (Math.floor(this.HEIGHT/2))}});
 			// let y = getRandomArbitrary(0,this.HEIGHT-1);
 			// let x = getRandomArbitrary(0,this.WIDTH-1);
 			//{'x': x, 'y': y}
@@ -473,7 +476,7 @@ this.cannonballs =[];
 								{x: currentIslandBorder[randomBorderIndex].x,y: currentIslandBorder[randomBorderIndex].y},
 								currentIslandBorder[randomBorderIndex].zone,
 								currentIslandBorder[randomBorderIndex].border,
-								u.getRandomArbitrary(10,50),
+								u.getRandomArbitrary(10,70),
 								tiles,
 								"zone",
 								{x: 0, y: 0},
@@ -621,15 +624,15 @@ this.cannonballs =[];
 
 
 	update(i, hitCallback) {
-		if (this.controls[0].ctrl == 0) {
-			this.state = 0;	
-		}
-		if (this.controls[0].ctrl == 1) {
-			this.state = 1;
-		}
-		if  ( this.controls[0].ctrl == 2) {
-			this.state = 2;
-		}
+		// if (this.controls[0].ctrl == 0) {
+		// 	this.state = 0;
+		// }
+		// if (this.controls[0].ctrl == 1) {
+		// 	this.state = 1;
+		// }
+		// if  ( this.controls[0].ctrl == 2) {
+		// 	this.state = 2;
+		// }
 
 
 		if (this.state != 2) {
@@ -712,19 +715,20 @@ this.cannonballs =[];
 
 	clicked(socketid, pos) {
 		//client pos not used
-
-		if (this.state == 0) {
-			this.placeables[this.islandIndexofSocket[socketid]].placeWallBlock(this.controls[this.islandIndexofSocket[socketid]].cursorPos);
-			this.setDrawables();
-			return {innerTiles: Array.from(this.islands[this.islandIndexofSocket[socketid]].innerTiles), drawables:this.drawables};
-		} else if (this.state == 1) {
-			//this.placeables[i].placeCannon();
-			this.placeables[this.islandIndexofSocket[socketid]].placeCannon(this.controls[this.islandIndexofSocket[socketid]].cursorPos);
-			this.setDrawables();
-			return {drawables: this.drawables};
-		} else if (this.state == 2) {
-			this.islands[this.islandIndexofSocket[socketid]].fireCannon(this.controls[this.islandIndexofSocket[socketid]].cursorPos);
-			return undefined;
+		if (!this.stateChange) {
+			if (this.state == 0) {
+				this.placeables[this.islandIndexofSocket[socketid]].placeWallBlock(this.controls[this.islandIndexofSocket[socketid]].cursorPos);
+				this.setDrawables();
+				return {innerTiles: Array.from(this.islands[this.islandIndexofSocket[socketid]].innerTiles), drawables:this.drawables};
+			} else if (this.state == 1) {
+				//this.placeables[i].placeCannon();
+				this.placeables[this.islandIndexofSocket[socketid]].placeCannon(this.controls[this.islandIndexofSocket[socketid]].cursorPos);
+				this.setDrawables();
+				return {drawables: this.drawables};
+			} else if (this.state == 2) {
+				this.islands[this.islandIndexofSocket[socketid]].fireCannon(this.controls[this.islandIndexofSocket[socketid]].cursorPos);
+				return undefined;
+			}
 		}
 	}
 
@@ -734,6 +738,23 @@ this.cannonballs =[];
 		//console.log(newControls);
 		this.controls[this.islandIndexofSocket[socketid]] = newControls;
 	}
+
+
+
+	countdown(count, interval, totalTime, func, func2) {
+		this.stateChangeCount = count;
+    const i = setInterval(() => {
+			console.log(this.stateChangeCount);
+			this.stateChangeCount--;
+    }, interval);
+    setTimeout(() => {
+        clearInterval(i);
+				this.stateChangeCount = count;
+				func();
+				func2();
+				this.stateChange = false;
+    }, (totalTime+interval));
+	};
 
 	run(placeableCallback, cannonballCallback, hitCallback) {
 		this.tiles = this.determineZones(this.POINTS);
@@ -749,17 +770,45 @@ this.cannonballs =[];
 
 		this.setDrawables();
 		//drawCallback(drawables);
-		const FPS = 60;
-		setInterval(() => {
-			//this.update(0);
+		const gameLoop = () => {
+			const FPS = 60;
+			setInterval(() => {
+				//this.update(0);
 
-			//this.drawPlaceable(0);
-			for (let i=0; i<this.POINTS; i++) {
-				this.update(i,hitCallback);
-				this.drawPlaceable(i, placeableCallback);
-			}
-			this.drawCannonballs(cannonballCallback);
-		}, 1000/FPS);
+				//this.drawPlaceable(0);
+
+				for (let i=0; i<this.POINTS; i++) {
+					this.update(i,hitCallback);
+					this.drawPlaceable(i, placeableCallback);
+				}
+				this.drawCannonballs(cannonballCallback);
+			}, 1000/FPS);
+		}
+
+		const nextState= () => {
+			this.state += 1;
+			this.state = this.state%3;
+		}
+
+		const stateChanger = () => {
+			this.roundCount = this.stateRoundCounts[this.state];
+			console.log(this.roundCount);
+			this.roundCount--;
+				const interval = setInterval(() => {
+					console.log(this.roundCount);
+					this.roundCount--;
+				}, 1000);
+
+			  setTimeout(() => {
+					clearInterval(interval);
+					this.roundCount = this.stateRoundCounts[this.state];
+					console.log("stateChanger called");
+					this.stateChange = true;
+					this.countdown(5, 1000, 5000, nextState, stateChanger);
+				}, (this.stateRoundCounts[this.state]*1000+1000));
+		}
+
+		this.countdown(5, 1000, 5000, gameLoop, stateChanger);
 	}
 }
 

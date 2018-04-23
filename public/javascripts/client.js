@@ -1,7 +1,7 @@
 
   let hPressed = false;
   let gPressed = false;
-  let ctrl = 0;
+  let ctrl = 1;
     let cursorPos = {};
     let canvas = undefined;
     let context = undefined;
@@ -215,9 +215,9 @@ const sendInput = (socket) => {
     const FPS = 30;
     setInterval(() => {
       //console.log(cursorPos);
-      socket.emit("control", {g: gPressed, h: hPressed, ctrl: ctrl, cursorPos: cursorPos});
+      socket.emit("control", {g: gPressed, h: hPressed, cursorPos: cursorPos});
     }, 1000/FPS);
 }
 const clicked = (socket) => {
-  socket.emit("click", cursorPos); // TODO: maybe server position rather than client?
+  socket.emit("click", cursorPos);
 }

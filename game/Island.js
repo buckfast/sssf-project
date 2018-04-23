@@ -57,10 +57,16 @@ class Island {
 		for (let h=this.center.y-4; h<=this.center.y+3; h++) {
 			for (let w=this.center.x-3; w<=this.center.x+4; w++) {
 				//tiles[h][w].zone = this.id;
-				tiles[h+1][w].zone = this.id;
-				tiles[h-1][w].zone = this.id;
-				tiles[h][w+1].zone = this.id;
-				tiles[h][w-1].zone = this.id;
+				tiles[h+2][w].zone = this.id;
+				tiles[h-2][w].zone = this.id;
+				tiles[h][w+2].zone = this.id;
+				tiles[h][w-2].zone = this.id;
+
+				tiles[h+2][w+2].zone = this.id;
+				tiles[h-2][w+2].zone = this.id;
+				tiles[h+2][w-2].zone = this.id;
+				tiles[h-2][w-2].zone = this.id;
+
 
 				if(h==this.center.y-4 || w==this.center.x-3 || h==this.center.y+3 || w==this.center.x+4){
 					this.updateTilePlaceableStatus(tiles[h][w], "wall");
@@ -228,13 +234,16 @@ class Island {
 		this.cannons[id] = obj;
 	}
 
+	clearInnerAreas() {
+		 		//this happens on state 0
+				this.innerTiles.forEach((e) => {
+				e.inner[(this.id-1)] = false;
+				})
+				this.innerTiles = new Set();
+	}
+
 	findInnerAreas(tiles) {
 
- 		// this happens on state 0
-		// this.innerTiles.forEach((e) => {
-		// e.inner[(this.id-1)] = false;
-		// })
-		// this.innerTiles = new Set();
 
 		let totalFlooded = u.floodFill(
 			{x: this.minCoords.x-1, y: this.minCoords.y-1},
