@@ -13,6 +13,7 @@ module.exports.listen = (http) => {
     console.log('a user connected');
 
     socket.on('disconnect', () => {
+      leaveRoom(socket);
       console.log('user disconnected');
     });
 
