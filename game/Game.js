@@ -681,7 +681,7 @@ this.cannonballs =[];
 	}
 
 	drawPlaceable(index, cb) {
-
+		if (!this.stateChange) {
 		if (this.state == 0) {
 			if (this.controls[index].cursorPos.x != undefined && this.controls[index].cursorPos.y != undefined) {
 				cb(null, this.socketofIslandIndex[index], this.placeables[index].getWallBlock(this.controls[index].cursorPos));
@@ -699,6 +699,7 @@ this.cannonballs =[];
 		// else if (this.state == 2) {
 		// 	this.islands[index].getCannonballs();
 		// }
+		}
 	}
 
 	drawCannonballs(cb) {
@@ -709,7 +710,9 @@ this.cannonballs =[];
 			} else {
 				cb(this.cannonballs);
 			}
+
 		}
+
 	}
 
 
@@ -756,7 +759,7 @@ this.cannonballs =[];
     }, (totalTime+interval));
 	};
 
-	run(placeableCallback, cannonballCallback, hitCallback) {
+	run(placeableCallback, cannonballCallback, hitCallback, stateChangeCallback, stateChangerCallback) {
 		this.tiles = this.determineZones(this.POINTS);
 		this.createPlaceableContainers(this.tiles);
 		//this.colorais(this.tiles);
@@ -788,6 +791,14 @@ this.cannonballs =[];
 		const nextState= () => {
 			this.state += 1;
 			this.state = this.state%3;
+			if (this.state == 0) {
+				for (let i=0; i<this.islands.length; i++) {
+					this.islands[i].clearInnerAreas();
+					console.log(i,"clear inner areas");
+					this.islands[i].findInnerAreas(this.tiles);
+				}
+			}
+			stateChangeCallback(this.state);
 		}
 
 		const stateChanger = () => {
@@ -804,6 +815,7 @@ this.cannonballs =[];
 					this.roundCount = this.stateRoundCounts[this.state];
 					console.log("stateChanger called");
 					this.stateChange = true;
+					stateChangerCallback();
 					this.countdown(5, 1000, 5000, nextState, stateChanger);
 				}, (this.stateRoundCounts[this.state]*1000+1000));
 		}

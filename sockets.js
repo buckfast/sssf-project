@@ -58,6 +58,15 @@ module.exports.listen = (http) => {
             },
             (drawable) => {
                 io.in(getRoom(socket)).emit("updateDrawable", drawable);
+            },
+            (state) => {
+              if (state == 0) {
+                io.in(getRoom(socket)).emit("tiles", {"tiles":game.tiles, "playerCount":game.POINTS});
+              }
+            },
+            () => {
+              console.log("asd");
+                io.in(getRoom(socket)).emit("drawPlaceable", undefined);
             }
           );
           //socket.emit("game_start", game.tiles);

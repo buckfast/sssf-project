@@ -121,19 +121,21 @@ const setCurrentPlaceable = (wallBlock) => {
 const drawPlaceable = (coords) => {
   contextfg.clearRect(0, 0, canvasfg.width, canvasfg.height);
 
-  for (let i=0; i<coords.length; i++) {
-    // contextfg.beginPath();
-    // contextfg.rect(
-    // coords[i].x,
-    // coords[i].y,
-    // TILE_SIZE,
-    // TILE_SIZE);
-    //
-     contextfg.fillStyle = "#FFFFFF";
-    // contextfg.fill();
-    // contextfg.closePath();
-    contextfg.fillRect(coords[i].x, coords[i].y, TILE_SIZE, TILE_SIZE);
-    //console.log(JSON.stringify(coords));
+  if (coords != undefined) {
+    for (let i=0; i<coords.length; i++) {
+      // contextfg.beginPath();
+      // contextfg.rect(
+      // coords[i].x,
+      // coords[i].y,
+      // TILE_SIZE,
+      // TILE_SIZE);
+      //
+       contextfg.fillStyle = "#FFFFFF";
+      // contextfg.fill();
+      // contextfg.closePath();
+      contextfg.fillRect(coords[i].x, coords[i].y, TILE_SIZE, TILE_SIZE);
+      //console.log(JSON.stringify(coords));
+    }
   }
 
   //console.log("\n");
