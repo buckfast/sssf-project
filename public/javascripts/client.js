@@ -12,6 +12,9 @@
     let canvasfg = undefined;
     let contextfg = undefined;
 
+    let canvasui = undefined;
+    let contextui = undefined;
+
     const TILE_SIZE = 18;
     const HEIGHT = 540/TILE_SIZE+2;
     const WIDTH = 900/TILE_SIZE+2;
@@ -27,14 +30,17 @@ const run = () => {
   canvasfg = document.getElementById("foreground-canvas");
   contextfg = canvasfg.getContext("2d");
 
+  canvasui = document.getElementById("ui-canvas");
+  contextui = canvasui.getContext("2d");
+
   const getCursorPosition = (event) => {
-  	const rect = canvasfg.getBoundingClientRect();
+  	const rect = canvasui.getBoundingClientRect();
   	return {x: event.clientX - rect.left,
   		y: event.clientY - rect.top,
   		};
   }
 
-  canvasfg.addEventListener('mousemove', (event) => {
+  canvasui.addEventListener('mousemove', (event) => {
   	cursorPos = getCursorPosition(event);
   }, false);
 
@@ -69,6 +75,20 @@ const run = () => {
           gPressed = false;
       }
   }, false);
+}
+
+const banner = () => {
+
+}
+
+const drawCountdown = (count) => {
+  contextui.clearRect(0, 0, canvasui.width, canvasui.height);
+  contextui.font = '32px arial';
+  contextui.fillStyle = 'white';
+  contextui.fillText(count, canvasui.width/2-32, 40);
+}
+const clearCountdown = () => {
+  contextui.clearRect(0, 0, canvasui.width, canvasui.height);
 }
 
 const drawCannonballs=(balls)=> {

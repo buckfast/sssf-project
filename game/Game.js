@@ -759,7 +759,7 @@ this.cannonballs =[];
     }, (totalTime+interval));
 	};
 
-	run(placeableCallback, cannonballCallback, hitCallback, stateChangeCallback, stateChangerCallback) {
+	run(placeableCallback, cannonballCallback, hitCallback, stateChangeCallback, stateChangerCallback, countdownCallback) {
 		this.tiles = this.determineZones(this.POINTS);
 		this.createPlaceableContainers(this.tiles);
 		//this.colorais(this.tiles);
@@ -804,8 +804,11 @@ this.cannonballs =[];
 		const stateChanger = () => {
 			this.roundCount = this.stateRoundCounts[this.state];
 			console.log(this.roundCount);
+			countdownCallback(this.roundCount);
 			this.roundCount--;
 				const interval = setInterval(() => {
+					countdownCallback(this.roundCount);
+
 					console.log(this.roundCount);
 					this.roundCount--;
 				}, 1000);
