@@ -8,9 +8,9 @@
     <div id="stage">
 
   <canvas id="background-canvas" width="900" height="540"></canvas>
-  <canvas id="background-canvas2" width="900" height="540"></canvas>
   <canvas id="canvas" width="900" height="540"></canvas>
   <canvas id="foreground-canvas" width="900" height="540"></canvas>
+  <canvas id="ui-canvas" width="900" height="540"></canvas>
 
 </div>
     <h1 id="t">current room: none</h1>
@@ -96,16 +96,18 @@
           colorize(data.tiles, data.playerCount);
           initPlaceables(data.drawables);
           sendInput(socket);
-          canvasfg.addEventListener("click", () => {
+          canvasui.addEventListener("click", () => {
             clicked(socket);
           });
         })
 
         socket.on("drawPlaced", (drawables) => {
+          console.log("drawPlaced");
           drawPlaced(drawables);
         })
 
         socket.on("updateDrawable", (obj) => { //todo: rename stuff
+          console.log("udpateDrawable");
           if (obj != null) {
             drawPlaced(obj.drawables);
             if (obj.innerTiles != undefined) {
@@ -114,7 +116,15 @@
           }
         });
 
+        socket.on("roundCountdown", (count) => {
+          drawCountdown(count);
+        })
+        socket.on("clearCountdown", () => {
+          clearCountdown();
+        })
+
         socket.on("drawPlaceable", (placeable) => {
+          console.log("drawPlacaebel");
           drawPlaceable(placeable);
         })
 
@@ -123,6 +133,7 @@
         })
 
         socket.on("tiles", (data) => {
+          console.log("tiles");
           colorize(data.tiles, data.playerCount);
         });
 

@@ -65,8 +65,11 @@ module.exports.listen = (http) => {
               }
             },
             () => {
-              console.log("asd");
                 io.in(getRoom(socket)).emit("drawPlaceable", undefined);
+                io.in(getRoom(socket)).emit("clearCountdown");
+            },
+            (count) => {
+                io.in(getRoom(socket)).emit("roundCountdown", count);
             }
           );
           //socket.emit("game_start", game.tiles);
@@ -93,7 +96,6 @@ module.exports.listen = (http) => {
       }
     })
   });
-
 
   const usersInRoom = (room, cb) => {
     io.of('/').in(room).clients( (err, data) => {

@@ -17,7 +17,8 @@ a {
 
 canvas {
   position: absolute; }
-
+  #ui-canvas {
+    z-index: 3; }
 #foreground-canvas {
   z-index: 2; }
 
