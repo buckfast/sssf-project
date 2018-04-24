@@ -77,9 +77,6 @@ const run = () => {
   }, false);
 }
 
-const banner = () => {
-
-}
 
 const drawCountdown = (count) => {
   contextui.clearRect(0, 0, canvasui.width, canvasui.height);
@@ -140,7 +137,7 @@ const setCurrentPlaceable = (wallBlock) => {
 
 const banner = () => {
   contextfg.clearRect(0, 0, canvasfg.width, canvasfg.height);
-  // 
+  //
   // const FPS = 30;
   // setInterval(() => {
   //
