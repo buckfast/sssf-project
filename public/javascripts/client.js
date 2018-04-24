@@ -118,6 +118,15 @@ const setCurrentPlaceable = (wallBlock) => {
   currentPlaceableCoords = wallBlock;
 }
 
+const banner = () => {
+  contextfg.clearRect(0, 0, canvasfg.width, canvasfg.height);
+  // 
+  // const FPS = 30;
+  // setInterval(() => {
+  //
+  // }, 1000/FPS);
+}
+
 const drawPlaceable = (coords) => {
   contextfg.clearRect(0, 0, canvasfg.width, canvasfg.height);
 
