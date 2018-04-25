@@ -11,8 +11,8 @@ const UserSchema = new Schema({
   passwordHash: {type: String, required: true, set: password},
 });
 
-UserSchema.methods.validPassword = (password) => {
-  return bcrypt.compareSync(password, this.passwordHash);
+UserSchema.methods.validPassword = (password, hash) => {
+  return bcrypt.compareSync(password, hash);
 };
 
 

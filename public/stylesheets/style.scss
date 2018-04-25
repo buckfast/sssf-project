@@ -17,7 +17,9 @@ ul li:nth-last-child(-n+2) { float: right;}
 
        }
    }
-
+.form-error {
+  color:red;
+}
 .content {
   margin-top: 60px;
 }

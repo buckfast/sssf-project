@@ -65,7 +65,7 @@ passport.deserializeUser((userId, done) => {
 const local = new LocalStrategy((username, password, done) => {
   User.findOne({username})
     .then((user) => {
-      if (!user || !user.validPassword(password)) {
+      if (!user || !user.validPassword(password, user.passwordHash)) {
         done(null, false, {message: "Invalid credentials"});
       } else {
         done(null, user);

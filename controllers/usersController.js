@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const passport = require("passport");
 const {body, validationResult} = require('express-validator/check');
 const {sanitizeBody} = require('express-validator/filter');
 
@@ -6,14 +7,28 @@ exports.login_get = (req, res, next) => {
   res.render("login", { title: 'Log in', currentPage: "login"})
 }
 
-exports.login_post = (req,res,next) => {
+exports.logout_get = (req,res,next) => {
+  req.logout();
+  res.redirect("/users/login");
+}
 
+exports.login_post = (req,res,next) => {
+  passport.authenticate('local', (err, user, info) => {
+    if(err) { return next(err)}
+    if (!user) {
+      return res.render("login", {formData: {username: req.body.username}, title: 'Log in', currentPage: "login", errors: [{param: "username", msg: info.message}]});
+    }
+
+    req.logIn(user, (err) => {
+      if (err) {return next(err);}
+      return res.redirect("/");
+    });
+  }) (req, res, next);
 }
 
 exports.signup_get = (req, res, next) => {
   res.render("signup", { title: 'Sign up', currentPage: "signup"})
 }
-
 
 
 exports.signup_post = [
@@ -55,10 +70,10 @@ exports.signup_post = [
               });
             })
             .catch(err => {
-              res.render('signup', { title: 'Sign up', currentPage: "signup", user: req.user, errors: err});
+              res.render('signup', {formData: {username: req.body.username}, title: 'Sign up', currentPage: "signup", user: req.user, errors: err});
             });
         } else {
-          res.render('signup', { title: 'Sign up', currentPage: "signup", user: req.user, errors: ["Username taken"]});
+          res.render('signup', {formData: {username: req.body.username}, title: 'Sign up', currentPage: "signup", user: req.user, errors: [{param: "username", msg: "Username is taken"}]});
         }
     });
   }

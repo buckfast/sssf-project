@@ -23,7 +23,7 @@
       				<div class="modal-body">
       					<form method="post"  id="formsignup">
 
-                  <div id="error" class="float-right">
+                  <div id="error" class="float-right form-error">
                     <%if (locals.errors != undefined) { %>
                       <%for (let result in locals.errors){%>
                         <% if (locals.errors[result].param == "username") { %>
@@ -41,7 +41,7 @@
       							</div>
       						</div>
 
-                  <div id="error" class="float-right">
+                  <div id="error" class="float-right form-error">
                     <%if (locals.errors != undefined) { %>
                       <%for (let result in locals.errors){%>
                         <% if (locals.errors[result].param == "password") { %>
@@ -60,7 +60,7 @@
 
 
       						</div>
-                  <div id="error" class="float-right">
+                  <div id="error" class="float-right form-error">
                     <%if (locals.errors != undefined) { %>
                       <%for (let result in locals.errors){%>
                         <% if (locals.errors[result].param == "password") { %>

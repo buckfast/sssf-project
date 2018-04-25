@@ -22,15 +22,23 @@
 
       				<div class="modal-body">
       					<form method="post" novalidate="novalidate" id="formlogin">
-      						<div id="error">
 
-      						</div>
+
+                  <div id="error" class="float-right form-error">
+                    <%if (locals.errors != undefined) { %>
+                      <%for (let result in locals.errors){%>
+                        <% if (locals.errors[result].param == "username") { %>
+                          <li><%=locals.errors[result].msg%></li>
+                        <%}%>
+                      <%}%>
+                    <%}%>
+                  </div>
 
       						<div class="form-group">
       							<label class="control-label" for="email">Username</label>
       							<div class="input-group">
       								<span class="input-group-addon"><img src="/images/glyphicons-4-user.png"></span></span>
-      								<input class="form-control rounded-0" placeholder="username" name="username" id="username" type="text">
+      								<input class="form-control rounded-0" placeholder="username" name="username" id="username" type="text" value="<%if (locals.errors != undefined) {%><%=locals.formData.username%><%}%>">
       							</div>
       						</div>
 

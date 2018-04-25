@@ -12,6 +12,9 @@ ul li:nth-last-child(-n+2) {
     top: 3px;
     margin-left: 50px; }
 
+.form-error {
+  color: red; }
+
 .content {
   margin-top: 60px; }
 
