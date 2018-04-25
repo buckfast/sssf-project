@@ -1,4 +1,13 @@
 
+exports.login_get = (req, res, next) => {
+  res.render("login", { title: 'Log in', currentPage: "login"})
+
+}
+
+exports.signup_get = (req, res, next) => {
+  res.render("signup", { title: 'Sign up', currentPage: "signup"})
+}
+
 /**
  * @api {get} /users List all users
  * @apiName GetUsers

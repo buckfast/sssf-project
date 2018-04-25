@@ -1,0 +1,51 @@
+
+
+<!-- <div class="topper p-3 bg-info d-none d-lg-block fixed-top">
+    <div class="container"></div>
+</div> -->
+
+<nav class="navbar fixed-top navbar-expand-md navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+          <img height="35px" src="/images/LogoMakr_8gXoAK.png">
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse"   aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbar">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item <% if (currentPage=="index") { %>active<%}%>">
+                    <a class="nav-link" href="/">Home</a>
+                </li>
+                <li class="nav-item <% if (currentPage=="play") { %>active<%}%>">
+                    <a class="nav-link" href="/play">Play</a>
+                </li>
+                <li class="nav-item <% if (currentPage=="stats") { %>active<%}%>">
+                    <a class="nav-link" href="/stats">Statistics</a>
+                </li>
+                <li class="nav-item <% if (currentPage=="users") { %>active<%}%>">
+                    <a class="nav-link" href="/users">Users</a>
+                </li>
+                <li class="nav-item search-field">
+                  <form class="form-inline my-2 my-sm-0">
+                      <input class="form-control form-control-sm mr-sm-2" type="search" placeholder="Search">
+                  </form>
+
+            </ul>
+            <div class="collapse navbar-collapse" id="navbar">
+              <ul class="navbar-nav ml-auto">
+              </li>
+              <li class="nav-item <% if (currentPage=="login") { %>active<%}%>">
+                  <a class="nav-link" href="/users/login">Log in</a>
+              </li>
+              <li class="nav-item <% if (currentPage=="signup") { %>active<%}%>">
+                <form action="/users/signup">
+                <button class="btn-sm btn btn-primary" type="submit">Sign up</button>
+              </form>
+              </li>
+              </ul>
+          </div>
+
+        </div>
+    </div>
+</nav>

@@ -1,9 +1,30 @@
 body {
-  padding: 50px;
+  margin: 0 auto;
+  background-color: #ffffff;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif; }
 
-a {
-  color: #00B7FF; }
+ul li:nth-last-child(-n+2) {
+  float: right; }
+
+.navbar {
+  height: 45px; }
+  .navbar .search-field {
+    top: 3px;
+    margin-left: 50px; }
+
+.content {
+  margin-top: 60px; }
+
+.input-group {
+  background-color: #f1f1f1; }
+
+.input-group-addon {
+  padding-top: 7px;
+  padding-right: 7px;
+  padding-left: 7px; }
+
+.align-right {
+  float: right; }
 
 #roomlist {
   float: right; }
@@ -17,8 +38,10 @@ a {
 
 canvas {
   position: absolute; }
-  #ui-canvas {
-    z-index: 3; }
+
+#ui-canvas {
+  z-index: 3; }
+
 #foreground-canvas {
   z-index: 2; }
 

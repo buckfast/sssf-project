@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>soket</title>
-    <link href="/stylesheets/style.css" rel="stylesheet" type="text/css">
-  </head>
-  <body>
+<html lang="en">
+<% include ../views/head %>
+
+<body>
+<% include ../views/nav %>
+
+<div class="container content">
     <div id="stage">
 
   <canvas id="background-canvas" width="900" height="540"></canvas>
@@ -49,6 +50,12 @@
           return false;
         });
 
+        socket.on("roomList", (list) => {
+          for (let i=0; i<list.length; i++) {
+            addRoomToList(socket, {name: Object.keys(list[i])[0], roomNumber: Object.keys(list[i])[0]});
+          }
+        });
+
         socket.on('message', (msg) => {
           $('#messages').append($('<li>').text(msg));
         });
@@ -58,14 +65,7 @@
         });
 
         socket.on("room_created", (msg) => {
-
-          let li = $('<li>').text("join "+msg.name+"'s room ("+msg.roomNumber+")");
-          li.attr("id", msg.roomNumber);
-          li.css('cursor','pointer');
-          li.on("click", () => {
-            socket.emit("room_join", msg);
-          });
-          $('#roomlist').find("ul").append(li);
+          addRoomToList(socket, msg);
         });
 
 
@@ -88,7 +88,7 @@
             }));
           }
 
-          $("#t").text("current room: "+msg.name+"'s room ("+msg.roomNumber+")");
+          $("#t").text("current room: "+msg.roomNumber);
         });
 
         socket.on("game_start", (data) => {
@@ -102,12 +102,10 @@
         })
 
         socket.on("drawPlaced", (drawables) => {
-          console.log("drawPlaced");
           drawPlaced(drawables);
         })
 
         socket.on("updateDrawable", (obj) => { //todo: rename stuff
-          console.log("udpateDrawable");
           if (obj != null) {
             drawPlaced(obj.drawables);
             if (obj.innerTiles != undefined) {
@@ -124,7 +122,6 @@
         })
 
         socket.on("drawPlaceable", (placeable) => {
-          console.log("drawPlacaebel");
           drawPlaceable(placeable);
         })
 
@@ -133,7 +130,6 @@
         })
 
         socket.on("tiles", (data) => {
-          console.log("tiles");
           colorize(data.tiles, data.playerCount);
         });
 
@@ -145,9 +141,20 @@
         }
       });
 
+      const addRoomToList = (socket, msg) => {
+        //let li = $('<li>').text("join "+msg.name+"'s room ("+msg.roomNumber+")");
+        let li = $('<li>').text("join room "+msg.roomNumber);
+
+        li.attr("id", msg.roomNumber);
+        li.css('cursor','pointer');
+        li.on("click", () => {
+          socket.emit("room_join", msg);
+        });
+        $('#roomlist').find("ul").append(li);
+      }
 
 
     </script>
-
+</div>
   </body>
 </html>

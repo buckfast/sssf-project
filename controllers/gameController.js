@@ -4,8 +4,8 @@
  * @apiGroup Games
  * @apiDescription Lists all games
  */
-exports.games_get = (req, res, next) => {
-    res.render("games");
+exports.game_get = (req, res, next) => {
+    res.render("play", { title: 'play', currentPage: "play"});
 }
 
 /**
@@ -14,7 +14,7 @@ exports.games_get = (req, res, next) => {
  * @apiGroup Games
  * @apiDescription Creates a new game
  */
-exports.games_post = (req, res, next) => {
+exports.game_post = (req, res, next) => {
     res.send("create game");
 }
 

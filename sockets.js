@@ -9,8 +9,58 @@ module.exports.listen = (http) => {
   let roomNumber = 0;
 
 
+  const usersInRoom = (io, room, cb) => {
+    io.of('/').in(room).clients( (err, data) => {
+      if (err) {
+        cb(err);
+      } else {
+        cb(null, data);
+      }
+    });
+  }
+
+
+
+  let leaveRoom = (socket) => {
+    for (let key in socket.rooms) {
+        if (key != socket.id) {
+          socket.leave(key);
+        }
+    }
+  }
+
+  let getRoom = (socket) => {
+    for (let key in socket.rooms) {
+        if (key != socket.id) {
+          return key;
+        }
+    }
+  }
+
+  const joinRoom = (socket, roomNumber) => {
+    leaveRoom(socket);
+    socket.join(roomNumber);
+  }
+
+
   io.on('connection', (socket) => {
+
+    const getAllRooms = () => {
+      let gameRooms = [];
+      for(let key in io.sockets.adapter.rooms) {
+        if (key.substring(0, 4) == 'game') {
+          let obj = {};
+          obj[key] = io.sockets.adapter.rooms[key];
+          gameRooms.push(obj);
+        }
+      }
+    //  console.log(gameRooms);
+    return gameRooms;
+    }
+
     console.log('a user connected');
+    joinRoom(socket, "lobby");
+    socket.emit("roomList", getAllRooms());
 
     socket.on('disconnect', () => {
       leaveRoom(socket);
@@ -24,22 +74,21 @@ module.exports.listen = (http) => {
     });
 
     socket.on("room_create", (msg) => {
-          io.emit('room_created', {roomNumber: roomNumber, name: msg});
-          joinRoom(socket, roomNumber);
+          io.emit('room_created', {roomNumber: "game"+roomNumber, name: msg});
+          joinRoom(socket, "game"+roomNumber);
           console.log("created new room: "+roomNumber);
-          socket.emit("room_joined", {roomNumber: roomNumber, name: msg, host: true});
+          socket.emit("room_joined", {roomNumber: "game"+roomNumber, name: msg, host: true});
           roomNumber++;
     });
 
     socket.on("room_join", (msg) => {
-
       joinRoom(socket, msg.roomNumber);
       socket.emit('room_joined', msg);
 
     });
 
     socket.on("start_game", () => {
-    usersInRoom(getRoom(socket), (err, players) => {
+    usersInRoom(io, getRoom(socket), (err, players) => {
         if (err == null) {
           //console.log("data: ",data);
           const game = new Game(players, 900, 540, 18);
@@ -71,7 +120,7 @@ module.exports.listen = (http) => {
             },
             (count) => {
                 io.in(getRoom(socket)).emit("roundCountdown", count);
-            }
+            },
           );
           //socket.emit("game_start", game.tiles);
           io.in(getRoom(socket)).emit("game_start", {'tiles': game.tiles, 'drawables': game.drawables, 'playerCount': players.length});
@@ -98,40 +147,8 @@ module.exports.listen = (http) => {
     })
   });
 
-  const usersInRoom = (room, cb) => {
-    io.of('/').in(room).clients( (err, data) => {
-      if (err) {
-        cb(err);
-      } else {
-        cb(null, data);
-      }
-    });
-  }
+
+
 
   return io;
-}
-
-
-
-
-let leaveRoom = (socket) => {
-  for (let key in socket.rooms) {
-      if (key != socket.id) {
-        socket.leave(key);
-      }
-  }
-}
-let getRoom = (socket) => {
-  for (let key in socket.rooms) {
-      if (key != socket.id) {
-        return key;
-      }
-  }
-}
-
-const joinRoom = (socket, roomNumber) => {
-  leaveRoom(socket);
-  socket.join(roomNumber);
-
-
 }

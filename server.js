@@ -10,7 +10,7 @@ const sassMiddleware = require('node-sass-middleware');
 
 const index = require('./routes/index');
 const users = require('./routes/users');
-const games = require('./routes/games');
+const game = require('./routes/game');
 
 const requestedPath = require("./middlewares/path");
 const timestamp = require("./middlewares/timestamp");
@@ -55,7 +55,7 @@ app.use(sassMiddleware({
 
 app.use('/', index);
 app.use('/users', users);
-app.use('/games', games);
+app.use('/play', game);
 
 
 // catch 404 and forward to error handler
