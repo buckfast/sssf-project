@@ -1,12 +1,12 @@
 const SocketServer = require('socket.io');
 const Game = require("./game/Game");
-
+const shortid = require('shortid');
 
 module.exports.listen = (http) => {
   const io = new SocketServer(http);
 
   let games = {};
-  let roomNumber = 0;
+  //let roomNumber = 0;
 
 
   const usersInRoom = (io, room, cb) => {
@@ -44,18 +44,17 @@ module.exports.listen = (http) => {
 
 
   io.on('connection', (socket) => {
-
     const getAllRooms = () => {
       let gameRooms = [];
       for(let key in io.sockets.adapter.rooms) {
-        if (key.substring(0, 4) == 'game') {
+        if (key.substring(0, 4) == 'room') {
           let obj = {};
           obj[key] = io.sockets.adapter.rooms[key];
           gameRooms.push(obj);
         }
       }
-    //  console.log(gameRooms);
-    return gameRooms;
+      console.log(gameRooms);
+      return gameRooms;
     }
 
     console.log('a user connected');
@@ -74,11 +73,13 @@ module.exports.listen = (http) => {
     });
 
     socket.on("room_create", (msg) => {
-          io.emit('room_created', {roomNumber: "game"+roomNumber, name: msg});
-          joinRoom(socket, "game"+roomNumber);
-          console.log("created new room: "+roomNumber);
-          socket.emit("room_joined", {roomNumber: "game"+roomNumber, name: msg, host: true});
-          roomNumber++;
+        const id = "room_"+shortid.generate();
+
+          io.emit('room_created', {roomNumber: id, name: msg});
+          joinRoom(socket, id);
+          console.log("created new room: "+id);
+          socket.emit("room_joined", {roomNumber: id, name: msg, host: true});
+          //roomNumber++;
     });
 
     socket.on("room_join", (msg) => {

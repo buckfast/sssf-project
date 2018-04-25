@@ -36,6 +36,36 @@ const getRandomArbitrary = exports.getRandomArbitrary = (min, max) => {
     return Math.round(Math.random() * (max - min) + min);
 }
 
+
+const floodFillStack = exports.floodFill4Stack = (startPoint, target, replacement, tiles, whatToCheck, minCoords, maxCoords) => {
+  if(target == replacement) return;
+
+  const dx = [0, 1, 0, -1];
+  const dy = [-1, 0, 1, 0];
+	let totalFlooded = 0;
+  let stack=[];
+	let tile;
+	let asd = {};
+  stack.push(tiles[startPoint.y][startPoint.x]);
+
+  while(!!(tile = stack.pop())) {
+		asd = {x: tile.x, y: tile.y};
+
+		tiles[asd.y][asd.x][whatToCheck] = replacement;
+		console.log("flooded: "+asd.x+", "+asd.y);
+			totalFlooded++;
+
+		  for(let i=0; i<4; i++) {
+	      let nx = asd.x + dx[i];
+	      let ny = asd.y + dy[i];
+	      if (nx >= minCoords.x && nx <= maxCoords.x && ny >= minCoords.y && ny <= maxCoords.y && tiles[ny][nx][whatToCheck] == target) {
+	        stack.push(tiles[ny][nx]);
+	      }
+    	}
+  }
+	return totalFlooded;
+}
+
 const floodFill = exports.floodFill = (startPoint, target, replacement, max, tiles, whatToCheck, minCoords, maxCoords, stopAtCenter, island) => {
   if (target == replacement) {
     return false;
@@ -44,7 +74,6 @@ const floodFill = exports.floodFill = (startPoint, target, replacement, max, til
   if (tiles[startPoint.y][startPoint.x][whatToCheck] == target)
     //&& tiles[startPoint.y][startPoint.x].zone == islands[tiles[startPoint.y][startPoint.x].zone-1].id) ///t�n voi poistaa sit joskus
   {
-    //console.log("joujou");
     let q = new Queue();
     tiles[startPoint.y][startPoint.x][whatToCheck] = replacement;
 

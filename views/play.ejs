@@ -6,6 +6,152 @@
 <% include ../views/nav %>
 
 <div class="container content">
+
+
+
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="/stylesheets/lobby.css" rel="stylesheet">
+
+  <div class="row">
+      <div class="col-lg-12">
+          <div class="box">
+              <div class="lobby">
+                  <aside class="left-side">
+                      <div class="top-head">
+                          <h4>Game lobby</h4>
+                      </div>
+                      <ul class="room-list">
+                          <li class="list-room">
+                              <a href="#">
+                                  <i class="fa fa-rocket"></i>
+                                  <span>sasdag</span>
+                                  <i class="fa  pull-right"></i>
+                              </a>
+                          </li>
+                          <li class="list-room">
+                              <a href="#">
+                                  <i class="fa fa-rocket"></i>
+                                  <span>fgsgfsgs Cofgsfgoler</span>
+                                  <i class="fa  pull-right"></i>
+                              </a>
+                          </li>
+                      </ul>
+
+
+
+                      <footer>
+                          <a class="avatar" href="">
+                              <img alt="" src="/images/LogoMakr_8gXoAK.png" width="40px">
+                          </a>
+                          <div class="status">
+                              <i class="fa fa-circle text-success"></i>
+                              username
+                          </div>
+
+                      </footer>
+                  </aside>
+
+
+
+                  <aside class="right-side">
+                      <div class="lobby-head">
+
+                      </div>
+                      <div class="lobby-chat">
+
+                          <div class="chat-message">
+                              <p>feaaaaaaaaaaaaaaaaaaaaaaefffffffffffffffffffffffffffffffffffffffffaeeeeeeeeeeeeaeeeeeeeeeeeffffff</p>
+                          </div>
+                          <div class="chat-message">
+                              <p>drgggggggggggggggggggggddddddddddddggggggggggggggggg</p>
+                          </div>
+                          <div class="chat-message">
+                              <p>feaaaaaaaaaaaaaaaaaaaaaaefffffffffffffffffffffffffffffffffffffffffaeeeeeeeeeeeeaeeeeeeeeeeeffffff</p>
+                          </div>
+                          <div class="chat-message">
+                              <p>drgggggggggggggggggggggddddddddddddggggggggggggggggg</p>
+                          </div>
+                          <div class="chat-message">
+                              <p>feaaaaaaaaaaaaaaaaaaaaaaefffffffffffffffffffffffffffffffffffffffffaeeeeeeeeeeeeaeeeeeeeeeeeffffff</p>
+                          </div>
+                          <div class="chat-message">
+                              <p>drgggggggggggggggggggggddddddddddddggggggggggggggggg</p>
+                          </div>
+                          <div class="chat-message">
+                              <p>feaaaaaaaaaaaaaaaaaaaaaaefffffffffffffffffffffffffffffffffffffffffaeeeeeeeeeeeeaeeeeeeeeeeeffffff</p>
+                          </div>
+                          <div class="chat-message">
+                              <p>drgggggggggggggggggggggddddddddddddggggggggggggggggg</p>
+                          </div>
+                          <div class="chat-message">
+                              <p>feaaaaaaaaaaaaaaaaaaaaaaefffffffffffffffffffffffffffffffffffffffffaeeeeeeeeeeeeaeeeeeeeeeeeffffff</p>
+                          </div>
+                          <div class="chat-message">
+                              <p>drgggggggggggggggggggggddddddddddddggggggggggggggggg</p>
+                          </div>
+                          <div class="chat-message">
+                              <p>feaaaaaaaaaaaaaaaaaaaaaaefffffffffffffffffffffffffffffffffffffffffaeeeeeeeeeeeeaeeeeeeeeeeeffffff</p>
+                          </div>
+                          <div class="chat-message">
+                              <p>drgggggggggggggggggggggddddddddddddggggggggggggggggg</p>
+                          </div>
+
+
+                      </div>
+                      <footer>
+                      <div class="input-group mb-3 chat-type">
+                      <input type="text" class="form-control rounded-0" placeholder="sfee">
+                      <div class="input-group-append">
+                          <button class="btn-sm rounded-0 btn btn-info" type="submit">Send</button>
+                      </div>
+                    </div>
+                  </footer>
+                  </aside>
+
+                  <aside class="game-create-side">
+                      <div class="top-head">
+                        <h4>Create a new game</h4>
+                      </div>
+                      <div class="game-create-row">
+
+                        <form>
+                        <div class="form-group">
+                          <label for="gamename">Game name</label>
+                          <input type="text" class="form-control rounded-0" id="gamename" value="anon's game">
+                        </div>
+                        <div class="form-group">
+                          <label for="gamepassword">Password</label>
+                          <input type="text" class="form-control rounded-0" id="gamepassword">
+                          <small class="form-text text-muted">Leave empty for public</small>
+                        </div>
+                        <div class="form-group">
+                          <label for="round-length">stuff</label>
+                          <select class="form-control rounded-0" id="round-length">
+                            <option>15</option>
+                            <option>20</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                          </select>
+                        </div>
+
+                      </form>
+                          <a href="##" class="btn btn-info pull-right rounded-0" title="">create game</a>
+                      </div>
+
+                  </aside>
+
+              </footer>
+              </div>
+          </div>
+      </div>
+  </div>
+
+
+
+
+
+
     <div id="stage">
 
   <canvas id="background-canvas" width="900" height="540"></canvas>
@@ -26,9 +172,16 @@
       <input id="input"/>
       <button>Send</button>
     </form>
-    <div id="buttons">
+
+
+
+
+      <input id="roomname" placeholder="room name"/>
+      <div id="buttons">
     <button id="createroom">create room</button>
-  </div>
+    </div>
+
+
     <script
 			  src="https://code.jquery.com/jquery-3.3.1.min.js"
 			  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="

@@ -57,6 +57,7 @@ class Island {
 		for (let h=this.center.y-4; h<=this.center.y+3; h++) {
 			for (let w=this.center.x-3; w<=this.center.x+4; w++) {
 				//tiles[h][w].zone = this.id;
+
 				tiles[h+2][w].zone = this.id;
 				tiles[h-2][w].zone = this.id;
 				tiles[h][w+2].zone = this.id;
@@ -69,9 +70,11 @@ class Island {
 
 
 				if(h==this.center.y-4 || w==this.center.x-3 || h==this.center.y+3 || w==this.center.x+4){
+
 					this.updateTilePlaceableStatus(tiles[h][w], "wall");
 					initialWallTiles.push(tiles[h][w]);
 				}
+
 			}
 		}
 		//console.log(initialWallTiles);
@@ -245,6 +248,17 @@ class Island {
 	findInnerAreas(tiles) {
 
 
+		// let totalFlooded = u.floodFill(
+		// 	{x: this.minCoords.x-1, y: this.minCoords.y-1},
+		// 	0,
+		// 	1,
+		// 	5000,
+		// 	tiles,
+		// 	this.floodCheckName,
+		// 	{x: this.minCoords.x-1, y: this.minCoords.y-1},
+		// 	{x: this.maxCoords.x+1, y: this.maxCoords.y+1},
+		// );
+
 		let totalFlooded = u.floodFill(
 			{x: this.minCoords.x-1, y: this.minCoords.y-1},
 			0,
@@ -255,6 +269,8 @@ class Island {
 			{x: this.minCoords.x-1, y: this.minCoords.y-1},
 			{x: this.maxCoords.x+1, y: this.maxCoords.y+1},
 		);
+		console.log("totalfoolde: "+totalFlooded);
+
 		//console.log(totalFlooded);
 		let ylength = (this.maxCoords.y+2) - (this.minCoords.y-1);
 		let xlength = (this.maxCoords.x+2) - (this.minCoords.x-1);
