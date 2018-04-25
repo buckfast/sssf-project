@@ -1,5 +1,6 @@
 'use strict';
 const express = require('express');
+const dotenv = require('dotenv').config();
 const path = require('path');
 const favicon = require('serve-favicon');
 const logger = require('morgan');
@@ -17,18 +18,70 @@ const timestamp = require("./middlewares/timestamp");
 const ip = require("./middlewares/ip");
 const browser = require("./middlewares/browser");
 
+const helmet = require('helmet');
+
+const mongoose = require('mongoose');
+
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const session = require("express-session");
+
+
 //TODO: global search and repalce!!!
 const app = express();
 
+app.use(helmet());
+
+
+//var mongoDB = 'mongodb://127.0.0.1/assignment';
+mongoose.connect('mongodb://'+process.env.DB_USER+':'+process.env.DB_PASS+'@'+process.env.DB_HOST+':'+'27017/project');
+mongoose.Promise = global.Promise;
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'mongodb error:'));
+
+
+//session
+app.use(
+  session({
+    resave: false,
+    saveUninitialized: true,
+    secret: "suppersready"
+  })
+);
+
+//passport
+let User = require('./models/user');
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.serializeUser((user, done) => {
+  done(null, user._id);
+});
+
+passport.deserializeUser((userId, done) => {
+  User.findById(userId, (err, user) => done(err, user));
+});
+
+const local = new LocalStrategy((username, password, done) => {
+  User.findOne({username})
+    .then((user) => {
+      if (!user || !user.validPassword(password)) {
+        done(null, false, {message: "Invalid credentials"});
+      } else {
+        done(null, user);
+      }
+    })
+    .catch((e) => done(e));
+});
+passport.use("local", local);
 
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-//app.use(logger('dev'));
+// app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+// app.use(logger('dev'));
 
 // create a write stream (in append mode)
 //let accessLogStream = fs.createWriteStream(path.join(__dirname, 'logi.log'), {flags: 'a'})

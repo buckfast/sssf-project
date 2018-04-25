@@ -1,12 +1,69 @@
+const User = require('../models/user');
+const {body, validationResult} = require('express-validator/check');
+const {sanitizeBody} = require('express-validator/filter');
 
 exports.login_get = (req, res, next) => {
   res.render("login", { title: 'Log in', currentPage: "login"})
+}
+
+exports.login_post = (req,res,next) => {
 
 }
 
 exports.signup_get = (req, res, next) => {
   res.render("signup", { title: 'Sign up', currentPage: "signup"})
 }
+
+
+
+exports.signup_post = [
+  body('username', 'Username required').isLength({min: 1}).trim(),
+  body('username', 'Username must be 3-16 characters').isLength({min: 3, max: 16}).trim(),
+  body('password', 'Password must be at least 5 characters').isLength({min: 5}).trim(),
+  body("password", "Passwords do not match").custom((value, {req, loc, path}) => {
+            if (value !== req.body.password2) {
+                throw new Error("Passwords don't match");
+            } else {
+                return value;
+            }
+        }),
+  sanitizeBody('username').trim().escape(),
+
+(req,res,next) => {
+  const errors = validationResult(req);
+  console.log(errors.array());
+  if (!errors.isEmpty()) {
+    console.log("eka errori");
+    res.render('signup', {formData: {username: req.body.username}, title: 'Sign up', currentPage: "signup", user: req.user, errors: errors.array()});
+
+    return;
+  } else {
+    User.findOne({username: req.body.username}, (err, user) => {
+      if (err)  {
+         console.log("ollaa findonessa");
+         return (err);
+       }
+      if (!user) {
+        console.log("tehaas ukko");
+          const user = new User({username: req.body.username, passwordHash: req.body.password});
+          user.save()
+            .then(user => {
+              console.log("ja onnaa");
+              req.login(user, err => {
+                if (err) next(err);
+                else res.redirect("/");
+              });
+            })
+            .catch(err => {
+              res.render('signup', { title: 'Sign up', currentPage: "signup", user: req.user, errors: err});
+            });
+        } else {
+          res.render('signup', { title: 'Sign up', currentPage: "signup", user: req.user, errors: ["Username taken"]});
+        }
+    });
+  }
+  }
+]
 
 /**
  * @api {get} /users List all users

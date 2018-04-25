@@ -21,18 +21,35 @@
       					</h4>
 
       				<div class="modal-body">
-      					<form method="post" novalidate="novalidate" id="formsignup">
-      						<div id="error">
+      					<form method="post"  id="formsignup">
 
-      						</div>
+                  <div id="error" class="float-right">
+                    <%if (locals.errors != undefined) { %>
+                      <%for (let result in locals.errors){%>
+                        <% if (locals.errors[result].param == "username") { %>
+                          <li><%=locals.errors[result].msg%></li>
+                        <%}%>
+                      <%}%>
+                    <%}%>
+                  </div>
 
       						<div class="form-group">
       							<label class="control-label" for="email">Username</label>
       							<div class="input-group">
       								<span class="input-group-addon"><img src="/images/glyphicons-4-user.png"></span></span>
-      								<input class="form-control rounded-0" placeholder="username" name="username" id="username" type="text">
+      								<input class="form-control rounded-0" placeholder="username" name="username" id="username" type="text" value="<%if (locals.errors != undefined) {%><%=locals.formData.username%><%}%>">
       							</div>
       						</div>
+
+                  <div id="error" class="float-right">
+                    <%if (locals.errors != undefined) { %>
+                      <%for (let result in locals.errors){%>
+                        <% if (locals.errors[result].param == "password") { %>
+                          <li><%=locals.errors[result].msg%></li>
+                        <%}%>
+                      <%}%>
+                    <%}%>
+                  </div>
 
       						<div class="form-group">
       							<label class="control-label" for="password">Password</label>
@@ -40,27 +57,40 @@
       								<span class="input-group-addon"><img src="/images/glyphicons-204-lock.png"></span></span>
       								<input class="form-control rounded-0" placeholder="password" name="password" id="password" type="password">
       							</div>
+
+
       						</div>
+                  <div id="error" class="float-right">
+                    <%if (locals.errors != undefined) { %>
+                      <%for (let result in locals.errors){%>
+                        <% if (locals.errors[result].param == "password") { %>
+                          <li><%=locals.errors[result].msg%></li>
+                        <%}%>
+                      <%}%>
+                    <%}%>
+                  </div>
+
 
       						<div class="form-group">
-      							<label class="control-label" for="password">Confirm password</label>
+      							<label class="control-label" for="password2">Confirm password</label>
       							<div class="input-group">
       								<span class="input-group-addon"><img src="/images/glyphicons-204-lock.png"></span></span>
-      								<input class="form-control rounded-0" placeholder="confirm password" name="passwordConfirmSignUp" id="passwordConfirmSignUp" type="password">
+      								<input class="form-control rounded-0" placeholder="confirm password" name="password2" id="password2" type="password">
       							</div>
       						</div>
 
 
-      						<button type="submit" id="buttonsignup" class=" float-right btn-sm btn btn-primary">Create an account</button>
+      						<button type="submit" id="buttonsignup" class=" float-right rounded-0 btn-sm btn btn-primary">Create an account</button>
       					</form>
-<small>Already a member? <a class="" href="/users/login">Login here</a></small>
+                  <small>Already a member? <a class="" href="/users/login">Login here</a></small>
       				</div>
-
 
 
       			</div>
                   </div>
       	</div>
+
+
 
 
   </div>

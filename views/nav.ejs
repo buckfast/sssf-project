@@ -9,9 +9,7 @@
         <a class="navbar-brand" href="/">
           <img height="35px" src="/images/LogoMakr_8gXoAK.png">
         </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse"   aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+
         <div class="collapse navbar-collapse" id="navbar">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item <% if (currentPage=="index") { %>active<%}%>">
@@ -28,7 +26,7 @@
                 </li>
                 <li class="nav-item search-field">
                   <form class="form-inline my-2 my-sm-0">
-                      <input class="form-control form-control-sm mr-sm-2" type="search" placeholder="Search">
+                      <input class="form-control rounded-0 form-control-sm mr-sm-2" type="search" placeholder="Search">
                   </form>
 
             </ul>
@@ -40,7 +38,7 @@
               </li>
               <li class="nav-item <% if (currentPage=="signup") { %>active<%}%>">
                 <form action="/users/signup">
-                <button class="btn-sm btn btn-primary" type="submit">Sign up</button>
+                <button class="btn-sm rounded-0 btn btn-primary" type="submit">Sign up</button>
               </form>
               </li>
               </ul>
