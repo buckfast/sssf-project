@@ -45,7 +45,12 @@
                           </a>
                           <div class="status">
                               <i class="fa fa-circle text-success"></i>
-                              username
+                              <%if (locals.user != undefined) { %>
+                                <%= locals.user.username %>
+                                <%} else { %>
+                                  anon
+                                <%}%>
+
                           </div>
 
                       </footer>
@@ -62,39 +67,7 @@
                           <div class="chat-message">
                               <p>feaaaaaaaaaaaaaaaaaaaaaaefffffffffffffffffffffffffffffffffffffffffaeeeeeeeeeeeeaeeeeeeeeeeeffffff</p>
                           </div>
-                          <div class="chat-message">
-                              <p>drgggggggggggggggggggggddddddddddddggggggggggggggggg</p>
-                          </div>
-                          <div class="chat-message">
-                              <p>feaaaaaaaaaaaaaaaaaaaaaaefffffffffffffffffffffffffffffffffffffffffaeeeeeeeeeeeeaeeeeeeeeeeeffffff</p>
-                          </div>
-                          <div class="chat-message">
-                              <p>drgggggggggggggggggggggddddddddddddggggggggggggggggg</p>
-                          </div>
-                          <div class="chat-message">
-                              <p>feaaaaaaaaaaaaaaaaaaaaaaefffffffffffffffffffffffffffffffffffffffffaeeeeeeeeeeeeaeeeeeeeeeeeffffff</p>
-                          </div>
-                          <div class="chat-message">
-                              <p>drgggggggggggggggggggggddddddddddddggggggggggggggggg</p>
-                          </div>
-                          <div class="chat-message">
-                              <p>feaaaaaaaaaaaaaaaaaaaaaaefffffffffffffffffffffffffffffffffffffffffaeeeeeeeeeeeeaeeeeeeeeeeeffffff</p>
-                          </div>
-                          <div class="chat-message">
-                              <p>drgggggggggggggggggggggddddddddddddggggggggggggggggg</p>
-                          </div>
-                          <div class="chat-message">
-                              <p>feaaaaaaaaaaaaaaaaaaaaaaefffffffffffffffffffffffffffffffffffffffffaeeeeeeeeeeeeaeeeeeeeeeeeffffff</p>
-                          </div>
-                          <div class="chat-message">
-                              <p>drgggggggggggggggggggggddddddddddddggggggggggggggggg</p>
-                          </div>
-                          <div class="chat-message">
-                              <p>feaaaaaaaaaaaaaaaaaaaaaaefffffffffffffffffffffffffffffffffffffffffaeeeeeeeeeeeeaeeeeeeeeeeeffffff</p>
-                          </div>
-                          <div class="chat-message">
-                              <p>drgggggggggggggggggggggddddddddddddggggggggggggggggg</p>
-                          </div>
+
 
 
                       </div>
@@ -246,7 +219,7 @@
 
         socket.on("game_start", (data) => {
           run();
-          colorize(data.tiles, data.playerCount);
+          colorize(data.tiles, data.playerCount, data.borders);
           initPlaceables(data.drawables);
           sendInput(socket);
           canvasui.addEventListener("click", () => {
@@ -283,7 +256,7 @@
         })
 
         socket.on("tiles", (data) => {
-          colorize(data.tiles, data.playerCount);
+          colorize(data.tiles, data.playerCount, data.borders);
         });
 
         const start = () => {

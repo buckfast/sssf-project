@@ -46,16 +46,14 @@ exports.signup_post = [
 
 (req,res,next) => {
   const errors = validationResult(req);
-  console.log(errors.array());
+  //console.log(errors.array());
   if (!errors.isEmpty()) {
-    console.log("eka errori");
     res.render('signup', {formData: {username: req.body.username}, title: 'Sign up', currentPage: "signup", user: req.user, errors: errors.array()});
 
     return;
   } else {
     User.findOne({username: req.body.username}, (err, user) => {
       if (err)  {
-         console.log("ollaa findonessa");
          return (err);
        }
       if (!user) {
@@ -63,7 +61,6 @@ exports.signup_post = [
           const user = new User({username: req.body.username, passwordHash: req.body.password});
           user.save()
             .then(user => {
-              console.log("ja onnaa");
               req.login(user, err => {
                 if (err) next(err);
                 else res.redirect("/");

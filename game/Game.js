@@ -346,6 +346,7 @@ this.cannonballs =[];
 
 	findBorders(tiles) {
 		//console.log("toka");
+		// let borders = [];
 		for (let i=0; i<this.islands.length; i++) {
 			this.islands[i].superBorders = {};
 			this.islands[i].totalTiles = this.floodCheckNeighbours(this.islands[i].center, this.islands[i].id, 'F', 5000, tiles);
@@ -353,6 +354,7 @@ this.cannonballs =[];
 			let x = this.islands[i].center['x'];
 			let y = this.islands[i].center['y'];
 			tiles[y][x].zone = this.islands[i].id;
+			// borders.push(this.islands[i].superBorders);
 			// contextbg.font = "14px Arial";
 			// contextbg.fillStyle = "white";
 			// contextbg.fillText(" "+this.islands[i].id,x*this.TILE_SIZE-this.TILE_SIZE,y*this.TILE_SIZE-2-this.TILE_SIZE);
@@ -380,6 +382,17 @@ this.cannonballs =[];
 			// 	}
 			// }
 		}
+		// return borders;
+	}
+
+	getBorders() {
+
+		let borders = [];
+		for (let i=0; i<this.islands.length; i++) {
+			borders.push(this.islands[i].superBorders);
+		}
+
+		return borders;
 	}
 
 
@@ -765,7 +778,6 @@ this.cannonballs =[];
 		//this.colorais(this.tiles);
 		this.findBorders(this.tiles);
 
-
 		for (let i=0; i<this.POINTS; i++) {
 			this.drawables[i] = {};
 			this.cannonballs[i] = undefined;
@@ -803,13 +815,11 @@ this.cannonballs =[];
 
 		const stateChanger = () => {
 			this.roundCount = this.stateRoundCounts[this.state];
-			console.log(this.roundCount);
 			countdownCallback(this.roundCount);
 			this.roundCount--;
 				const interval = setInterval(() => {
 					countdownCallback(this.roundCount);
 
-					console.log(this.roundCount);
 					this.roundCount--;
 				}, 1000);
 

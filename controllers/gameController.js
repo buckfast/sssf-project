@@ -5,7 +5,7 @@
  * @apiDescription Lists all games
  */
 exports.game_get = (req, res, next) => {
-    res.render("play", { title: 'play', currentPage: "play"});
+    res.render("play", {title: 'play', currentPage: "play", user: req.user});
 }
 
 /**

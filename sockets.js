@@ -44,6 +44,7 @@ module.exports.listen = (http) => {
 
 
   io.on('connection', (socket) => {
+
     const getAllRooms = () => {
       let gameRooms = [];
       for(let key in io.sockets.adapter.rooms) {
@@ -53,7 +54,6 @@ module.exports.listen = (http) => {
           gameRooms.push(obj);
         }
       }
-      console.log(gameRooms);
       return gameRooms;
     }
 
@@ -112,7 +112,7 @@ module.exports.listen = (http) => {
             },
             (state) => {
               if (state == 0) {
-                io.in(getRoom(socket)).emit("tiles", {"tiles":game.tiles, "playerCount":game.POINTS});
+                io.in(getRoom(socket)).emit("tiles", {"tiles":game.tiles, "playerCount":game.POINTS, 'borders': game.getBorders()});
               }
             },
             () => {
@@ -122,9 +122,10 @@ module.exports.listen = (http) => {
             (count) => {
                 io.in(getRoom(socket)).emit("roundCountdown", count);
             },
+
           );
           //socket.emit("game_start", game.tiles);
-          io.in(getRoom(socket)).emit("game_start", {'tiles': game.tiles, 'drawables': game.drawables, 'playerCount': players.length});
+          io.in(getRoom(socket)).emit("game_start", {'tiles': game.tiles, 'drawables': game.drawables, 'playerCount': players.length, 'borders': game.getBorders()});
         }
       });
 

@@ -174,24 +174,35 @@ const initPlaceables = (drawables) => {
     drawCannons(drawables[i]["cannons"]);
   }
 }
-const colorize = (tiles, players) => {
+const colorize = (tiles, players, borders) => {
   contextbg.clearRect(0, 0, canvas.width, canvas.height);
-
+console.log(borders);
   const PLAYERS = players;
+  let odd = [];
+  for (let i=0; i<PLAYERS; i++) {
+    odd.push({row: 0, tile: 0});
+  }
 
   for (let i=0; i<HEIGHT; i++) {
       for (let j=0; j<WIDTH; j++) {
         if (tiles[i][j].zone === 1) {
-              contextbg.fillStyle = "#629a56";
+              (odd[0].tile%2==0 && i%2==0) ? contextbg.fillStyle = "#629a56" : contextbg.fillStyle = "#5c8f51";
+              odd[0].tile++;
               contextbg.fillRect(j*TILE_SIZE-TILE_SIZE, i*TILE_SIZE-TILE_SIZE, j+TILE_SIZE, i+TILE_SIZE);
+
             } else if (tiles[i][j].zone === 2) {
-              contextbg.fillStyle = "#5250a8";
+                (odd[1].tile%2==0&& i%2==0) ? contextbg.fillStyle = "#615faf" : contextbg.fillStyle = "#585699";
+                odd[1].tile++;
               contextbg.fillRect(j*TILE_SIZE-TILE_SIZE, i*TILE_SIZE-TILE_SIZE, j+TILE_SIZE, i+TILE_SIZE);
+
             } else if (tiles[i][j].zone === 3) {
-              contextbg.fillStyle = "#83afaf";
+              (odd[2].tile%2==0&& i%2==0) ? contextbg.fillStyle = "#83afaf" : contextbg.fillStyle = "#78a1a1";
+              odd[2].tile++;
               contextbg.fillRect(j*TILE_SIZE-TILE_SIZE, i*TILE_SIZE-TILE_SIZE, j+TILE_SIZE, i+TILE_SIZE);
+
             }  else if (tiles[i][j].zone === 4) {
-              contextbg.fillStyle = "#a85785";
+              (odd[2].tile%2==0&& i%2==0) ? contextbg.fillStyle = "#a85785" : contextbg.fillStyle = "#945478";
+              odd[2].tile++;
               contextbg.fillRect(j*TILE_SIZE-TILE_SIZE, i*TILE_SIZE-TILE_SIZE, j+TILE_SIZE, i+TILE_SIZE);
             } else if (tiles[i][j].zone === 5) {
               contextbg.fillStyle = "#c5cd65";
@@ -212,17 +223,17 @@ const colorize = (tiles, players) => {
               contextbg.fillStyle = "#404040";
               contextbg.fillRect(j*TILE_SIZE-TILE_SIZE+2, i*TILE_SIZE-TILE_SIZE+2, j+TILE_SIZE-2, i+TILE_SIZE-2);
             }
-            contextbg.beginPath();
-            contextbg.rect(j*TILE_SIZE, 0, 1, HEIGHT*TILE_SIZE);
-            contextbg.fillStyle = "rgb(0, 0, 0)";
-            contextbg.fill();
-            contextbg.closePath();
+            // contextbg.beginPath();
+            // contextbg.rect(j*TILE_SIZE, 0, 1, HEIGHT*TILE_SIZE);
+            // contextbg.fillStyle = "rgb(0, 0, 0)";
+            // contextbg.fill();
+            // contextbg.closePath();
       }
-      contextbg.beginPath();
-      contextbg.rect(0, i*TILE_SIZE-TILE_SIZE, WIDTH*TILE_SIZE, 1);
-      contextbg.fillStyle = "rgb(0, 0, 0)";
-      contextbg.fill();
-      contextbg.closePath();
+      // contextbg.beginPath();
+      // contextbg.rect(0, i*TILE_SIZE-TILE_SIZE, WIDTH*TILE_SIZE, 1);
+      // contextbg.fillStyle = "rgb(0, 0, 0)";
+      // contextbg.fill();
+      // contextbg.closePath();
     }
 
 
