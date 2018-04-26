@@ -461,7 +461,6 @@ this.cannonballs =[];
 	}
 
 	fluffIslandsUp(tiles) {
-
 		this.findBorders(tiles);
 		//console.log(islands);
 		let sortedNeighbours = this.sortNeighboursBySize();
@@ -478,7 +477,6 @@ this.cannonballs =[];
 						let borderIsland, currentIslandBorder;
 						borderIsland = this.islands[borderIslandID-1];
 						currentIslandBorder = borderIsland.superBorders[island];
-
 						if (borderIsland.totalTiles > this.islands[island-1].totalTiles) {
 
 						//console.log("border: "+island+": "+borderIsland.id);
@@ -658,6 +656,11 @@ this.cannonballs =[];
 				this.controls[i].h = false;
 			}
 		} else if (this.state == 2) {
+			for (let key in this.islands[i].cannons) {
+				if (this.islands[i].cannons[key].timer > 0) {
+					this.islands[i].cannons[key].timer--;
+				}
+			}
 			this.islands[i].updateCannonballs((hitTile) => {
 				//console.log(hitTile.placeable);
 				if (hitTile.placeable.type == "wall") {
@@ -717,6 +720,9 @@ this.cannonballs =[];
 
 	drawCannonballs(cb) {
 		if (this.state == 2) {
+
+
+
 			this.setCannonballs();
 			if (u.isEmpty(this.cannonballs)) {
 				cb(null)
