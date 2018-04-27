@@ -45,11 +45,12 @@
                           </a>
                           <div class="status">
                               <i class="fa fa-circle text-success"></i>
-                              <%if (locals.user != undefined) { %>
+                              <span class="statusText"></span>
+                              <!-- <%if (locals.user != undefined) { %>
                                 <%= locals.user.username %>
                                 <%} else { %>
                                   anon
-                                <%}%>
+                                <%}%> -->
 
                           </div>
 
@@ -168,6 +169,12 @@
       $(() => {
 
         let socket = io();
+
+        socket.on("onConnection", (name) => {
+          console.log(name);
+          document.getElementsByClassName("statusText")[0].innerHTML = name;
+        })
+
         $('#form').submit(() => {
           socket.emit('message', $('#name').val()+": "+$('#input').val());
 
@@ -274,7 +281,7 @@
         li.attr("id", msg.roomNumber);
         li.css('cursor','pointer');
         li.on("click", () => {
-          socket.emit("room_join", msg);
+          socket.emit("room_join", msg, "pekka");
         });
         $('#roomlist').find("ul").append(li);
       }

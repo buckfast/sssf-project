@@ -1,9 +1,15 @@
 const SocketServer = require('socket.io');
 const Game = require("./game/Game");
 const shortid = require('shortid');
+const cookieParser = require('cookie-parser');
+const passport = require('passport');
+const sharedsession = require("express-socket.io-session");
+const User = require('./models/user');
 
-module.exports.listen = (http) => {
+module.exports.listen = (http, session) => {
   const io = new SocketServer(http);
+
+  io.use(sharedsession(session));
 
   let games = {};
   //let roomNumber = 0;
@@ -44,6 +50,20 @@ module.exports.listen = (http) => {
 
 
   io.on('connection', (socket) => {
+
+    if (socket.handshake.session.passport == undefined || Object.keys(socket.handshake.session.passport).length == 0) {
+      let name = "anon_"+shortid.generate();
+      socket.emit("onConnection", name);
+      socket["username"] = name;
+    } else {
+      User.findById(socket.handshake.session.passport.user, (err, user) => {
+        if (err) {return err};
+        socket.emit("onConnection", user.username);
+        socket["username", user.username];
+      });
+    }
+
+
 
     const getAllRooms = () => {
       let gameRooms = [];
@@ -101,9 +121,10 @@ module.exports.listen = (http) => {
     });
 
     socket.on("room_join", (msg) => {
+      //socket["username"] = name;
       joinRoom(socket, msg.roomNumber);
       socket.emit('room_joined', msg);
-
+      console.log(socket["username"]+" joining room");
     });
 
     socket.on("start_game", () => {

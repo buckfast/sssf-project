@@ -41,12 +41,13 @@ db.on('error', console.error.bind(console, 'mongodb error:'));
 
 
 //session
+const sess = session({
+  resave: false,
+  saveUninitialized: true,
+  secret: "suppersready"
+})
 app.use(
-  session({
-    resave: false,
-    saveUninitialized: true,
-    secret: "suppersready"
-  })
+  sess
 );
 
 //passport
@@ -130,7 +131,7 @@ app.use((err, req, res, next) => {
 });
 
 const http = require('http').Server(app);
-const io = require('./sockets').listen(http)
+const io = require('./sockets').listen(http, sess)
 
 http.listen(3000, () => {
   console.log('server started');
