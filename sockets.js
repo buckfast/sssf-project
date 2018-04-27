@@ -61,9 +61,27 @@ module.exports.listen = (http) => {
     joinRoom(socket, "lobby");
     socket.emit("roomList", getAllRooms());
 
-    socket.on('disconnect', () => {
+    socket.on("disconnecting", () => {
+      //console.log("use disconnecting");
+      const room = getRoom(socket);
       leaveRoom(socket);
+      usersInRoom(io,room, (err, users)=>{
+        if (err == null) {
+          if (users.length == 0) {
+            if (games[room] != undefined) {
+              games[room].killGameLoop();
+              games[room] = undefined;
+            }
+            delete games[room];
+            console.log("delete game: "+room);
+          }
+        }
+      });
+    });
+
+    socket.on('disconnect', () => {
       console.log('user disconnected');
+
     });
 
     socket.on('message', (msg) => {

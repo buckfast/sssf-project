@@ -21,6 +21,13 @@ class Game {
 		}
 		console.log(this.islandIndexofSocket);
 
+		this.stateChangeCountInterval;
+		this.roundCountInterval;
+		this.gameLoopInterval;
+
+		this.roundCountTimeout;
+		this.stateChangeCountTimeout;
+
 this.drawables = [];
 this.cannonballs =[];
 
@@ -761,16 +768,32 @@ this.cannonballs =[];
 		this.controls[this.islandIndexofSocket[socketid]] = newControls;
 	}
 
+	killGameLoop() {
+		clearInterval(this.gameLoopInterval);
+		clearInterval(this.roundCountInterval);
+		clearInterval(this.stateChangeCountInterval);
 
+		clearTimeout(this.roundCountTimeout);
+		clearTimeout(this.stateChangeCountTimeout);
+
+		this.gameLoopInterval = null;
+		this.roundCountInterval = null;
+		this.stateChangeCountInterval = null;
+
+		this.roundCountTimeout = null;
+		this.stateChangeCountTimeout = null;
+
+		console.log("killed gameloop");
+	}
 
 	countdown(count, interval, totalTime, func, func2) {
 		this.stateChangeCount = count;
-    const i = setInterval(() => {
+    this.stateChangeCountInterval = setInterval(() => {
 			console.log(this.stateChangeCount);
 			this.stateChangeCount--;
     }, interval);
-    setTimeout(() => {
-        clearInterval(i);
+    this.stateChangeCountTimeout = setTimeout(() => {
+        clearInterval(this.stateChangeCountInterval);
 				this.stateChangeCount = count;
 				func();
 				func2();
@@ -793,7 +816,7 @@ this.cannonballs =[];
 		//drawCallback(drawables);
 		const gameLoop = () => {
 			const FPS = 60;
-			setInterval(() => {
+			this.gameLoopInterval = setInterval(() => {
 				//this.update(0);
 
 				//this.drawPlaceable(0);
@@ -812,7 +835,7 @@ this.cannonballs =[];
 			if (this.state == 0) {
 				for (let i=0; i<this.islands.length; i++) {
 					this.islands[i].clearInnerAreas();
-					console.log(i,"clear inner areas");
+					//console.log(i,"clear inner areas");
 					this.islands[i].findInnerAreas(this.tiles);
 				}
 			}
@@ -823,14 +846,14 @@ this.cannonballs =[];
 			this.roundCount = this.stateRoundCounts[this.state];
 			countdownCallback(this.roundCount);
 			this.roundCount--;
-				const interval = setInterval(() => {
+				this.roundCountInterval = setInterval(() => {
 					countdownCallback(this.roundCount);
 
 					this.roundCount--;
 				}, 1000);
 
-			  setTimeout(() => {
-					clearInterval(interval);
+			  this.roundCountTimeout = setTimeout(() => {
+					clearInterval(this.roundCountInterval);
 					this.roundCount = this.stateRoundCounts[this.state];
 					console.log("stateChanger called");
 					this.stateChange = true;
