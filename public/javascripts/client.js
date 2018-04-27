@@ -177,10 +177,10 @@ const initPlaceables = (drawables) => {
 const colorize = (tiles, players, borders) => {
   contextbg.clearRect(0, 0, canvas.width, canvas.height);
 console.log(borders);
-  const PLAYERS = players;
   let odd = [];
-  for (let i=0; i<PLAYERS; i++) {
+  for (let i=0; i<players.length; i++) {
     odd.push({row: 0, tile: 0});
+    players[i]["nameTagDrawn"] = false;
   }
 
   for (let i=0; i<HEIGHT; i++) {
@@ -212,14 +212,24 @@ console.log(borders);
               contextbg.fillRect(j*TILE_SIZE-TILE_SIZE, i*TILE_SIZE-TILE_SIZE, j+TILE_SIZE, i+TILE_SIZE);
             }
 
-            for (let k=0; k<PLAYERS; k++) {
+            for (let k=0; k<players.length; k++) {
               if (tiles[i][j].inner[k] === true ) {
                 //if (tiles[i][j].zone == 1) {
                   contextbg.fillStyle = "#e0a33a";
                   contextbg.fillRect(j*TILE_SIZE-TILE_SIZE+2, i*TILE_SIZE-TILE_SIZE+2, j+TILE_SIZE-2, i+TILE_SIZE-2);
               }
             }
+
             if (tiles[i][j].castle == true) {
+              for (let p=0; p<players.length; p++) {
+                if (tiles[i][j].zone == (p+1) && players[p].nameTagDrawn==false) {
+                  contextbg.fillStyle = "#000000";
+                  contextbg.font = "15px Arial";
+                  console.log(players[p][Object.keys(players[p])[0]])
+                  contextbg.fillText(players[p][Object.keys(players[p])[0]],j*TILE_SIZE-(TILE_SIZE*3), i*TILE_SIZE-TILE_SIZE-2);
+                  players[p].nameTagDrawn = true;
+                }
+              }
               contextbg.fillStyle = "#404040";
               contextbg.fillRect(j*TILE_SIZE-TILE_SIZE+2, i*TILE_SIZE-TILE_SIZE+2, j+TILE_SIZE-2, i+TILE_SIZE-2);
             }

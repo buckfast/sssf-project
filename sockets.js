@@ -47,12 +47,13 @@ module.exports.listen = (http, session) => {
     leaveRoom(socket);
     socket.join(roomNumber, (err) => {
       if (err== null) {
-
+        if (roomNumber != "lobby") {
+          let obj = {};
+          obj[socket.id] = socket["username"];
+          games[roomNumber].players.push(obj);
+        }
       }
     });
-
-
-
   }
 
 
@@ -66,7 +67,7 @@ module.exports.listen = (http, session) => {
       User.findById(socket.handshake.session.passport.user, (err, user) => {
         if (err) {return err};
         socket.emit("onConnection", user.username);
-        socket["username", user.username];
+        socket["username"] = user.username;
       });
     }
 
@@ -96,13 +97,11 @@ module.exports.listen = (http, session) => {
         usersInRoom(io,room, (err, users)=>{
           if (err == null) {
             if (users.length == 0) {
-              console.log("shieiiet");
               if (games[room].game != undefined) {
                 games[room].game.killGameLoop();
                 games[room] = undefined;
                 delete games[room];
                 console.log("delete game: "+room);
-
               }
             }
           }
@@ -126,7 +125,7 @@ module.exports.listen = (http, session) => {
 
           io.emit('room_created', {roomNumber: id, name: msg});
 
-          games[id] = {game: undefined, players: {}};
+          games[id] = {game: undefined, players: []};
           joinRoom(socket, id);
           //games[id].players[socket.id]=socket["username"];
           console.log("created new room: "+id);
@@ -143,11 +142,11 @@ module.exports.listen = (http, session) => {
     });
 
     socket.on("start_game", () => {
-        const room = getRoom(socket);
-    usersInRoom(io, room, (err, players) => {
-        if (err == null) {
+      const room = getRoom(socket);
+      // usersInRoom(io, room, (err, players) => {
+      //   if (err == null) {
           //console.log("data: ",data);
-          const game = new Game(players, 900, 540, 18);
+          const game = new Game(games[room].players, 900, 540, 18);
           games[room].game = game;
 
           game.run(
@@ -167,7 +166,7 @@ module.exports.listen = (http, session) => {
             },
             (state) => {
               if (state == 0) {
-                io.in(room).emit("tiles", {"tiles":game.tiles, "playerCount":game.POINTS, 'borders': game.getBorders()});
+                io.in(room).emit("tiles", {"tiles":game.tiles, "players":games[room].players, 'borders': game.getBorders()});
               }
             },
             () => {
@@ -180,9 +179,9 @@ module.exports.listen = (http, session) => {
 
           );
           //socket.emit("game_start", game.tiles);
-          io.in(room).emit("game_start", {'tiles': game.tiles, 'drawables': game.drawables, 'playerCount': players.length, 'borders': game.getBorders()});
-        }
-      });
+          io.in(room).emit("game_start", {'tiles': game.tiles, 'drawables': game.drawables, 'players': games[room].players, 'borders': game.getBorders()});
+        //}
+      //});
 
     })
 

@@ -9,16 +9,22 @@ const Placeables = require("./Placeables");
 
 class Game {
 	constructor(players, width, height, tileSize) {
-		this.POINTS = players.length;
+		this.POINTS = Object.keys(players).length;
 
 		this.islandIndexofSocket = {};
 		this.socketofIslandIndex = {};
 
 		for (let i=0; i<players.length; i++) {
-			this.islandIndexofSocket[players[i]] = i;
-			this.socketofIslandIndex[i] = players[i];
-
+			this.islandIndexofSocket[Object.keys(players[i])[0]] = i;
+			this.socketofIslandIndex[i] = Object.keys(players[i])[0];
 		}
+		// let i=0;
+		// for (let key in players) {
+		// 	this.islandIndexofSocket[key] = i;
+		// 	this.socketofIslandIndex[i] = key;
+		// 	i++;
+		// }
+
 		console.log(this.islandIndexofSocket);
 
 		this.stateChangeCountInterval;

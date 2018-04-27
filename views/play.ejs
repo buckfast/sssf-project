@@ -57,7 +57,17 @@
                       </footer>
                   </aside>
 
+                  <aside class="gamestage">
+                    <div id="stage">
 
+                      <canvas id="background-canvas" width="900" height="540"></canvas>
+                      <canvas id="canvas" width="900" height="540"></canvas>
+                      <canvas id="foreground-canvas" width="900" height="540"></canvas>
+                      <canvas id="ui-canvas" width="900" height="540"></canvas>
+
+                    </div>
+                    <div id="buttons">
+                  </aside>
 
                   <aside class="right-side">
                       <div class="lobby-head">
@@ -91,12 +101,12 @@
                         <form>
                         <div class="form-group">
                           <label for="gamename">Game name</label>
-                          <input type="text" class="form-control rounded-0" id="gamename" value="anon's game">
+                          <input type="text" class="form-control rounded-0" id="gamename" value="">
                         </div>
                         <div class="form-group">
                           <label for="gamepassword">Password</label>
                           <input type="text" class="form-control rounded-0" id="gamepassword">
-                          <small class="form-text text-muted">Leave empty for public</small>
+                          <small class="form-text text-muted">Leave empty for public game</small>
                         </div>
                         <div class="form-group">
                           <label for="round-length">stuff</label>
@@ -110,7 +120,7 @@
                         </div>
 
                       </form>
-                          <a href="##" class="btn btn-info pull-right rounded-0" title="">create game</a>
+                          <button type="button" id="createroom" class="btn btn-info pull-right rounded-0" title="">Create game!</button>
                       </div>
 
                   </aside>
@@ -126,14 +136,7 @@
 
 
 
-    <div id="stage">
 
-  <canvas id="background-canvas" width="900" height="540"></canvas>
-  <canvas id="canvas" width="900" height="540"></canvas>
-  <canvas id="foreground-canvas" width="900" height="540"></canvas>
-  <canvas id="ui-canvas" width="900" height="540"></canvas>
-
-</div>
     <h1 id="t">current room: none</h1>
     <div id="roomlist">
       <h1>room list</h1>
@@ -150,10 +153,6 @@
 
 
 
-      <input id="roomname" placeholder="room name"/>
-      <div id="buttons">
-    <button id="createroom">create room</button>
-    </div>
 
 
     <script
@@ -171,7 +170,7 @@
         let socket = io();
 
         socket.on("onConnection", (name) => {
-          console.log(name);
+          document.getElementById("gamename").value = name+"'s game";
           document.getElementsByClassName("statusText")[0].innerHTML = name;
         })
 
@@ -194,6 +193,10 @@
         });
 
         $("#createroom").click(() => {
+          document.getElementsByClassName("left-side")[0].style.visibility = "hidden";
+          document.getElementsByClassName("right-side")[0].style.visibility = "hidden";
+
+          document.getElementsByClassName("game-create-side")[0].style.visibility = "hidden";
           socket.emit("room_create", $('#name').val());
         });
 
@@ -225,8 +228,9 @@
         });
 
         socket.on("game_start", (data) => {
+
           run();
-          colorize(data.tiles, data.playerCount, data.borders);
+          colorize(data.tiles, data.players, data.borders);
           initPlaceables(data.drawables);
           sendInput(socket);
           canvasui.addEventListener("click", () => {
@@ -263,7 +267,8 @@
         })
 
         socket.on("tiles", (data) => {
-          colorize(data.tiles, data.playerCount, data.borders);
+          console.log("players",data.players);
+          colorize(data.tiles, data.players, data.borders);
         });
 
         const start = () => {
