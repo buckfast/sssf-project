@@ -45,7 +45,14 @@ module.exports.listen = (http, session) => {
 
   const joinRoom = (socket, roomNumber) => {
     leaveRoom(socket);
-    socket.join(roomNumber);
+    socket.join(roomNumber, (err) => {
+      if (err== null) {
+
+      }
+    });
+
+
+
   }
 
 
@@ -85,18 +92,22 @@ module.exports.listen = (http, session) => {
       //console.log("use disconnecting");
       const room = getRoom(socket);
       leaveRoom(socket);
-      usersInRoom(io,room, (err, users)=>{
-        if (err == null) {
-          if (users.length == 0) {
-            if (games[room] != undefined) {
-              games[room].killGameLoop();
-              games[room] = undefined;
+      if (room!="lobby") {
+        usersInRoom(io,room, (err, users)=>{
+          if (err == null) {
+            if (users.length == 0) {
+              console.log("shieiiet");
+              if (games[room].game != undefined) {
+                games[room].game.killGameLoop();
+                games[room] = undefined;
+                delete games[room];
+                console.log("delete game: "+room);
+
+              }
             }
-            delete games[room];
-            console.log("delete game: "+room);
           }
-        }
-      });
+        });
+      }
     });
 
     socket.on('disconnect', () => {
@@ -114,7 +125,10 @@ module.exports.listen = (http, session) => {
         const id = "room_"+shortid.generate();
 
           io.emit('room_created', {roomNumber: id, name: msg});
+
+          games[id] = {game: undefined, players: {}};
           joinRoom(socket, id);
+          //games[id].players[socket.id]=socket["username"];
           console.log("created new room: "+id);
           socket.emit("room_joined", {roomNumber: id, name: msg, host: true});
           //roomNumber++;
@@ -123,16 +137,18 @@ module.exports.listen = (http, session) => {
     socket.on("room_join", (msg) => {
       //socket["username"] = name;
       joinRoom(socket, msg.roomNumber);
+
       socket.emit('room_joined', msg);
       console.log(socket["username"]+" joining room");
     });
 
     socket.on("start_game", () => {
-    usersInRoom(io, getRoom(socket), (err, players) => {
+        const room = getRoom(socket);
+    usersInRoom(io, room, (err, players) => {
         if (err == null) {
           //console.log("data: ",data);
           const game = new Game(players, 900, 540, 18);
-          games[getRoom(socket)] = game;
+          games[room].game = game;
 
           game.run(
             (err, socketid, placeable) => {
@@ -143,28 +159,28 @@ module.exports.listen = (http, session) => {
             },
             (cannonballs) => {
               if (cannonballs != null) {
-                io.in(getRoom(socket)).emit("drawCannonballs", cannonballs);
+                io.in(room).emit("drawCannonballs", cannonballs);
               }
             },
             (drawable) => {
-                io.in(getRoom(socket)).emit("updateDrawable", drawable);
+                io.in(room).emit("updateDrawable", drawable);
             },
             (state) => {
               if (state == 0) {
-                io.in(getRoom(socket)).emit("tiles", {"tiles":game.tiles, "playerCount":game.POINTS, 'borders': game.getBorders()});
+                io.in(room).emit("tiles", {"tiles":game.tiles, "playerCount":game.POINTS, 'borders': game.getBorders()});
               }
             },
             () => {
-                io.in(getRoom(socket)).emit("drawPlaceable", undefined);
-                io.in(getRoom(socket)).emit("clearCountdown");
+                io.in(room).emit("drawPlaceable", undefined);
+                io.in(room).emit("clearCountdown");
             },
             (count) => {
-                io.in(getRoom(socket)).emit("roundCountdown", count);
+                io.in(room).emit("roundCountdown", count);
             },
 
           );
           //socket.emit("game_start", game.tiles);
-          io.in(getRoom(socket)).emit("game_start", {'tiles': game.tiles, 'drawables': game.drawables, 'playerCount': players.length, 'borders': game.getBorders()});
+          io.in(room).emit("game_start", {'tiles': game.tiles, 'drawables': game.drawables, 'playerCount': players.length, 'borders': game.getBorders()});
         }
       });
 
@@ -172,15 +188,15 @@ module.exports.listen = (http, session) => {
 
     socket.on("control", (controls) => {
       //console.log(control);
-      if (games[getRoom(socket)]!=undefined) {
+      if (games[getRoom(socket)] != undefined && games[getRoom(socket)].game!=undefined) {
 
-        games[getRoom(socket)].updateUserControls(socket.id, controls);
+        games[getRoom(socket)].game.updateUserControls(socket.id, controls);
       }
     })
 
     socket.on("click", (pos) => {
-      if (games[getRoom(socket)] != undefined) {
-        let obj = games[getRoom(socket)].clicked(socket.id, pos);
+      if (games[getRoom(socket)].game != undefined) {
+        let obj = games[getRoom(socket)].game.clicked(socket.id, pos);
           io.in(getRoom(socket)).emit("updateDrawable", obj);
           //io.in(getRoom(socket)).emit("tiles", {"tiles":games[getRoom(socket)].tiles, "playerCount":games[getRoom(socket)].POINTS});
 
