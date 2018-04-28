@@ -36,12 +36,20 @@ exports.signup_post = [
   body('username', 'Username must be 3-16 characters').isLength({min: 3, max: 16}).trim(),
   body('password', 'Password must be at least 5 characters').isLength({min: 5}).trim(),
   body("password", "Passwords do not match").custom((value, {req, loc, path}) => {
-            if (value !== req.body.password2) {
-                throw new Error("Passwords don't match");
-            } else {
-                return value;
-            }
-        }),
+    if (value !== req.body.password2) {
+      throw new Error("Passwords don't match");
+    } else {
+      return value;
+    }
+  }),
+  body("username", "Invalid username").custom((value, {req, loc, path}) => {
+    const regex = /^[0-9A-Za-z!@#$%&*()_\-+={[}\]|\:;"'<,>.?\/\\~`]+[0-9A-Za-z!@#$%&*()_\-+={[}\]|\:;"'<,>.?\/\\~`]*$/g
+    if (!regex.test(value)) {
+      throw new Error("Invalid username");
+    } else {
+      return value;
+    }
+  }),
   sanitizeBody('username').trim().escape(),
 
 (req,res,next) => {
@@ -52,7 +60,7 @@ exports.signup_post = [
 
     return;
   } else {
-    User.findOne({username: req.body.username}, (err, user) => {
+    User.findOne({username: req.body.username}, (err, user) => { // TODO: make this a custom validation
       if (err)  {
          return (err);
        }
@@ -114,7 +122,16 @@ exports.users_post = (req, res, next) => {
  * @apiError UserNotFound The <code>id</code> of the User was not found
  */
 exports.user_id_get = (req, res, next) => {
-    res.send("get user id "+req.params.id);
+    //res.send("get user id "+req.params.id);
+    User.findOne({username: req.params.id}, (err, user) => {
+      if (err) {return (err);}
+
+      if (user) {
+        res.render("profile", {title: req.params.id, currentPage: "profile"});
+      } else {
+        res.send("Not found");
+      }
+    });
 }
 
 /**
@@ -125,6 +142,10 @@ exports.user_id_get = (req, res, next) => {
  * @apiError UserNotFound The <code>id</code> of the User was not found
  */
 exports.user_id_post = (req, res, next) => {
+    res.send("update user id "+req.params.id);
+}
+
+exports.user_id_put = (req, res, next) => {
     res.send("update user id "+req.params.id);
 }
 
