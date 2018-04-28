@@ -33,8 +33,7 @@ ul li:nth-last-child(-n+2) {
   display: none;
   width: 900px;
   height: 540px;
-  position: relative;
-  border: 2px solid black; }
+  position: relative; }
 
 canvas {
   position: absolute; }

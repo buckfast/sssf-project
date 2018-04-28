@@ -60,7 +60,7 @@ module.exports.listen = (http, session) => {
   io.on('connection', (socket) => {
 
     if (socket.handshake.session.passport == undefined || Object.keys(socket.handshake.session.passport).length == 0) {
-      let name = "anon_"+shortid.generate();
+      let name = "anon_"+shortid.generate().substring(0,5);
       socket.emit("onConnection", name);
       socket["username"] = name;
     } else {
@@ -111,7 +111,6 @@ module.exports.listen = (http, session) => {
 
     socket.on('disconnect', () => {
       console.log('user disconnected');
-
     });
 
     socket.on('message', (msg) => {
@@ -183,6 +182,16 @@ module.exports.listen = (http, session) => {
         //}
       //});
 
+    })
+
+    socket.on("leave_room", () => {
+      const room = getRoom(socket);
+      const playerIndex = games[room].players.findIndex((obj) => {
+        return Object.keys(obj)[0] == socket.id;
+      })
+      if (playerIndex!=-1) {
+        games[room].players.splice(playerIndex, 1);
+      }
     })
 
     socket.on("control", (controls) => {

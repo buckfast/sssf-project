@@ -19,9 +19,15 @@
   .lobby .right-side {
     width: 50%;
     max-height: 400px;
-    overflow-y: scroll;
     background: ivory;
     background: #fff; }
+  .lobby .gamestage {
+    display: none; }
+  .lobby .gamestage .top-head {
+    background: #b6c294;
+    color: #000000;
+    padding: 15px;
+    position: relative; }
   .lobby .game-create-side {
     width: 25%;
     background: #fff; }
@@ -102,8 +108,7 @@ ul.users-list li {
   height: 70px;
   width: 50%;
   position: absolute;
-  bottom: 0;
-  border-right: 1px solid #E5E8EF; }
+  bottom: 0; }
 
 .lobby .left-side footer .avatar img {
   width: 40px;
@@ -121,13 +126,14 @@ ul.users-list li {
   display: inline-block;
   margin-bottom: 70px;
   height: 450px;
-  overflow: auto;
+  overflow-y: scroll;
   width: 100%;
   padding: 5px; }
 
 .chat-message {
   background: #f7f8fa;
-  padding: 1px
+  padding: 1px;
+  padding-bottom: 0px;
   display: inline-block;
   width: 100%;
   word-wrap: break-word;

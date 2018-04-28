@@ -21,14 +21,24 @@
   .right-side {
     width: 50%;
     max-height: 400px;
-    overflow-y: scroll;
+
     background: ivory;
     background: #fff;
+  }
+  .gamestage {
+        display: none;
+  }
+  .gamestage .top-head {
+    background: #b6c294;
+    color: #000000;
+    padding: 15px;
+    position:relative
   }
   .game-create-side {
     width: 25%;
     background: #fff;
   }
+
   .left-side .top-head {
     background: #b6c294;
     color: #000000;
@@ -125,7 +135,6 @@ ul.users-list li {
     width: 50%;
     position: absolute;
     bottom: 0;
-    border-right: 1px solid #E5E8EF;
   }
   .left-side footer {
     .avatar img {
@@ -148,7 +157,7 @@ ul.users-list li {
   display: inline-block;
   margin-bottom: 70px;
   height: 450px;
-  overflow: auto;
+    overflow-y: scroll;
   width: 100%;
   padding: 5px;
 }

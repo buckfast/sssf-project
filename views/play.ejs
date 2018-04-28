@@ -16,6 +16,22 @@
       <div class="col-lg-12">
           <div class="box">
               <div class="lobby">
+
+                <aside class="gamestage">
+                  <div class="lobby-head">
+                    <h4>aaaaa</h4>
+                  </div>
+                  <div id="stage">
+
+                    <canvas id="background-canvas" width="900" height="540"></canvas>
+                    <canvas id="canvas" width="900" height="540"></canvas>
+                    <canvas id="foreground-canvas" width="900" height="540"></canvas>
+                    <canvas id="ui-canvas" width="900" height="540"></canvas>
+
+                  </div>
+                  <div id="buttons">
+                </aside>
+
                   <aside class="left-side">
                       <div class="top-head">
                           <h4>Game lobby</h4>
@@ -46,28 +62,13 @@
                           <div class="status">
                               <i class="fa fa-circle text-success"></i>
                               <span class="statusText"></span>
-                              <!-- <%if (locals.user != undefined) { %>
-                                <%= locals.user.username %>
-                                <%} else { %>
-                                  anon
-                                <%}%> -->
 
                           </div>
 
                       </footer>
                   </aside>
 
-                  <aside class="gamestage">
-                    <div id="stage">
 
-                      <canvas id="background-canvas" width="900" height="540"></canvas>
-                      <canvas id="canvas" width="900" height="540"></canvas>
-                      <canvas id="foreground-canvas" width="900" height="540"></canvas>
-                      <canvas id="ui-canvas" width="900" height="540"></canvas>
-
-                    </div>
-                    <div id="buttons">
-                  </aside>
 
                   <aside class="right-side">
                       <div class="lobby-head">
@@ -193,10 +194,7 @@
         });
 
         $("#createroom").click(() => {
-          document.getElementsByClassName("left-side")[0].style.visibility = "hidden";
-          document.getElementsByClassName("right-side")[0].style.visibility = "hidden";
 
-          document.getElementsByClassName("game-create-side")[0].style.visibility = "hidden";
           socket.emit("room_create", $('#name').val());
         });
 
@@ -209,10 +207,23 @@
         socket.on("room_joined", (msg) => {
           $('#messages').find("li").remove();
 
+          document.getElementsByClassName("right-side")[0].style.visibility = "hidden";
+          document.getElementsByClassName("left-side")[0].style.visibility = "hidden";
+
+          document.getElementsByClassName("game-create-side")[0].style.visibility = "hidden";
+          document.getElementsByClassName("gamestage")[0].style.display = "block";
 
           $("#roomlist").hide();
           $("#createroom").hide();
           $("#stage").css("display", "block");
+
+          $("#buttons").append($("<button>", {
+            text: "leave room",
+            id: "leaveroom",
+            click: () => {
+              leaveroom();
+            }
+          }));
 
           if (msg.host) {
             $("#buttons").append($("<button>", {
@@ -272,10 +283,12 @@
         });
 
         const start = () => {
-
           $("#startgame").hide();
           socket.emit("start_game");
-
+        }
+        const leaveroom = () => {
+          socket.emit("leave_room");
+          document.location.href = '/play'
         }
       });
 
