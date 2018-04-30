@@ -179,8 +179,8 @@
         }
 
         socket.on("room_users_update", (msg) => {
+          console.log(msg);
           emptyUsersList();
-
           for (let i=0; i<msg.length; i++) {
             addUserToList(msg[i]);
           }
