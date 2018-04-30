@@ -17,7 +17,7 @@
           <div class="box">
               <div class="lobby">
 
-                <aside class="gamestage">
+                <!-- <aside class="gamestage">
                   <div class="lobby-head">
                     <h4>aaaaa</h4>
                   </div>
@@ -29,8 +29,48 @@
                     <canvas id="ui-canvas" width="900" height="540"></canvas>
 
                   </div>
+
+                </aside>
+                <aside class="gameplayers">
+                  <div class="lobby-head">
+                    <h4>aaaaa</h4>
+                  </div>
+                  <ul class="players-list">
+                      <li class="list-player">
+                          <a href="#">
+                              <i class="fa fa-rocket"></i>
+                              <span>sasdag</span>
+                              <i class="fa  pull-right"></i>
+                          </a>
+                      </li>
+                      <li class="list-player">
+                          <a href="#">
+                              <i class="fa fa-rocket"></i>
+                              <span>fgsgfsgs Cofgsfgoler</span>
+                              <i class="fa  pull-right"></i>
+                          </a>
+                      </li>
+                  </ul>
+
                   <div id="buttons">
                 </aside>
+                <aside class="gamechat">
+                  <div class="game-chat">
+
+                      <div class="chat-message">
+                          <p>feaaaaaaaaaaaaaaaaaaaaaaefffffffffffffffffffffffffffffffffffffffffaeeeeeeeeeeeeaeeeeeeeeeeeffffff</p>
+                      </div>
+                  </div>
+                  <footer>
+                  <div class="input-group mb-3 chat-type">
+                  <input type="text" class="form-control rounded-0" placeholder="sfee">
+                  <div class="input-group-append">
+                      <button class=" rounded-0 btn btn-sm btn-info" type="submit">Send</button>
+                  </div>
+                </div>
+              </footer>
+                </aside> -->
+
 
                   <aside class="left-side">
                       <div class="top-head">
@@ -41,13 +81,6 @@
                               <a href="#">
                                   <i class="fa fa-rocket"></i>
                                   <span>sasdag</span>
-                                  <i class="fa  pull-right"></i>
-                              </a>
-                          </li>
-                          <li class="list-room">
-                              <a href="#">
-                                  <i class="fa fa-rocket"></i>
-                                  <span>fgsgfsgs Cofgsfgoler</span>
                                   <i class="fa  pull-right"></i>
                               </a>
                           </li>
@@ -195,97 +228,24 @@
 
         $("#createroom").click(() => {
 
-          socket.emit("room_create", $('#name').val());
+          socket.emit("room_create", $('#gamename').val());
+
+
+        });
+
+        socket.on("room_creating", (msg) => {
+          //addRoomToList(socket, msg);
+          document.location.href = '/play/'+msg.roomNumber;
         });
 
         socket.on("room_created", (msg) => {
-          addRoomToList(socket, msg);
-        });
+          console.log(msg);
+          $(".room-list").append($('<li class="list-room"><a href="/play/'+msg.roomNumber+'"><i class="fa fa-rocket"></i><span>'+msg.roomName+'</span><i class="fa pull-right"></i></a></li>'));
 
-
-
-        socket.on("room_joined", (msg) => {
-          $('#messages').find("li").remove();
-
-          document.getElementsByClassName("right-side")[0].style.visibility = "hidden";
-          document.getElementsByClassName("left-side")[0].style.visibility = "hidden";
-
-          document.getElementsByClassName("game-create-side")[0].style.visibility = "hidden";
-          document.getElementsByClassName("gamestage")[0].style.display = "block";
-
-          $("#roomlist").hide();
-          $("#createroom").hide();
-          $("#stage").css("display", "block");
-
-          $("#buttons").append($("<button>", {
-            text: "leave room",
-            id: "leaveroom",
-            click: () => {
-              leaveroom();
-            }
-          }));
-
-          if (msg.host) {
-            $("#buttons").append($("<button>", {
-              text: "start game",
-              id: "startgame",
-              click: () => {
-                start();
-              }
-            }));
-          }
-
-          $("#t").text("current room: "+msg.roomNumber);
-        });
-
-        socket.on("game_start", (data) => {
-
-          run();
-          colorize(data.tiles, data.players, data.borders);
-          initPlaceables(data.drawables);
-          sendInput(socket);
-          canvasui.addEventListener("click", () => {
-            clicked(socket);
-          });
         })
 
-        socket.on("drawPlaced", (drawables) => {
-          drawPlaced(drawables);
-        })
 
-        socket.on("updateDrawable", (obj) => { //todo: rename stuff
-          if (obj != null) {
-            drawPlaced(obj.drawables);
-            if (obj.innerTiles != undefined) {
-              drawInnerTiles(obj.innerTiles);
-            }
-          }
-        });
 
-        socket.on("roundCountdown", (count) => {
-          drawCountdown(count);
-        })
-        socket.on("clearCountdown", () => {
-          clearCountdown();
-        })
-
-        socket.on("drawPlaceable", (placeable) => {
-          drawPlaceable(placeable);
-        })
-
-        socket.on("drawCannonballs", (balls) => {
-          drawCannonballs(balls);
-        })
-
-        socket.on("tiles", (data) => {
-          console.log("players",data.players);
-          colorize(data.tiles, data.players, data.borders);
-        });
-
-        const start = () => {
-          $("#startgame").hide();
-          socket.emit("start_game");
-        }
         const leaveroom = () => {
           socket.emit("leave_room");
           document.location.href = '/play'

@@ -26,7 +26,23 @@
     background: #fff;
   }
   .gamestage {
-        display: none;
+    visibility: visible;
+      width:900px;
+        display: table-cell;
+  }
+  .gamechat {
+    background-color: #fefefe;
+      width:100%;
+        display: table-row;
+  }
+  #buttons {
+
+  }
+  #stage {
+    display:block;
+  }
+  .gameplayers {
+        display: table-cell;
   }
   .gamestage .top-head {
     background: #b6c294;
@@ -83,6 +99,29 @@ ul.room-list li a {
     color: #00a9b4;
     background: #f2f4f7;
   }
+}
+
+ul.players-list {
+  li a span {
+    padding-left: 10px;
+  }
+  padding-left: 0;
+  list-style: none;
+}
+ul.players-list li a {
+  color: #6a6a6a;
+  display: block;
+  padding: 15px;
+  font-weight: 300;
+  text-decoration: none;
+  &:hover {
+    color: #00a9b4;
+    background: #f2f4f7;
+  }
+}
+
+.list-player {
+  width: 100%;
 }
 
 .list-room {
@@ -157,6 +196,13 @@ ul.users-list li {
   display: inline-block;
   margin-bottom: 70px;
   height: 450px;
+    overflow-y: scroll;
+  width: 100%;
+  padding: 5px;
+}
+.game-chat {
+  display: inline-block;
+  height: 100px;
     overflow-y: scroll;
   width: 100%;
   padding: 5px;

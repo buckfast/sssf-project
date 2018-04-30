@@ -13,6 +13,8 @@ const index = require('./routes/index');
 const users = require('./routes/users');
 const game = require('./routes/game');
 
+
+
 const requestedPath = require("./middlewares/path");
 const timestamp = require("./middlewares/timestamp");
 const ip = require("./middlewares/ip");
@@ -27,8 +29,12 @@ const LocalStrategy = require('passport-local').Strategy;
 const session = require("express-session");
 
 
+
+
 //TODO: global search and repalce!!!
 const app = express();
+
+
 
 app.use(helmet());
 
@@ -49,6 +55,11 @@ const sess = session({
 app.use(
   sess
 );
+
+const server  = require('http').createServer(app);
+//const io      = require('socket.io').listen(server);
+
+const io = require('./sockets').listen(server, sess);
 
 //passport
 let User = require('./models/user');
@@ -104,8 +115,14 @@ app.use(sassMiddleware({
   src: path.join(__dirname, 'public'),
   dest: path.join(__dirname, 'public'),
   indentedSyntax: false,
-  sourceMap: true
+  sourceMap: false
 }));
+
+
+app.use((req, res, next) => {
+    req.io = io;
+    next();
+});
 
 app.use('/', index);
 app.use('/users', users);
@@ -130,9 +147,10 @@ app.use((err, req, res, next) => {
   res.render('error');
 });
 
-const http = require('http').Server(app);
-const io = require('./sockets').listen(http, sess)
+//const http = require('http').Server(app);
 
-http.listen(3000, () => {
+
+
+server.listen(3000, () => {
   console.log('server started');
 });
