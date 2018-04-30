@@ -78,6 +78,7 @@ module.exports.listen = (http, session) => {
           obj[socket.id] = socket.handshake.session.username;//socket["username"];
           games[roomNumber].players.push(obj);
           socket.handshake.session.roomId=roomNumber;
+          socket.handshake.session.save();
 
           typeof cb === 'function' && cb(null, roomNumber);
         }
@@ -92,7 +93,7 @@ module.exports.listen = (http, session) => {
     //if (socket.handshake.session.passport == undefined || Object.keys(socket.handshake.session.passport).length == 0) {
     if (socket.handshake.session.username == undefined) {
         let name = "anon_"+shortid.generate().substring(0,5);
-
+        socket.handshake.session.roomId = undefined;
         socket.handshake.session.username = name;
         socket.handshake.session.save();
       //}
@@ -193,24 +194,26 @@ module.exports.listen = (http, session) => {
           io.emit('room_created', {roomNumber: socket.handshake.session.roomId, roomName: socket.handshake.session.roomName, username: socket.handshake.session.username});
 
         } else {
-          if (games[room]!=undefined || !games[room].started) {
-            usersInRoom(io, room, (err, users) => {
-              if (err==null) {
-                if (users.length > 0) {
-                  joinRoom(socket, room, (err, room) => {
-                    if (err == null) {
-                      console.log(getRoomUsernames(room));
-                      //socket.emit('room_joined', getRoomUsernames(room));
-                      io.in(room).emit("room_users_update", getRoomUsernames(room));
+          if (games[room]!=undefined) {
+              if (!games[room].started) {
+               if (!getRoomUsernames(room).includes(socket.handshake.session.username)) {
+                usersInRoom(io, room, (err, users) => {
+                  if (err==null) {
+                    if (users.length > 0) {
+                      joinRoom(socket, room, (err, room) => {
+                        if (err == null) {
+                          console.log(getRoomUsernames(room));
+                          //socket.emit('room_joined', getRoomUsernames(room));
+                          io.in(room).emit("room_users_update", getRoomUsernames(room));
+                        }
+                      });
                     }
-                  });
-                }
+                  }
+                });
               }
-            });
+            }
           }
-          }
-
-        //console.log(socket["username"]+" joining room");
+        }
 
     });
 

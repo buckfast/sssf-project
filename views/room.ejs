@@ -172,7 +172,7 @@
         });
 
         const addUserToList = (username) => {
-          $(".players-list").append($('<li class="list-players"><a href="/users/'+username+'"><i class="fa fa-user"></i><span>'+username+'</span><i class="fa pull-right"></i></a></li>'));
+          $(".players-list").append($('<li class="list-player"><a href="/users/'+username+'"><i class="fa fa-user"></i><span>'+username+'</span><i class="fa pull-right"></i></a></li>'));
         }
         const emptyUsersList = () => {
           $('.players-list').empty();
