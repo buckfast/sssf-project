@@ -66,6 +66,7 @@ module.exports.listen = (http, session) => {
   }
 
   const joinRoom = (socket, roomNumber, cb) => {
+    console.log("joinroom roombnumer: "+games[roomNumber]);
     leaveRoom(socket);
     socket.join(roomNumber, (err) => {
       if (err && typeof cb === 'function') {
@@ -73,7 +74,7 @@ module.exports.listen = (http, session) => {
       }
       if (err== null) {
         //console.log("username",socket.handshake.session.username);
-        if (roomNumber != "lobby") {
+        if (roomNumber != "lobby" && games[roomNumber] != undefined) {
           let obj = {};
           obj[socket.id] = socket.handshake.session.username;//socket["username"];
           games[roomNumber].players.push(obj);
@@ -113,10 +114,10 @@ module.exports.listen = (http, session) => {
       //logged in
       User.findById(socket.handshake.session.passport.user, (err, user) => {
         if (err) {return err};
-        socket.emit("onConnection", user.username);
         socket.handshake.session.roomId = undefined;
         socket.handshake.session.username = user.username;
         socket.handshake.session.save();
+        socket.emit("onConnection", user.username);
       });
     } else {
       if (socket.handshake.session.username == undefined) {
@@ -124,9 +125,10 @@ module.exports.listen = (http, session) => {
         socket.handshake.session.roomId = undefined;
         socket.handshake.session.username = name;
         socket.handshake.session.save();
-        socket.emit("onConnection", socket.handshake.session.username);
+        socket.emit("onConnection", name);
       }
     }
+    socket.emit("onConnection", socket.handshake.session.username);
 
 
 
@@ -138,7 +140,7 @@ module.exports.listen = (http, session) => {
 
     socket.emit("roomList", getAllRooms(io));
 
-    socket.on("disconnecting", () => { // TODO: check if host disconects (socket.handshake.session.host = false; socket.handshake.session.save();)
+    socket.on("disconnecting", () => { // TODO: check if host disconects
       //console.log("use disconnecting");
       const room = getRoom(socket);
       leaveRoom(socket, (room) => {
@@ -154,6 +156,12 @@ module.exports.listen = (http, session) => {
                 delete games[room];
                 console.log("delete game: "+room);
               }
+              else {
+                delete games[room];
+                console.log("delete room: "+room);
+              }
+              io.emit("room_delete", room);
+
             }
           }
         });
@@ -173,28 +181,35 @@ module.exports.listen = (http, session) => {
     socket.on("room_create", (msg) => {
         const id = "room_"+shortid.generate();
 
+        socket.handshake.session.host = true;
+        socket.handshake.session.roomId = id;
+        socket.handshake.session.roomName = msg;
+        socket.handshake.session.save();
+
           socket.emit('room_creating', {roomNumber: id, name: msg});
 
-          socket.handshake.session.host = true;
-          socket.handshake.session.roomId = id;
-          socket.handshake.session.roomName = msg;
-          socket.handshake.session.save();
 
-          games[socket.handshake.session.roomId] = {game: undefined, players: [], name: msg, started: false};
+
+          games[id] = {game: undefined, players: [], name: msg, started: false};
 
           //roomNumber++;
     });
 
     socket.on("room_join", (room) => {
         if (socket.handshake.session.host) {
-
           socket.handshake.session.host = false;
           socket.handshake.session.save();
 
-          joinRoom(socket, socket.handshake.session.roomId);
-          console.log("created new room: "+socket.handshake.session.roomId);
-          //socket.emit("room_joined", {roomNumber: socket.handshake.session.roomId, name: msg, host: true});
-          io.emit('room_created', {roomNumber: socket.handshake.session.roomId, roomName: socket.handshake.session.roomName, username: socket.handshake.session.username});
+          joinRoom(socket, room, (err, room) => {
+            if (err == null) {
+              console.log("created new room: "+socket.handshake.session.roomId);
+              const data = {roomNumber: socket.handshake.session.roomId, roomName: socket.handshake.session.roomName, username: socket.handshake.session.username};
+              io.emit('room_created', data);
+              socket.emit("room_joined_and_created", data);
+            }
+
+          });
+
 
         } else {
           if (games[room]!=undefined) {

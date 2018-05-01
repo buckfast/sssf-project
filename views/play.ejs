@@ -161,28 +161,6 @@
 
 
 
-
-
-
-
-    <h1 id="t">current room: none</h1>
-    <div id="roomlist">
-      <h1>room list</h1>
-      <ul>
-      </ul>
-    </div>
-    <ul id="messages"></ul>
-    <form id="form" action="">
-      <input id="name" value="anon"/>
-      <input id="input"/>
-      <button>Send</button>
-    </form>
-
-
-
-
-
-
     <script
 			  src="https://code.jquery.com/jquery-3.3.1.min.js"
 			  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
@@ -200,6 +178,14 @@
         socket.on("onConnection", (name) => {
           document.getElementById("gamename").value = name+"'s game";
           document.getElementsByClassName("statusText")[0].innerHTML = name;
+
+          // $("#createroom").click(() => {
+          //   socket.emit("room_create", $('#gamename').val());
+          // });
+        })
+
+        document.getElementById("createroom").addEventListener("click", (e) => {
+          socket.emit("room_create", $('#gamename').val());
         })
 
         $('#form').submit(() => {
@@ -209,6 +195,18 @@
           $('#input').val('');
           return false;
         });
+
+        const addRoomToList = (roomId, roomName) => {
+          $(".room-list").append($('<li class="list-room" id="'+roomId+'"><a href="/play/'+roomId+'"><i class="fa fa-rocket"></i><span>'+roomName+'</span><i class="fa pull-right"></i></a></li>'));
+        }
+
+        const leaveroom = (socket) => {
+          socket.emit("leave_room");
+          document.location.href = '/play'
+        }
+
+
+
 
         socket.on("roomList", (list) => {
           console.log(list);
@@ -221,14 +219,8 @@
           $('#messages').append($('<li>').text(msg));
         });
 
-        $("#createroom").click(() => {
-
-          socket.emit("room_create", $('#gamename').val());
-
-
-        });
-
         socket.on("room_creating", (msg) => {
+          console.log("room creating", msg);
           //addRoomToList(socket, msg);
           document.location.href = '/play/'+msg.roomNumber;
         });
@@ -238,17 +230,13 @@
           addRoomToList(msg.roomNumber, msg.roomName);
         })
 
+        socket.on("room_delete", (room) => {
+          console.log("room delete!!!!!!!!!!!!!!!!!!!!!!!", room);
+          $(".room-list").find("#"+room).remove();
+        })
+    });
 
 
-        const leaveroom = () => {
-          socket.emit("leave_room");
-          document.location.href = '/play'
-        }
-      });
-
-      const addRoomToList = (roomId, roomName) => {
-        $(".room-list").append($('<li class="list-room"><a href="/play/'+roomId+'"><i class="fa fa-rocket"></i><span>'+roomName+'</span><i class="fa pull-right"></i></a></li>'));
-      }
 
 
     </script>

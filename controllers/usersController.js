@@ -9,6 +9,7 @@ exports.login_get = (req, res, next) => {
 
 exports.logout_get = (req,res,next) => {
   req.logout();
+  delete req.session.username;
   res.redirect("/users/login");
 }
 

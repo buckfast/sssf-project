@@ -81,28 +81,6 @@
 
 
 
-
-
-
-
-    <h1 id="t">current room: none</h1>
-    <div id="roomlist">
-      <h1>room list</h1>
-      <ul>
-      </ul>
-    </div>
-    <ul id="messages"></ul>
-    <form id="form" action="">
-      <input id="name" value="anon"/>
-      <input id="input"/>
-      <button>Send</button>
-    </form>
-
-
-
-
-
-
     <script
 			  src="https://code.jquery.com/jquery-3.3.1.min.js"
 			  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
@@ -125,8 +103,6 @@
           leaveroom();
         })
 
-
-
         $('#form').submit(() => {
           socket.emit('message', $('#name').val()+": "+$('#input').val());
 
@@ -145,12 +121,7 @@
           $('#messages').append($('<li>').text(msg));
         });
 
-        $("#createroom").click(() => {
-
-          socket.emit("room_create", $('#name').val());
-        });
-
-        socket.on("room_created", (data) => {
+        socket.on("room_joined_and_created", (data) => {
           //addRoomToList(socket, msg);
             $("#buttons").append($("<button>", {
               text: "start game",
