@@ -86,47 +86,57 @@ module.exports.listen = (http, session) => {
     });
   }
 
+  const getAllRooms = (io) => {
+    let gameRooms = [];
+    // for(let key in io.sockets.adapter.rooms) {
+    //   if (key.substring(0, 4) == 'room') {
+    //     let obj = {};
+    //     obj[key] = io.sockets.adapter.rooms[key];
+    //     gameRooms.push(obj);
+    //   }
+    // }
+    for (let key in games) {
+      let obj = {};
+      obj.roomName = games[key].name;
+      obj.roomId = key;
+      gameRooms.push(obj);
+    }
+    return gameRooms;
+  }
+
 
   io.on('connection', (socket) => {
     //console.log("connection", socket.handshake.session.username);
 
     //if (socket.handshake.session.passport == undefined || Object.keys(socket.handshake.session.passport).length == 0) {
-    if (socket.handshake.session.username == undefined) {
+    if (socket.handshake.session.passport != undefined && Object.keys(socket.handshake.session.passport).length > 0) {
+      //logged in
+      User.findById(socket.handshake.session.passport.user, (err, user) => {
+        if (err) {return err};
+        socket.emit("onConnection", user.username);
+        socket.handshake.session.roomId = undefined;
+        socket.handshake.session.username = user.username;
+        socket.handshake.session.save();
+      });
+    } else {
+      if (socket.handshake.session.username == undefined) {
         let name = "anon_"+shortid.generate().substring(0,5);
         socket.handshake.session.roomId = undefined;
         socket.handshake.session.username = name;
         socket.handshake.session.save();
-      //}
-    }
-    socket.emit("onConnection", socket.handshake.session.username);
-    /*else {
-      User.findById(socket.handshake.session.passport.user, (err, user) => {
-        if (err) {return err};
-        socket.emit("onConnection", user.username);
-        socket["username"] = user.username;
-        socket.handshake.session.username = user.username;
-      });
-    }*/
-
-    //console.log("connection2", socket.handshake.session.username);
-
-
-    const getAllRooms = () => {
-      let gameRooms = [];
-      for(let key in io.sockets.adapter.rooms) {
-        if (key.substring(0, 4) == 'room') {
-          let obj = {};
-          obj[key] = io.sockets.adapter.rooms[key];
-          gameRooms.push(obj);
-        }
+        socket.emit("onConnection", socket.handshake.session.username);
       }
-      return gameRooms;
     }
+
+
+
+
+
 
     console.log('a user connected');
     joinRoom(socket, "lobby");
 
-    socket.emit("roomList", getAllRooms());
+    socket.emit("roomList", getAllRooms(io));
 
     socket.on("disconnecting", () => { // TODO: check if host disconects (socket.handshake.session.host = false; socket.handshake.session.save();)
       //console.log("use disconnecting");
@@ -164,26 +174,19 @@ module.exports.listen = (http, session) => {
         const id = "room_"+shortid.generate();
 
           socket.emit('room_creating', {roomNumber: id, name: msg});
-          //
-          // games[id] = {game: undefined, players: []};
-          // joinRoom(socket, id);
-          // //games[id].players[socket.id]=socket["username"];
-          // console.log("created new room: "+id);
-          // socket.emit("room_joined", {roomNumber: id, name: msg, host: true});
 
           socket.handshake.session.host = true;
           socket.handshake.session.roomId = id;
           socket.handshake.session.roomName = msg;
           socket.handshake.session.save();
+
+          games[socket.handshake.session.roomId] = {game: undefined, players: [], name: msg, started: false};
+
           //roomNumber++;
     });
 
     socket.on("room_join", (room) => {
-
-
-
         if (socket.handshake.session.host) {
-          games[socket.handshake.session.roomId] = {game: undefined, players: [], started: false};
 
           socket.handshake.session.host = false;
           socket.handshake.session.save();

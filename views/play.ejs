@@ -77,13 +77,7 @@
                           <h4>Game lobby</h4>
                       </div>
                       <ul class="room-list">
-                          <li class="list-room">
-                              <a href="#">
-                                  <i class="fa fa-rocket"></i>
-                                  <span>sasdag</span>
-                                  <i class="fa  pull-right"></i>
-                              </a>
-                          </li>
+
                       </ul>
 
 
@@ -217,8 +211,9 @@
         });
 
         socket.on("roomList", (list) => {
+          console.log(list);
           for (let i=0; i<list.length; i++) {
-            addRoomToList(socket, {name: Object.keys(list[i])[0], roomNumber: Object.keys(list[i])[0]});
+            addRoomToList(list[i].roomId, list[i].roomName);
           }
         });
 
@@ -240,8 +235,7 @@
 
         socket.on("room_created", (msg) => {
           console.log(msg);
-          $(".room-list").append($('<li class="list-room"><a href="/play/'+msg.roomNumber+'"><i class="fa fa-rocket"></i><span>'+msg.roomName+'</span><i class="fa pull-right"></i></a></li>'));
-
+          addRoomToList(msg.roomNumber, msg.roomName);
         })
 
 
@@ -252,16 +246,8 @@
         }
       });
 
-      const addRoomToList = (socket, msg) => {
-        //let li = $('<li>').text("join "+msg.name+"'s room ("+msg.roomNumber+")");
-        let li = $('<li>').text("join room "+msg.roomNumber);
-
-        li.attr("id", msg.roomNumber);
-        li.css('cursor','pointer');
-        li.on("click", () => {
-          socket.emit("room_join", msg, "pekka");
-        });
-        $('#roomlist').find("ul").append(li);
+      const addRoomToList = (roomId, roomName) => {
+        $(".room-list").append($('<li class="list-room"><a href="/play/'+roomId+'"><i class="fa fa-rocket"></i><span>'+roomName+'</span><i class="fa pull-right"></i></a></li>'));
       }
 
 
