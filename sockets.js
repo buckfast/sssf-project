@@ -66,7 +66,7 @@ module.exports.listen = (http, session) => {
   }
 
   const joinRoom = (socket, roomNumber, cb) => {
-    console.log("joinroom roombnumer: "+games[roomNumber]);
+    //console.log("joinroom roombnumer: "+games[roomNumber]);
     leaveRoom(socket);
     socket.join(roomNumber, (err) => {
       if (err && typeof cb === 'function') {
@@ -137,6 +137,7 @@ module.exports.listen = (http, session) => {
 
     console.log('a user connected');
     joinRoom(socket, "lobby");
+    socket.handshake.session.roomId = "lobby";
 
     socket.emit("roomList", getAllRooms(io));
 
@@ -173,9 +174,10 @@ module.exports.listen = (http, session) => {
     });
 
     socket.on('message', (msg) => {
-      //console.log('message: ' + msg);
-      socket.broadcast.to(getRoom(socket)).emit('message', msg);
-      console.log(socket.rooms);
+      console.log(socket.handshake.session.roomId);
+      socket.to(socket.handshake.session.roomId).emit("message", socket.handshake.session.username+": "+msg);
+
+
     });
 
     socket.on("room_create", (msg) => {
@@ -221,7 +223,9 @@ module.exports.listen = (http, session) => {
                       joinRoom(socket, room, (err, room) => {
                         if (err == null) {
                           console.log(getRoomUsernames(room));
-                          //socket.emit('room_joined', getRoomUsernames(room));
+                          socket.handshake.session.roomId = room;
+                          const data = {roomNumber: socket.handshake.session.roomId, roomName: games[room].name, username: socket.handshake.session.username};
+                          socket.emit('room_joined', data);
                           io.in(room).emit("room_users_update", getRoomUsernames(room));
                         }
                       });

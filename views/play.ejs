@@ -17,59 +17,6 @@
           <div class="box">
               <div class="lobby">
 
-                <!-- <aside class="gamestage">
-                  <div class="lobby-head">
-                    <h4>aaaaa</h4>
-                  </div>
-                  <div id="stage">
-
-                    <canvas id="background-canvas" width="900" height="540"></canvas>
-                    <canvas id="canvas" width="900" height="540"></canvas>
-                    <canvas id="foreground-canvas" width="900" height="540"></canvas>
-                    <canvas id="ui-canvas" width="900" height="540"></canvas>
-
-                  </div>
-
-                </aside>
-                <aside class="gameplayers">
-                  <div class="lobby-head">
-                    <h4>aaaaa</h4>
-                  </div>
-                  <ul class="players-list">
-                      <li class="list-player">
-                          <a href="#">
-                              <i class="fa fa-rocket"></i>
-                              <span>sasdag</span>
-                              <i class="fa  pull-right"></i>
-                          </a>
-                      </li>
-                      <li class="list-player">
-                          <a href="#">
-                              <i class="fa fa-rocket"></i>
-                              <span>fgsgfsgs Cofgsfgoler</span>
-                              <i class="fa  pull-right"></i>
-                          </a>
-                      </li>
-                  </ul>
-
-                  <div id="buttons">
-                </aside>
-                <aside class="gamechat">
-                  <div class="game-chat">
-
-                      <div class="chat-message">
-                          <p>feaaaaaaaaaaaaaaaaaaaaaaefffffffffffffffffffffffffffffffffffffffffaeeeeeeeeeeeeaeeeeeeeeeeeffffff</p>
-                      </div>
-                  </div>
-                  <footer>
-                  <div class="input-group mb-3 chat-type">
-                  <input type="text" class="form-control rounded-0" placeholder="sfee">
-                  <div class="input-group-append">
-                      <button class=" rounded-0 btn btn-sm btn-info" type="submit">Send</button>
-                  </div>
-                </div>
-              </footer>
-                </aside> -->
 
 
                   <aside class="left-side">
@@ -103,18 +50,16 @@
                       </div>
                       <div class="lobby-chat">
 
-                          <div class="chat-message">
-                              <p>feaaaaaaaaaaaaaaaaaaaaaaefffffffffffffffffffffffffffffffffffffffffaeeeeeeeeeeeeaeeeeeeeeeeeffffff</p>
-                          </div>
+
 
 
 
                       </div>
                       <footer>
                       <div class="input-group mb-3 chat-type">
-                      <input type="text" class="form-control rounded-0" placeholder="sfee">
+                      <input id="chat-input" type="text" class="form-control rounded-0" placeholder="say hello">
                       <div class="input-group-append">
-                          <button class="btn-sm rounded-0 btn btn-info" type="submit">Send</button>
+                          <button id="chat-send" class="btn-sm rounded-0 btn btn-info" type="button">Send</button>
                       </div>
                     </div>
                   </footer>
@@ -172,10 +117,12 @@
 
 
       $(() => {
+      "use strict";
 
         let socket = io();
-
+        let username = "";
         socket.on("onConnection", (name) => {
+          username = name;
           document.getElementById("gamename").value = name+"'s game";
           document.getElementsByClassName("statusText")[0].innerHTML = name;
 
@@ -188,13 +135,35 @@
           socket.emit("room_create", $('#gamename').val());
         })
 
-        $('#form').submit(() => {
-          socket.emit('message', $('#name').val()+": "+$('#input').val());
 
-          $('#messages').append($('<li>').text($('#name').val()+": "+$('#input').val()));
-          $('#input').val('');
-          return false;
+        document.addEventListener('keydown', function onEvent(event) {
+            if (event.key === "Enter") {
+              if ($('#chat-input').val().length > 0) {
+                socket.emit("message", $('#chat-input').val());
+                addMessage(username+": "+$('#chat-input').val());
+              }
+            }
         });
+        document.getElementById("chat-send").addEventListener("click", (e) => {
+          if ($('#chat-input').val().length > 0) {
+            socket.emit("message", $('#chat-input').val());
+            addMessage(username+": "+$('#chat-input').val());
+          }
+        })
+        socket.on('message', (msg) => {
+          addMessage(msg);
+        });
+        const addMessage = (msg) => {
+          const chatbox = document.getElementsByClassName("lobby-chat")[0];
+          const isBottom = chatbox.scrollHeight-chatbox.clientHeight<=chatbox.scrollTop;
+
+          $('.lobby-chat').append($('<div class="chat-message"><p>'+msg+'</p></div>'));
+          $('#chat-input').val('');
+
+          if (isBottom) {
+            chatbox.scrollTop = chatbox.scrollHeight-chatbox.clientHeight;
+          }
+        }
 
         const addRoomToList = (roomId, roomName) => {
           $(".room-list").append($('<li class="list-room" id="'+roomId+'"><a href="/play/'+roomId+'"><i class="fa fa-rocket"></i><span>'+roomName+'</span><i class="fa pull-right"></i></a></li>'));
@@ -215,9 +184,7 @@
           }
         });
 
-        socket.on('message', (msg) => {
-          $('#messages').append($('<li>').text(msg));
-        });
+
 
         socket.on("room_creating", (msg) => {
           console.log("room creating", msg);

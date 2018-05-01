@@ -19,7 +19,7 @@
 
                 <aside class="gamestage">
                   <div class="lobby-head">
-                    <h4>aaaaa</h4>
+
                   </div>
                   <div id="stage">
 
@@ -33,7 +33,7 @@
                 </aside>
                 <aside class="gameplayers">
                   <div class="lobby-head">
-                    <h4>aaaaa</h4>
+                    <!-- <h4></h4> -->
 
                     <div id="buttons">
                       <button class="btn btn-sm btn-info rounded-0" id="leaveroom">leave room</button>
@@ -43,13 +43,6 @@
 
 
                   <ul class="players-list">
-                      <!-- <li class="list-player">
-                          <a href="#">
-                              <i class="fa fa-rocket"></i>
-                              <span>sasdag</span>
-                              <i class="fa  pull-right"></i>
-                          </a>
-                      </li> -->
 
                   </ul>
 
@@ -58,15 +51,13 @@
                 <aside class="gamechat">
                   <div class="game-chat">
 
-                      <div class="chat-message">
-                          <p>feaaaaaaaaaaaaaaaaaaaaaaefffffffffffffffffffffffffffffffffffffffffaeeeeeeeeeeeeaeeeeeeeeeeeffffff</p>
-                      </div>
+
                   </div>
                   <footer>
                   <div class="input-group mb-3 chat-type">
-                  <input type="text" class="form-control rounded-0" placeholder="sfee">
+                  <input id="chat-input" type="text" class="form-control rounded-0" placeholder="say hello">
                   <div class="input-group-append">
-                      <button class=" rounded-0 btn btn-sm btn-info" type="submit">Send</button>
+                      <button id="chat-send" class=" rounded-0 btn btn-sm btn-info" type="button">Send</button>
                   </div>
                 </div>
               </footer>
@@ -92,9 +83,9 @@
 
 
       $(() => {
-
+       "use strict";
         let socket = io();
-
+        let username = "";
         const url = window.location.pathname;
         socket.emit("room_join", url.substr(url.lastIndexOf('/') + 1));
 
@@ -103,22 +94,9 @@
           leaveroom();
         })
 
-        $('#form').submit(() => {
-          socket.emit('message', $('#name').val()+": "+$('#input').val());
-
-          $('#messages').append($('<li>').text($('#name').val()+": "+$('#input').val()));
-          $('#input').val('');
-          return false;
-        });
-
-        // socket.on("roomList", (list) => {
-        //   for (let i=0; i<list.length; i++) {
-        //     addRoomToList(socket, {name: Object.keys(list[i])[0], roomNumber: Object.keys(list[i])[0]});
-        //   }
-        // });
-
-        socket.on('message', (msg) => {
-          $('#messages').append($('<li>').text(msg));
+        socket.on("room_joined", (data) => {
+            $(".gamestage").find(".lobby-head").append('<h4>'+data.roomName+'</h4>');
+            username = data.username;
         });
 
         socket.on("room_joined_and_created", (data) => {
@@ -131,15 +109,13 @@
                 start();
               }
             }));
+            username = data.username;
+
+
+            $(".gamestage").find(".lobby-head").append("<h4>"+data.roomName+"</h4>");
 
             addUserToList(data.username)
-            // <li class="list-player">
-            //     <a href="#">
-            //         <i class="fa fa-rocket"></i>
-            //         <span>sasdag</span>
-            //         <i class="fa  pull-right"></i>
-            //     </a>
-            // </li>
+
         });
 
         const addUserToList = (username) => {
@@ -156,6 +132,36 @@
             addUserToList(msg[i]);
           }
         });
+
+        document.addEventListener('keydown', function onEvent(event) {
+            if (event.key === "Enter") {
+              if ($('#chat-input').val().length > 0) {
+                socket.emit("message", $('#chat-input').val());
+                addMessage(username+": "+$('#chat-input').val());
+              }
+            }
+        });
+        document.getElementById("chat-send").addEventListener("click", (e) => {
+          if ($('#chat-input').val().length > 0) {
+            socket.emit("message", $('#chat-input').val());
+            addMessage(username+": "+$('#chat-input').val());
+          }
+        })
+        socket.on('message', (msg) => {
+          addMessage(msg);
+        });
+
+        const addMessage = (msg) => {
+          const chatbox = document.getElementsByClassName("game-chat")[0];
+          const isBottom = chatbox.scrollHeight-chatbox.clientHeight<=chatbox.scrollTop;
+
+          $('.game-chat').append($('<div class="chat-message"><p>'+msg+'</p></div>'));
+          $('#chat-input').val('');
+
+          if (isBottom) {
+            chatbox.scrollTop = chatbox.scrollHeight-chatbox.clientHeight;
+          }
+        }
 
         socket.on("game_start", (data) => {
 
@@ -209,6 +215,8 @@
           socket.emit("leave_room");
           document.location.href = '/play'
         }
+
+        init();
       });
 
 

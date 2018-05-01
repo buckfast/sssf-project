@@ -20,18 +20,10 @@
     const WIDTH = 900/TILE_SIZE+2;
     let currentPlaceableCoords = undefined;
 
+
+
 const run = () => {
-  canvas = document.getElementById("canvas");
-  context = canvas.getContext("2d");
 
-  canvasbg = document.getElementById("background-canvas");
-  contextbg = canvasbg.getContext("2d");
-
-  canvasfg = document.getElementById("foreground-canvas");
-  contextfg = canvasfg.getContext("2d");
-
-  canvasui = document.getElementById("ui-canvas");
-  contextui = canvasui.getContext("2d");
 
   const getCursorPosition = (event) => {
   	const rect = canvasui.getBoundingClientRect();
@@ -118,7 +110,7 @@ const drawPlaced = (drawables) => {
 const drawWalls = (walls) => {
     for (let i=0; i<walls.length; i++) {
       context.fillStyle = "rgba(255, 255, 255, 0.7)";
-      context.fillRect(walls[i].x*TILE_SIZE+1-TILE_SIZE, walls[i].y*TILE_SIZE+1-TILE_SIZE, TILE_SIZE-2, TILE_SIZE-2);
+      context.fillRect(walls[i].x*TILE_SIZE+1-TILE_SIZE, walls[i].y*TILE_SIZE+1-TILE_SIZE, TILE_SIZE, TILE_SIZE);
     }
 }
 const drawCannons = (cannons) => {
@@ -165,6 +157,24 @@ const drawPlaceable = (coords) => {
   }
 
   //console.log("\n");
+}
+
+const init = () => {
+  canvas = document.getElementById("canvas");
+  context = canvas.getContext("2d");
+
+  canvasbg = document.getElementById("background-canvas");
+  contextbg = canvasbg.getContext("2d");
+
+  canvasfg = document.getElementById("foreground-canvas");
+  contextfg = canvasfg.getContext("2d");
+
+  canvasui = document.getElementById("ui-canvas");
+  contextui = canvasui.getContext("2d");
+
+  contextbg.clearRect(0, 0, canvas.width, canvas.height);
+  contextbg.fillStyle = "#c5cd65";
+  contextbg.fillRect(0, 0, canvas.width, canvas.height);
 }
 
 const initPlaceables = (drawables) => {
@@ -226,12 +236,12 @@ console.log(borders);
                   contextbg.fillStyle = "#000000";
                   contextbg.font = "15px Arial";
                   console.log(players[p][Object.keys(players[p])[0]])
-                  contextbg.fillText(players[p][Object.keys(players[p])[0]],j*TILE_SIZE-(TILE_SIZE*3), i*TILE_SIZE-TILE_SIZE-2);
+                  contextbg.fillText(players[p][Object.keys(players[p])[0]],j*TILE_SIZE-(TILE_SIZE*3), i*TILE_SIZE-TILE_SIZE);
                   players[p].nameTagDrawn = true;
                 }
               }
               contextbg.fillStyle = "#404040";
-              contextbg.fillRect(j*TILE_SIZE-TILE_SIZE+2, i*TILE_SIZE-TILE_SIZE+2, j+TILE_SIZE-2, i+TILE_SIZE-2);
+              contextbg.fillRect(j*TILE_SIZE-TILE_SIZE, i*TILE_SIZE-TILE_SIZE, j+TILE_SIZE, i+TILE_SIZE);
             }
             // contextbg.beginPath();
             // contextbg.rect(j*TILE_SIZE, 0, 1, HEIGHT*TILE_SIZE);
