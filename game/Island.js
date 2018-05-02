@@ -106,7 +106,13 @@ class Island {
 		const cannons = Object.keys(this.cannons).length;
 		if (cannons > 0) {
 			//console.log(nthProp(this.cannons, this.cannonToFire));
+
 			let currentCannon = u.nthProp(this.cannons, this.cannonToFire);
+			while (this.tiles[currentCannon.tiles[0].y][currentCannon.tiles[0].x].inner[(this.id-1)] == false) {
+				this.cannonToFire++;
+				this.cannonToFire = this.cannonToFire%cannons;
+				currentCannon = u.nthProp(this.cannons, this.cannonToFire);
+			}
       if (currentCannon != undefined && currentCannon.timer == 0) {
 			    let ball = new Cannonball({x:currentCannon.tiles[3].x, y:currentCannon.tiles[3].y}, u.clone(cursorPos), this.tileSize);
 			   this.cannonballs.push(ball);

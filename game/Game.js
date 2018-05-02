@@ -10,7 +10,7 @@ const Placeables = require("./Placeables");
 class Game {
 	constructor(players, width, height, tileSize) {
 		this.POINTS = Object.keys(players).length;
-
+		this.players = players;
 		this.islandIndexofSocket = {};
 		this.socketofIslandIndex = {};
 
@@ -42,6 +42,7 @@ this.cannonballs =[];
 		this.HEIGHT = height/this.TILE_SIZE;
 
 		this.state = 1;
+		this.stateChanges = 1;
 		this.stateChangeCount = 5;
 		this.roundCount = 15;
 		this.stateRoundCounts = [20, 12, 15];
@@ -863,6 +864,10 @@ this.cannonballs =[];
 					this.roundCount = this.stateRoundCounts[this.state];
 					console.log("stateChanger called");
 					this.stateChange = true;
+					this.stateChanges++;
+					if (this.stateChanges == 10) {
+						console.log("peli loppu");
+					}
 					stateChangerCallback();
 					this.countdown(5, 1000, 5000, nextState, stateChanger);
 				}, (this.stateRoundCounts[this.state]*1000+1000));

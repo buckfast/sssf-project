@@ -128,7 +128,7 @@ exports.user_id_get = (req, res, next) => {
       if (err) {return (err);}
 
       if (user) {
-        res.render("profile", {title: req.params.id, currentPage: "profile", user: req.user});
+        res.render("profile", {title: req.params.id, currentPage: "users", user: req.user});
       } else {
         res.send("Not found");
       }
