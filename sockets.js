@@ -76,7 +76,7 @@ module.exports.listen = (http, session) => {
         //console.log("username",socket.handshake.session.username);
         if (roomNumber != "lobby" && games[roomNumber] != undefined) {
           let obj = {};
-          obj[socket.id] = socket.handshake.session.username;//socket["username"];
+          obj[socket.id] = socket.handshake.session.username;
           games[roomNumber].players.push(obj);
           socket.handshake.session.roomId=roomNumber;
           socket.handshake.session.save();

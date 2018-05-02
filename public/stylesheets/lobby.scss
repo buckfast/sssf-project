@@ -45,10 +45,12 @@
         display: table-cell;
   }
   .gamestage .top-head {
-    background: #b6c294;
+    background: #f6f6f6;
     color: #000000;
-    padding: 15px;
-    position:relative
+    padding: 10px;
+    position:relative;
+    border-bottom: 2px solid #f1ebeb;
+
   }
   .game-create-side {
     width: 25%;
@@ -56,17 +58,21 @@
   }
 
   .left-side .top-head {
-    background: #b6c294;
+    background: #f6f6f6;
     color: #000000;
-    min-height: 70px;
-    padding: 15px;
+    height: 50px;
+    padding: 10px;
+    border-bottom: 2px solid #f1ebeb;
+
   }
   .game-create-side .top-head {
-    background: #cdd9a7;
+    background: #f6f6f6;
     color: #000000;
-    min-height: 70px;
-    padding: 15px;
+    height: 50px;
+    padding: 10px;
     position: relative;
+    border-bottom: 2px solid #f1ebeb;
+
   }
   .top-head {
     i {
@@ -83,10 +89,12 @@
 }
 
 .lobby-head {
-  background: #c0cc9c;
+  background: #f6f6f6;
   color: #000000;
-  min-height: 70px;
-  padding: 15px;
+  height: 50px;
+  padding: 10px;
+  border-bottom: 2px solid #f1ebeb;
+
 }
 
 ul.room-list li a {

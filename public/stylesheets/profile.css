@@ -1,0 +1,26 @@
+.thumbnail {
+  background-color: white;
+  width: 100px;
+  height: 100px;
+  margin: 10px; }
+
+.profile-top {
+  background: #f6f6f6;
+  color: #000000;
+  min-height: 70px;
+  padding: 10px;
+  border-bottom: 2px solid #f1ebeb; }
+
+.profile-top-left {
+  background: #f6f6f6;
+  color: #000000;
+  min-height: 70px;
+  padding: 10px;
+  border-bottom: 2px solid #f1ebeb; }
+
+.profile-top-right {
+  background: #f6f6f6;
+  color: #000000;
+  min-height: 70px;
+  padding: 10px;
+  border-bottom: 2px solid #f1ebeb; }
