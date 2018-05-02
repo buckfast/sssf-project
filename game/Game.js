@@ -47,6 +47,7 @@ this.cannonballs =[];
 		this.roundCount = 15;
 		this.stateRoundCounts = [20, 12, 15];
 		this.stateChange = true;
+		this.stateTexts = ["Build and Repair", "Place Cannons", "Prepare for Battle"];
 
 		this.tiles = null;
 
@@ -868,7 +869,11 @@ this.cannonballs =[];
 					if (this.stateChanges == 10) {
 						console.log("peli loppu");
 					}
-					stateChangerCallback();
+
+					let tempState = this.state+1;
+					tempState = tempState%3;
+					stateChangerCallback(this.stateTexts[tempState]);
+
 					this.countdown(5, 1000, 5000, nextState, stateChanger);
 				}, (this.stateRoundCounts[this.state]*1000+1000));
 		}

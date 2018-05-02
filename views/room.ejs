@@ -172,6 +172,7 @@
           canvasui.addEventListener("click", () => {
             clicked(socket);
           });
+          banner(data.stateText,5000);
         })
 
         socket.on("drawPlaced", (drawables) => {
@@ -190,8 +191,9 @@
         socket.on("roundCountdown", (count) => {
           drawCountdown(count);
         })
-        socket.on("clearCountdown", () => {
+        socket.on("stateChanger", (stateText) => {
           clearCountdown();
+          banner(stateText, 5000);
         })
 
         socket.on("drawPlaceable", (placeable) => {

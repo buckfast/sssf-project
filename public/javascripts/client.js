@@ -87,7 +87,7 @@ const drawCannonballs=(balls)=> {
     //if (balls[i] != undefined) {
     for (let i=0; i<balls[s].length; i++) {
       contextfg.beginPath();
-      contextfg.arc(balls[s][i].posx_pixels, balls[s][i].posy_pixels, 2, 0, 2 * Math.PI, false);
+      contextfg.arc(balls[s][i].posx_pixels, balls[s][i].posy_pixels, 3, 0, 2 * Math.PI, false);
       contextfg.fillStyle = '#000000';
       contextfg.fill();
       contextfg.lineWidth = 5;
@@ -115,11 +115,20 @@ const drawWalls = (walls) => {
 }
 const drawCannons = (cannons) => {
   for (let key in cannons) {
-    for (let j=0; j<cannons[key].tiles.length; j++) {
-      let t = cannons[key].tiles[j];
-      context.fillStyle = "rgba(255, 255, 255, 0.7)";
-      context.fillRect(t.x*TILE_SIZE-TILE_SIZE, t.y*TILE_SIZE-TILE_SIZE, TILE_SIZE, TILE_SIZE);
-    }
+    let t = cannons[key].tiles[3]
+    //for (let j=0; j<cannons[key].tiles.length; j++) {
+      //let t = cannons[key].tiles[j];
+      // context.fillStyle = "rgba(255, 255, 255, 0.7)";
+      // context.fillRect(t.x*TILE_SIZE-TILE_SIZE, t.y*TILE_SIZE-TILE_SIZE, TILE_SIZE, TILE_SIZE);
+      context.beginPath();
+      context.arc(t.x*TILE_SIZE-TILE_SIZE, t.y*TILE_SIZE-TILE_SIZE, 16, 0, 2 * Math.PI, false);
+      context.fillStyle = '#ffffff';
+      context.fill();
+      context.lineWidth = 4;
+      context.strokeStyle = '#b4574e';
+      context.stroke();
+      context.closePath();
+    //}
   }
 }
 
@@ -127,13 +136,47 @@ const setCurrentPlaceable = (wallBlock) => {
   currentPlaceableCoords = wallBlock;
 }
 
-const banner = () => {
-  contextfg.clearRect(0, 0, canvasfg.width, canvasfg.height);
-  //
-  // const FPS = 30;
-  // setInterval(() => {
-  //
-  // }, 1000/FPS);
+const banner = (text, ms) => {
+
+  let y = 0;
+  let speed = canvas.height/(ms/1000)+10;
+  let deltaTime;
+  let then = Date.now();
+  let animationFrameLoop;
+
+  const update = () => {
+  	let vel = speed * deltaTime;
+  	y += vel;
+    contextui.clearRect(0, 0, canvas.width, canvas.height);
+    contextui.fillStyle = "#ffffff";
+    contextui.font = "45px Arial";
+
+    let padding = (canvas.width-contextui.measureText(text).width)/2;
+
+    contextui.fillText(text, padding, y);
+  };
+
+  const frame = () => {
+      let now = Date.now();
+      let delta = now - then;
+      deltaTime = delta / 1000;
+      then = now;
+      update();
+      loop();
+  }
+
+  const loop = () => {
+      animationFrameLoop = requestAnimationFrame(frame);
+  };
+
+  const pause = () => {
+  	cancelAnimationFrame(animationFrameLoop);
+  };
+
+  loop();
+  setTimeout(()=>{
+    pause();
+  },ms);
 }
 
 const drawPlaceable = (coords) => {
@@ -175,6 +218,8 @@ const init = () => {
   contextbg.clearRect(0, 0, canvas.width, canvas.height);
   contextbg.fillStyle = "#c5cd65";
   contextbg.fillRect(0, 0, canvas.width, canvas.height);
+
+  banner("sföfglh", 5000);
 }
 
 const initPlaceables = (drawables) => {

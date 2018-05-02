@@ -266,9 +266,9 @@ module.exports.listen = (http, session) => {
                 io.in(room).emit("tiles", {"tiles":game.tiles, "players":game.players, 'borders': game.getBorders()});
               }
             },
-            () => {
+            (stateText) => {
                 io.in(room).emit("drawPlaceable", undefined);
-                io.in(room).emit("clearCountdown");
+                io.in(room).emit("stateChanger", stateText);
             },
             (count) => {
                 io.in(room).emit("roundCountdown", count);
@@ -276,7 +276,7 @@ module.exports.listen = (http, session) => {
 
           );
 
-          io.in(room).emit("game_start", {'tiles': game.tiles, 'drawables': game.drawables, 'players': game.players, 'borders': game.getBorders()});
+          io.in(room).emit("game_start", {'tiles': game.tiles, 'drawables': game.drawables, 'players': game.players, 'borders': game.getBorders(), "stateText": game.stateTexts[game.state]});
     })
 
 
