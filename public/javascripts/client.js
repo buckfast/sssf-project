@@ -1,7 +1,8 @@
-
+"use strict";
   let hPressed = false;
   let gPressed = false;
-  let ctrl = 1;
+
+
     let cursorPos = {};
     let canvas = undefined;
     let context = undefined;
@@ -37,24 +38,12 @@ const run = () => {
   }, false);
 
 
-
-
-
-
   document.addEventListener("keydown", (e) => {
   if (e.repeat) {return;}
-  		if(e.keyCode == 71 && !hPressed) {
+  		if(e.keyCode == 71 && !hPressed ) {
   				hPressed = true;
   		}
-
-  		if (e.keyCode == 17) {
-  			//game.state+=1;
-  			//game.state = game.state%3;
-        ctrl += 1;
-        ctrl = ctrl%3;
-  		}
-
-  		if(e.keyCode == 72 && !gPressed) {
+  		if(e.keyCode == 72 && !gPressed ) {
   				gPressed = true;
   		}
   	}, false);
