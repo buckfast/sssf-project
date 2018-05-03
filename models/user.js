@@ -9,6 +9,10 @@ const password = (password) => {
 const UserSchema = new Schema({
   username: {type: String, required: true, unique: true},
   passwordHash: {type: String, required: true, set: password},
+  registered: {type: Date, default: "01.01.2153"},
+  aboutMe: {type: String, required: false, max: 500, default: ""},
+  avatar: {type: String, required: true, default: "avatar.png"}
+
 });
 
 UserSchema.methods.validPassword = (password, hash) => {

@@ -2,6 +2,7 @@ const User = require('../models/user');
 const passport = require("passport");
 const {body, validationResult} = require('express-validator/check');
 const {sanitizeBody} = require('express-validator/filter');
+const dateformat = require('date-format');
 
 exports.login_get = (req, res, next) => {
   res.render("login", { title: 'Log in', currentPage: "login"})
@@ -67,7 +68,7 @@ exports.signup_post = [
        }
       if (!user) {
         console.log("tehaas ukko");
-          const user = new User({username: req.body.username, passwordHash: req.body.password});
+          const user = new User({username: req.body.username, passwordHash: req.body.password, registered: new Date()});
           user.save()
             .then(user => {
               req.login(user, err => {
@@ -124,11 +125,12 @@ exports.users_post = (req, res, next) => {
  */
 exports.user_id_get = (req, res, next) => {
     //res.send("get user id "+req.params.id);
-    User.findOne({username: req.params.id}, (err, user) => {
+    User.findOne({username: req.params.id},"username registered avatar aboutMe",(err, user) => {
       if (err) {return (err);}
 
       if (user) {
-        res.render("profile", {title: req.params.id, currentPage: "users", user: req.user});
+        let date = dateformat.asString('dd.MM.yyyy', user.registered);
+        res.render("profile", {title: req.params.id, currentPage: "users", profileUser: {username: user.username, registered: date, avatar: user.avatar, aboutMe: user.aboutMe}, user: req.user});
       } else {
         res.send("Not found");
       }

@@ -116,7 +116,7 @@ class Island {
       if (currentCannon != undefined && currentCannon.timer == 0) {
 			    let ball = new Cannonball({x:currentCannon.tiles[3].x, y:currentCannon.tiles[3].y}, u.clone(cursorPos), this.tileSize);
 			   this.cannonballs.push(ball);
-				 currentCannon.timer = 60;
+				 currentCannon.timer = 120;
       }
 			this.cannonToFire++;
 			this.cannonToFire = this.cannonToFire%cannons;

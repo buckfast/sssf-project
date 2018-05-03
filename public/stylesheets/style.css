@@ -50,6 +50,13 @@ canvas {
 #background-canvas {
   z-index: 0; }
 
+.header {
+  background: #f6f6f6;
+  color: #000000;
+  height: 50px;
+  padding: 10px;
+  border-bottom: 2px solid #f1ebeb; }
+
 .thumbnail {
   background-color: white;
   width: 100px;
