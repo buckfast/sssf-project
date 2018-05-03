@@ -165,12 +165,14 @@ class Island {
 	}
 
   removeCannon(tile) {
-    const tiles = this.cannons[tile.placeable.id].tiles;
-    delete this.cannons[tile.placeable.id];
-    for (let i=0; i<tiles.length; i++) {
-      tiles[i].placeable = undefined;
-    }
-
+		this.cannons[tile.placeable.id].health--;
+		if (this.cannons[tile.placeable.id].health == 0) {
+	    const tiles = this.cannons[tile.placeable.id].tiles;
+	    delete this.cannons[tile.placeable.id];
+	    for (let i=0; i<tiles.length; i++) {
+	      tiles[i].placeable = undefined;
+	    }
+		}
   }
 
 	setCastleTiles() {
