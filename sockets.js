@@ -241,6 +241,11 @@ module.exports.listen = (http, session) => {
 
     socket.on("start_game", () => {
           const room = getRoom(socket);
+
+          if (games[room].players.length < 2 || games[room].started) {
+            return -1;
+          }
+
           games[room].started=true;
           let players = JSON.parse(JSON.stringify(games[room].players));
           const game = new Game(players, 900, 540, 18);

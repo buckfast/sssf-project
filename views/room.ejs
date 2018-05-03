@@ -164,7 +164,7 @@
         }
 
         socket.on("game_start", (data) => {
-
+          $("#startgame").hide();
           run();
           colorize(data.tiles, data.players, data.borders);
           initPlaceables(data.drawables);
@@ -210,7 +210,6 @@
         });
 
         const start = () => {
-          $("#startgame").hide();
           socket.emit("start_game");
         }
         const leaveroom = () => {
