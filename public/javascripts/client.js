@@ -180,7 +180,7 @@ const drawPlaceable = (coords) => {
       // TILE_SIZE,
       // TILE_SIZE);
       //
-       contextfg.fillStyle = "#FFFFFF";
+       contextfg.fillStyle = "rgba(255, 255, 255, 0.77)";
       // contextfg.fill();
       // contextfg.closePath();
       contextfg.fillRect(coords[i].x, coords[i].y, TILE_SIZE, TILE_SIZE);
@@ -237,7 +237,7 @@ console.log(borders);
 
             } else if (tiles[i][j].zone === 2) {
               if (odd[1] != undefined) {
-                (odd[1].tile%2==0&& i%2==0) ? contextbg.fillStyle = "#615faf" : contextbg.fillStyle = "#585699";
+                (odd[1].tile%2==0&& i%2==0) ? contextbg.fillStyle = "#a85785" : contextbg.fillStyle = "#945478";
                 odd[1].tile++;
                 contextbg.fillRect(j*TILE_SIZE-TILE_SIZE, i*TILE_SIZE-TILE_SIZE, j+TILE_SIZE, i+TILE_SIZE);
               }
@@ -250,13 +250,13 @@ console.log(borders);
               }
             }  else if (tiles[i][j].zone === 4) {
               if (odd[3] != undefined) {
-                (odd[3].tile%2==0&& i%2==0) ? contextbg.fillStyle = "#a85785" : contextbg.fillStyle = "#945478";
+                (odd[3].tile%2==0&& i%2==0) ? contextbg.fillStyle = "#c5cd65" : contextbg.fillStyle = "#b2b95c";
                 odd[3].tile++;
                 contextbg.fillRect(j*TILE_SIZE-TILE_SIZE, i*TILE_SIZE-TILE_SIZE, j+TILE_SIZE, i+TILE_SIZE);
               }
             } else if (tiles[i][j].zone === 5) {
               if (odd[4] != undefined) {
-                (odd[4].tile%2==0&& i%2==0) ? contextbg.fillStyle = "#c5cd65" : contextbg.fillStyle = "#b2b95c";
+                (odd[4].tile%2==0&& i%2==0) ? contextbg.fillStyle = "#615faf" : contextbg.fillStyle = "#585699";
                 odd[4].tile++;
                 contextbg.fillRect(j*TILE_SIZE-TILE_SIZE, i*TILE_SIZE-TILE_SIZE, j+TILE_SIZE, i+TILE_SIZE);
               }

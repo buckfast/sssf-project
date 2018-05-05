@@ -334,7 +334,7 @@ this.cannonballs =[];
 				//console.log(islands[i].id+": y1");
 			}
 
-			this.islands[i].setCastleTiles();
+
 		}
 	}
 
@@ -542,40 +542,30 @@ this.cannonballs =[];
 			}
 
 			if (s==3) {
+				const shift=4;
 					for (let i=0; i<points; i++) {
-						// for (let j=0; j<points; j++) {
-						// 	if (j!=i) {
-						// 		if (eukliidean(islands[i].center.x, islands[j].center.x, islands[i].center.y, islands[j].center.y) < 10) {
-						// 				console.log("ficcccccccclllllll "+islands[i].id+": "+islands[j].id);
-						// 				//islands[i].center.x+=3; islands[i].center.y+=3; islands[j].center.x -=3; islands[j].center.y-=3;
-						// 		}
-						// 	}
-						//
-						// }
 
+						for (let j=0; j<points; j++) {
+							if (j!=i) {
+								if (u.euclidean(this.islands[i].center.x, this.islands[j].center.x, this.islands[i].center.y, this.islands[j].center.y) < 10) {
+										console.log("osuupa "+this.islands[i].id+": "+this.islands[j].id);
+										//this.islands[i].center.x+=3; islands[i].center.y+=3; islands[j].center.x -=3; islands[j].center.y-=3;
+										if (this.islands[i].center.x <= this.islands[j].center.x) {
+											this.islands[i].center.x-=shift; this.islands[j].center.x+=shift;
+										} else {
+											this.islands[i].center.x+=shift; this.islands[j].center.x-=shift;
+										}
+										if (this.islands[i].center.y <= this.islands[j].center.y) {
+											this.islands[i].center.y-=shift; this.islands[j].center.y+=shift;
+										} else {
+											this.islands[i].center.y+=shift; this.islands[j].center.y-=shift;
+										}
+								}
+							}
 
+						}
 
-						// (() => {
-						// for (let j=islands[i].center.y-4; j<islands[i].center.y+3; j++) {
-						// 	for (let k=islands[i].center.x-3; k<islands[i].center.x+4; k++) {
-						//
-						// 		if (j>=0 && j<this.HEIGHT+2 && k>=0 && k<this.WIDTH+2) {
-						// 			if (tiles[j][k].zone != islands[i].id) {
-						// 				let x = islands[i].center.x - k;
-						// 				let y = islands[i].center.y - j;
-						// 				islands[i].center.x += x;
-						// 				islands[i].center.y += y;
-						//
-						//
-						// 				console.log((i+1)+": "+x+", "+y);
-						// 				return;
-						// 			}
-						// 		}
-						//
-						// 	}
-						// }
-						// })();
-
+						this.islands[i].setCastleTiles();
 						this.islands[i].initWalls(tiles);
 					}
 
