@@ -783,6 +783,12 @@ this.cannonballs =[];
 		console.log("killed gameloop");
 	}
 
+	killPlayer(socketid) {
+		this.alive[socketid] = false;
+
+		console.log(this.alive);
+	}
+
 	countdown(count, interval, totalTime, func, func2) {
 		this.stateChangeCount = count;
     this.stateChangeCountInterval = setInterval(() => {
@@ -858,9 +864,11 @@ this.cannonballs =[];
 
 					if (this.state == 0) {
 						for (let i=0; i<this.islands.length; i++) {
-							if (this.islands[i].isCastleInInnerArea() == false) {
+							if (this.islands[i].isCastleInInnerArea() == false || this.alive[this.socketofIslandIndex[i]] == false) {
 								this.alive[this.socketofIslandIndex[i]] = false;
-								this.deadIslandIds.push(i);
+								if (!this.deadIslandIds.includes(i)) {
+									this.deadIslandIds.push(i);
+								}
 							}
 						}
 						stateChangeCallback(this.state);
@@ -869,8 +877,10 @@ this.cannonballs =[];
 
 					this.stateChanges++;
 					if (this.stateChanges == 10 || (this.POINTS - this.deadIslandIds.length) < 2) {
-						console.log("koko peli loppu");
 
+						console.log("koko peli loppu");
+						console.log(this.stateChanges);
+						console.log((this.POINTS - this.deadIslandIds.length));
 						gameEndCallback();
 						this.killGameLoop();
 					} else {

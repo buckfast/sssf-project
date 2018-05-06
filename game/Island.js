@@ -58,15 +58,15 @@ class Island {
 			for (let w=this.center.x-3; w<=this.center.x+4; w++) {
 				//tiles[h][w].zone = this.id;
 
-				tiles[h+2][w].zone = this.id;
-				tiles[h-2][w].zone = this.id;
-				tiles[h][w+2].zone = this.id;
-				tiles[h][w-2].zone = this.id;
+				tiles[h+1][w].zone = this.id;
+				tiles[h-1][w].zone = this.id;
+				tiles[h][w+1].zone = this.id;
+				tiles[h][w-1].zone = this.id;
 
-				tiles[h+2][w+2].zone = this.id;
-				tiles[h-2][w+2].zone = this.id;
-				tiles[h+2][w-2].zone = this.id;
-				tiles[h-2][w-2].zone = this.id;
+				tiles[h+1][w+1].zone = this.id;
+				tiles[h-1][w+1].zone = this.id;
+				tiles[h+1][w-1].zone = this.id;
+				tiles[h-1][w-1].zone = this.id;
 
 
 				if(h==this.center.y-4 || w==this.center.x-3 || h==this.center.y+3 || w==this.center.x+4){

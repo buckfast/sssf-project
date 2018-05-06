@@ -144,6 +144,10 @@ module.exports.listen = (http, session) => {
     socket.on("disconnecting", () => { // TODO: check if host disconects
       //console.log("use disconnecting");
       const room = getRoom(socket);
+      if (games[room] != undefined) {
+        games[room].game.killPlayer(socket.id);
+      }
+
       leaveRoom(socket, (room) => {
         io.in(room).emit("room_users_update", getRoomUsernames(room));
       });
@@ -306,7 +310,7 @@ module.exports.listen = (http, session) => {
     })
 
     socket.on("click", (pos) => {
-      if (games[getRoom(socket)].game != undefined) {
+      if (games[getRoom(socket)] != undefined) {
         console.log("click", pos);
         if (games[getRoom(socket)].game.alive[socket.id]) {
           let obj = games[getRoom(socket)].game.clicked(socket.id, pos);
