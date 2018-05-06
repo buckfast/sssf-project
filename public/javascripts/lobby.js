@@ -31,6 +31,7 @@ $(() => {
     if ($('#chat-input').val().length > 0) {
       socket.emit("message", $('#chat-input').val());
       addMessage(username+": "+$('#chat-input').val());
+      $('#chat-input').val('');
     }
   })
   socket.on('message', (msg) => {
@@ -41,7 +42,6 @@ $(() => {
     const isBottom = chatbox.scrollHeight-chatbox.clientHeight<=chatbox.scrollTop;
 
     $('.lobby-chat').append($('<div class="chat-message"><p>'+msg+'</p></div>'));
-    $('#chat-input').val('');
 
     if (isBottom) {
       chatbox.scrollTop = chatbox.scrollHeight-chatbox.clientHeight;

@@ -100,6 +100,9 @@ class Island {
 		}
 	}
 
+	isCastleInInnerArea() {
+		return this.tiles[this.center.y][this.center.x].inner[(this.id-1)];
+	}
 
 
 	fireCannon(cursorPos) {

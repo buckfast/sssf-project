@@ -13,10 +13,14 @@ class Game {
 		this.players = players;
 		this.islandIndexofSocket = {};
 		this.socketofIslandIndex = {};
+		this.alive = {};
+
+		this.deadIslandIds = [];
 
 		for (let i=0; i<players.length; i++) {
 			this.islandIndexofSocket[Object.keys(players[i])[0]] = i;
 			this.socketofIslandIndex[i] = Object.keys(players[i])[0];
+			this.alive[Object.keys(players[i])[0]] = true;
 		}
 		// let i=0;
 		// for (let key in players) {
@@ -725,18 +729,13 @@ this.cannonballs =[];
 
 	drawCannonballs(cb) {
 		if (this.state == 2) {
-
-
-
 			this.setCannonballs();
 			if (u.isEmpty(this.cannonballs)) {
 				cb(null)
 			} else {
 				cb(this.cannonballs);
 			}
-
 		}
-
 	}
 
 
@@ -763,7 +762,7 @@ this.cannonballs =[];
 
 	updateUserControls(socketid, newControls) {
 		//console.log(newControls);
-		this.controls[this.islandIndexofSocket[socketid]] = newControls;
+			this.controls[this.islandIndexofSocket[socketid]] = newControls;
 	}
 
 	killGameLoop() {
@@ -799,7 +798,7 @@ this.cannonballs =[];
     }, (totalTime+interval));
 	};
 
-	run(placeableCallback, cannonballCallback, hitCallback, stateChangeCallback, stateChangerCallback, countdownCallback) {
+	run(placeableCallback, cannonballCallback, hitCallback, stateChangeCallback, stateChangerCallback, countdownCallback, gameEndCallback) {
 		this.tiles = this.determineZones(this.POINTS);
 		this.createPlaceableContainers(this.tiles);
 		//this.colorais(this.tiles);
@@ -855,16 +854,32 @@ this.cannonballs =[];
 					this.roundCount = this.stateRoundCounts[this.state];
 					console.log("stateChanger called");
 					this.stateChange = true;
-					this.stateChanges++;
-					if (this.stateChanges == 10) {
-						console.log("peli loppu");
+
+
+					if (this.state == 0) {
+						for (let i=0; i<this.islands.length; i++) {
+							if (this.islands[i].isCastleInInnerArea() == false) {
+								this.alive[this.socketofIslandIndex[i]] = false;
+								this.deadIslandIds.push(i);
+							}
+						}
+						stateChangeCallback(this.state);
+						console.log("alive",this.alive);
 					}
 
-					let tempState = this.state+1;
-					tempState = tempState%3;
-					stateChangerCallback(this.stateTexts[tempState]);
+					this.stateChanges++;
+					if (this.stateChanges == 10 || (this.POINTS - this.deadIslandIds.length) < 2) {
+						console.log("koko peli loppu");
 
-					this.countdown(5, 1000, 5000, nextState, stateChanger);
+						gameEndCallback();
+						this.killGameLoop();
+					} else {
+						let tempState = this.state+1;
+						tempState = tempState%3;
+						stateChangerCallback(this.stateTexts[tempState]);
+
+						this.countdown(5, 1000, 5000, nextState, stateChanger);
+					}
 				}, (this.stateRoundCounts[this.state]*1000+1000));
 		}
 

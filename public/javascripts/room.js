@@ -51,11 +51,12 @@ $(() => {
   }
 
   socket.on("room_users_update", (msg) => {
-    console.log(msg);
     emptyUsersList();
+    if (msg!=null) {
     for (let i=0; i<msg.length; i++) {
       addUserToList(msg[i]);
     }
+  }
   });
 
   document.addEventListener('keydown', function onEvent(event) {
@@ -70,6 +71,8 @@ $(() => {
     if ($('#chat-input').val().length > 0) {
       socket.emit("message", $('#chat-input').val());
       addMessage(username+": "+$('#chat-input').val());
+      $('#chat-input').val('');
+
     }
   })
   socket.on('message', (msg) => {
@@ -81,7 +84,6 @@ $(() => {
     const isBottom = chatbox.scrollHeight-chatbox.clientHeight<=chatbox.scrollTop;
 
     $('.game-chat').append($('<div class="chat-message"><p>'+msg+'</p></div>'));
-    $('#chat-input').val('');
 
     if (isBottom) {
       chatbox.scrollTop = chatbox.scrollHeight-chatbox.clientHeight;
@@ -91,7 +93,7 @@ $(() => {
   socket.on("game_start", (data) => {
     $("#startgame").hide();
     run();
-    colorize(data.tiles, data.players, data.borders);
+    colorize(data.tiles, data.players, data.borders, data.deadIslands);
     initPlaceables(data.drawables);
     sendInput(socket);
     canvasui.addEventListener("click", () => {
@@ -131,7 +133,7 @@ $(() => {
 
   socket.on("tiles", (data) => {
     console.log("players",data.players);
-    colorize(data.tiles, data.players, data.borders);
+    colorize(data.tiles, data.players, data.borders,data.deadIslands);
   });
 
   const start = () => {

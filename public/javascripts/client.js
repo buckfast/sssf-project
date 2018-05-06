@@ -218,45 +218,83 @@ const initPlaceables = (drawables) => {
     drawCannons(drawables[i]["cannons"]);
   }
 }
-const colorize = (tiles, players, borders) => {
+const colorize = (tiles, players, borders, deadIslands) => {
   console.log("asdsd",players);
   contextbg.clearRect(0, 0, canvas.width, canvas.height);
-console.log(borders);
+  console.log(borders);
+
   let odd = [];
   for (let i=0; i<players.length; i++) {
     odd.push({row: 0, tile: 0});
     players[i]["nameTagDrawn"] = false;
   }
+  console.log("deadislands",deadIslands);
+  let c1_1 = "#629a56";
+  let c1_2 = "#5c8f51";
+  if (deadIslands.includes(0)) {
+    c1_1 = "#777777";
+    c1_2 = "#707070";
+  }
+
+  let c2_1 = "#a85785";
+  let c2_2 = "#945478";
+  if (deadIslands.includes(1)) {
+    c2_1 = "#777777";
+    c2_2 = "#707070";
+  }
+
+  let c3_1 = "#83afaf";
+  let c3_2 = "#78a1a1";
+  if (deadIslands.includes(2)) {
+    c3_1 = "#777777";
+    c3_2 = "#707070";
+  }
+
+  let c4_1 = "#c5cd65";
+  let c4_2 = "#b2b95c";
+  if (deadIslands.includes(3)) {
+    c4_1 = "#777777";
+    c4_2 = "#707070";
+  }
+
+  let c5_1 = "#615faf";
+  let c5_2 = "#585699";
+  if (deadIslands.includes(4)) {
+    c5_1 = "#777777";
+    c5_2 = "#707070";
+  }
+
+
 
   for (let i=0; i<HEIGHT; i++) {
       for (let j=0; j<WIDTH; j++) {
         if (tiles[i][j].zone === 1) {
-              (odd[0].tile%2==0 && i%2==0) ? contextbg.fillStyle = "#629a56" : contextbg.fillStyle = "#5c8f51";
+              (odd[0].tile%2==0 && i%2==0) ? contextbg.fillStyle = c1_1 : contextbg.fillStyle = c1_2;
               odd[0].tile++;
               contextbg.fillRect(j*TILE_SIZE-TILE_SIZE, i*TILE_SIZE-TILE_SIZE, j+TILE_SIZE, i+TILE_SIZE);
 
             } else if (tiles[i][j].zone === 2) {
               if (odd[1] != undefined) {
-                (odd[1].tile%2==0&& i%2==0) ? contextbg.fillStyle = "#a85785" : contextbg.fillStyle = "#945478";
+                (odd[1].tile%2==0&& i%2==0) ? contextbg.fillStyle = c2_1 : contextbg.fillStyle = c2_2;
                 odd[1].tile++;
                 contextbg.fillRect(j*TILE_SIZE-TILE_SIZE, i*TILE_SIZE-TILE_SIZE, j+TILE_SIZE, i+TILE_SIZE);
               }
 
             } else if (tiles[i][j].zone === 3) {
               if (odd[2] != undefined) {
-                (odd[2].tile%2==0&& i%2==0) ? contextbg.fillStyle = "#83afaf" : contextbg.fillStyle = "#78a1a1";
+                (odd[2].tile%2==0&& i%2==0) ? contextbg.fillStyle = c3_1 : contextbg.fillStyle = c3_2;
                 odd[2].tile++;
                 contextbg.fillRect(j*TILE_SIZE-TILE_SIZE, i*TILE_SIZE-TILE_SIZE, j+TILE_SIZE, i+TILE_SIZE);
               }
             }  else if (tiles[i][j].zone === 4) {
               if (odd[3] != undefined) {
-                (odd[3].tile%2==0&& i%2==0) ? contextbg.fillStyle = "#c5cd65" : contextbg.fillStyle = "#b2b95c";
+                (odd[3].tile%2==0&& i%2==0) ? contextbg.fillStyle = c4_1 : contextbg.fillStyle = c4_2;
                 odd[3].tile++;
                 contextbg.fillRect(j*TILE_SIZE-TILE_SIZE, i*TILE_SIZE-TILE_SIZE, j+TILE_SIZE, i+TILE_SIZE);
               }
             } else if (tiles[i][j].zone === 5) {
               if (odd[4] != undefined) {
-                (odd[4].tile%2==0&& i%2==0) ? contextbg.fillStyle = "#615faf" : contextbg.fillStyle = "#585699";
+                (odd[4].tile%2==0&& i%2==0) ? contextbg.fillStyle = c5_1 : contextbg.fillStyle = c5_2;
                 odd[4].tile++;
                 contextbg.fillRect(j*TILE_SIZE-TILE_SIZE, i*TILE_SIZE-TILE_SIZE, j+TILE_SIZE, i+TILE_SIZE);
               }

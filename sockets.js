@@ -255,7 +255,9 @@ module.exports.listen = (http, session) => {
             (err, socketid, placeable) => {
               if (err == null) {
                 //console.log(socketid);
-                io.to(socketid).emit("drawPlaceable", placeable);
+                if (game.alive[socketid] == true) {
+                  io.to(socketid).emit("drawPlaceable", placeable);
+                }
               }
             },
             (cannonballs) => {
@@ -268,20 +270,25 @@ module.exports.listen = (http, session) => {
             },
             (state) => {
               if (state == 0) {
-                io.in(room).emit("tiles", {"tiles":game.tiles, "players":game.players, 'borders': game.getBorders()});
+                io.in(room).emit("tiles", {"tiles":game.tiles, "players":game.players, 'borders': undefined, 'deadIslands': game.deadIslandIds});
               }
             },
             (stateText) => {
                 io.in(room).emit("drawPlaceable", undefined);
                 io.in(room).emit("stateChanger", stateText);
+
             },
             (count) => {
                 io.in(room).emit("roundCountdown", count);
             },
+            () => {
+              io.in(room).emit("drawPlaceable", undefined);
+
+            }
 
           );
 
-          io.in(room).emit("game_start", {'tiles': game.tiles, 'drawables': game.drawables, 'players': game.players, 'borders': game.getBorders(), "stateText": game.stateTexts[game.state]});
+          io.in(room).emit("game_start", {'tiles': game.tiles, 'drawables': game.drawables, 'players': game.players, 'borders': undefined, 'deadIslands':game.deadIslandIds, "stateText": game.stateTexts[game.state]});
     })
 
 
@@ -292,17 +299,20 @@ module.exports.listen = (http, session) => {
     socket.on("control", (controls) => {
       //console.log(control);
       if (games[getRoom(socket)] != undefined && games[getRoom(socket)].game!=undefined) {
-
-        games[getRoom(socket)].game.updateUserControls(socket.id, controls);
+        if (games[getRoom(socket)].game.alive[socket.id]) {
+          games[getRoom(socket)].game.updateUserControls(socket.id, controls);
+        }
       }
     })
 
     socket.on("click", (pos) => {
       if (games[getRoom(socket)].game != undefined) {
-        let obj = games[getRoom(socket)].game.clicked(socket.id, pos);
+        console.log("click", pos);
+        if (games[getRoom(socket)].game.alive[socket.id]) {
+          let obj = games[getRoom(socket)].game.clicked(socket.id, pos);
           io.in(getRoom(socket)).emit("updateDrawable", obj);
           //io.in(getRoom(socket)).emit("tiles", {"tiles":games[getRoom(socket)].tiles, "playerCount":games[getRoom(socket)].POINTS});
-
+        }
       }
     })
   });
