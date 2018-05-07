@@ -20,13 +20,12 @@
   				<h2>
   					<%= profileUser.username %>
   				</h2>
-          <br/>
-          <small>dasdfdaf</small>
+
 
   		</div>
 
   		<div class="col-md-1 column  profile-top-right" >
-<%if (locals.user != undefined) {%>
+<%if (locals.user != undefined && locals.title == locals.user.username) {%>
   				 <a class="btn btn-info btn-sm rounded-0 btn-block" href="/users/<%=profileUser.username%>/edit" type="button">
                       Edit
           </a>

@@ -3,6 +3,11 @@ const passport = require("passport");
 const {body, validationResult} = require('express-validator/check');
 const {sanitizeBody} = require('express-validator/filter');
 const dateformat = require('date-format');
+const sharp = require('sharp');
+const multer = require("multer");
+const path = require('path');
+const fs = require('fs');
+
 
 exports.login_get = (req, res, next) => {
   res.render("login", { title: 'Log in', currentPage: "login"})
@@ -12,6 +17,18 @@ exports.logout_get = (req,res,next) => {
   req.logout();
   delete req.session.username;
   res.redirect("/users/login");
+}
+
+exports.loggedInAs = (req, res, next) => {
+    if (req.isAuthenticated() && typeof req.user !== "undefined" && req.user.username === req.params.id) {
+      next();
+    }
+    else {
+      //res.redirect(303,"/")
+      let err = new Error('Not Found');
+      err.status = 404;
+      next(err);
+    }
 }
 
 exports.login_post = (req,res,next) => {
@@ -106,23 +123,17 @@ exports.users_get = (req, res, next) => {
 
 }
 
-/**
- * @api {post} /users Create new user
- * @apiName CreateUser
- * @apiGroup Users
- * @apiDescription Creates a new user
- */
-exports.users_post = (req, res, next) => {
-    res.send("create new user");
+
+exports.user_id_edit_get = (req, res, next) => {
+  let date = dateformat.asString('dd.MM.yyyy', req.user.registered);
+  res.render("edit", {title: req.params.id, currentPage: "users", registered: date, user: req.user});
 }
 
-/**
- * @api {get} /users/:id Request user information
- * @apiName GetUser
- * @apiGroup Users
- * @apiDescription Requests user information
- * @apiError UserNotFound The <code>id</code> of the User was not found
- */
+// exports.user_id_edit_post = (req, res, next) => {
+//     res.send("asd");
+// }
+
+
 exports.user_id_get = (req, res, next) => {
     //res.send("get user id "+req.params.id);
     User.findOne({username: req.params.id},"username registered avatar aboutMe",(err, user) => {
@@ -132,18 +143,69 @@ exports.user_id_get = (req, res, next) => {
         let date = dateformat.asString('dd.MM.yyyy', user.registered);
         res.render("profile", {title: req.params.id, currentPage: "users", profileUser: {username: user.username, registered: date, avatar: user.avatar, aboutMe: user.aboutMe}, user: req.user});
       } else {
-        res.send("Not found");
+        let err = new Error('Not Found');
+        err.status = 404;
+        next(err);
       }
     });
 }
 
-/**
- * @api {post} /users/:id Update user information
- * @apiName UpdateUser
- * @apiGroup Users
- * @apiDescription Updates user information
- * @apiError UserNotFound The <code>id</code> of the User was not found
- */
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'public/images');
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now()+path.extname(file.originalname));
+  }
+})
+
+exports.upload = multer({storage: storage});
+
+exports.user_id_edit_post = (req, res) => {
+  console.log(req.file);
+
+  const update = (filename) => {
+    let avatar
+    if (filename != undefined) {
+      avatar = 'avatar'+filename;
+    } else {
+      avatar = req.user.avatar;
+    }
+
+    let user = new User(
+       {
+         registered: req.user.registered,
+         aboutMe: req.body.aboutme,
+         avatar: avatar,
+         _id:req.user._id,
+       }
+     );
+     User.findByIdAndUpdate(req.user._id, user, {}, (err, data) => {
+       if (err) { return next(err); }
+       res.redirect("/users/"+req.params.id);
+    });
+  }
+
+  if (req.file != undefined) {
+    sharp('public/images/'+req.file.filename)
+      .resize(100, 100)
+      .toFile('public/images/avatar'+req.file.filename, (err) => {
+        if (err) {return next(err);}
+
+        // fs.unlink('public/images/'+req.file.filename, (err) => {
+        //   if (err) {throw err;}
+        //   console.log('Deleted original: '+req.file.filename);
+        // });
+
+        update(req.file.filename)
+      });
+  } else {
+    update(undefined);
+  }
+
+};
+
 exports.user_id_post = (req, res, next) => {
     res.send("update user id "+req.params.id);
 }
