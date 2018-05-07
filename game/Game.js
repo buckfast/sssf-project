@@ -555,15 +555,39 @@ this.cannonballs =[];
 										console.log("osuupa "+this.islands[i].id+": "+this.islands[j].id);
 										//this.islands[i].center.x+=3; islands[i].center.y+=3; islands[j].center.x -=3; islands[j].center.y-=3;
 										if (this.islands[i].center.x <= this.islands[j].center.x) {
-											this.islands[i].center.x-=shift; this.islands[j].center.x+=shift;
+											if (this.islands[i].center.x-shift > 4) {
+												this.islands[i].center.x-=shift;
+											}
+											if (this.islands[j].center.x+shift < this.WIDTH-4) {
+												this.islands[j].center.x+=shift;
+											}
 										} else {
-											this.islands[i].center.x+=shift; this.islands[j].center.x-=shift;
+											if (this.islands[i].center.x+shift < this.WIDTH-4) {
+												this.islands[i].center.x+=shift;
+											}
+											if (this.islands[j].center.x-shift > 4) {
+												this.islands[j].center.x-=shift;
+											}
 										}
+
+
 										if (this.islands[i].center.y <= this.islands[j].center.y) {
-											this.islands[i].center.y-=shift; this.islands[j].center.y+=shift;
+											if (this.islands[i].center.y-shift > 4) {
+												this.islands[i].center.y-=shift;
+											}
+											if (this.islands[j].center.y+shift < this.HEIGHT-4) {
+												this.islands[j].center.y+=shift;
+											}
 										} else {
-											this.islands[i].center.y+=shift; this.islands[j].center.y-=shift;
+											if (this.islands[i].center.y+shift < this.HEIGHT-4) {
+												this.islands[i].center.y+=shift;
+											}
+											if (this.islands[j].center.y-shift > 4) {
+												this.islands[j].center.y-=shift;
 										}
+									}
+
+
 								}
 							}
 

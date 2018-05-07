@@ -45,7 +45,7 @@ exports.signup_post = [
     }
   }),
   body("username", "Invalid username").custom((value, {req, loc, path}) => {
-    const regex = /^[0-9A-Za-z!@#$%&*()_\-+={[}\]|\:;"'<,>.?\/\\~`]+[0-9A-Za-z!@#$%&*()_\-+={[}\]|\:;"'<,>.?\/\\~`]*$/g
+    const regex = /^[0-9A-Za-z!@#$%&*()_\-+={[}\]|\:;<,>.?\/\\~`]+[0-9A-Za-z!@#$%&*()_\-+={[}\]|\:;<,>.?\/\\~`]*$/g
     if (!regex.test(value)) {
       throw new Error("Invalid username");
     } else {
