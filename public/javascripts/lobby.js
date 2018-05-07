@@ -41,7 +41,10 @@ $(() => {
     const chatbox = document.getElementsByClassName("lobby-chat")[0];
     const isBottom = chatbox.scrollHeight-chatbox.clientHeight<=chatbox.scrollTop;
 
-    $('.lobby-chat').append($('<div class="chat-message"><p>'+msg+'</p></div>'));
+    let $m = ($('<div class="chat-message"></div>'));
+    $m.append($('<p></p>').text(msg));
+    $('.lobby-chat').append($m);
+
 
     if (isBottom) {
       chatbox.scrollTop = chatbox.scrollHeight-chatbox.clientHeight;
