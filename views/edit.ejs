@@ -31,7 +31,7 @@
         </div>
         <div class="col-md-6 column" >
 <label for="image" class="col-sm-6 col-form-label  col-form-label-sm">Change avatar</label>
-<input type="file" class="form-control form-control-sm  rounded-0" id="image" name="image">
+<input type="file" class=" btn btn-sm btn  rounded-0" id="image" name="image">
 </div>
   		</div>
     </div>
@@ -45,6 +45,8 @@
         <a id="cancel" class="btn btn-default btn-sm rounded-0" href="/users/<%=user.username%>" type="button">
                    Cancel
         </a>
+        <br>
+
   		</div>
 
   	</div>
@@ -88,6 +90,11 @@
               						</tbody>
               					</table>
                       </p>
+                      <button id="delete" class=" float-right btn btn-default btn-sm rounded-0" href="#" type="button" data-id="<%= user.username %>">
+                                 Delete account
+                      </button>
+                      <p class="confirmdelete float-right"></p>
+
               				</div>
               			</div>
   					</div>

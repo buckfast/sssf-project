@@ -13,6 +13,8 @@ const index = require('./routes/index');
 const users = require('./routes/users');
 const game = require('./routes/game');
 
+const apiUsers = require('./routes/apiUsers');
+
 
 
 const requestedPath = require("./middlewares/path");
@@ -127,6 +129,9 @@ app.use((req, res, next) => {
 app.use('/', index);
 app.use('/users', users);
 app.use('/play', game);
+
+app.use('/api/users', apiUsers);
+
 
 
 // catch 404 and forward to error handler

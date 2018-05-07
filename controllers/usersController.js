@@ -126,7 +126,7 @@ exports.users_get = (req, res, next) => {
 
 exports.user_id_edit_get = (req, res, next) => {
   let date = dateformat.asString('dd.MM.yyyy', req.user.registered);
-  res.render("edit", {title: req.params.id, currentPage: "users", registered: date, user: req.user});
+  res.render("edit", {title: req.params.id, currentPage: "profile", registered: date, user: req.user});
 }
 
 // exports.user_id_edit_post = (req, res, next) => {
@@ -141,7 +141,7 @@ exports.user_id_get = (req, res, next) => {
 
       if (user) {
         let date = dateformat.asString('dd.MM.yyyy', user.registered);
-        res.render("profile", {title: req.params.id, currentPage: "users", profileUser: {username: user.username, registered: date, avatar: user.avatar, aboutMe: user.aboutMe}, user: req.user});
+        res.render("profile", {title: req.params.id, currentPage: "profile", profileUser: {username: user.username, registered: date, avatar: user.avatar, aboutMe: user.aboutMe}, user: req.user});
       } else {
         let err = new Error('Not Found');
         err.status = 404;
@@ -203,8 +203,11 @@ exports.user_id_edit_post = (req, res) => {
   } else {
     update(undefined);
   }
-
 };
+
+exports.user_id_edit_delete = (req, res, next) => {
+  
+}
 
 exports.user_id_post = (req, res, next) => {
     res.send("update user id "+req.params.id);

@@ -43,8 +43,19 @@ $(() => {
 
 
   const addUserToList = (username) => {
-    $(".players-list").append($('<li class="list-player"><a href="/users/'+username+'"><i class="fa fa-user"></i><span>'+username+'</span><i class="fa pull-right"></i></a></li>'));
+    $(".players-list").append($('<li class="list-player"><a href="/users/'+username+'" id="avatar-'+username+'"><img class="small-avatar" src="/images/avatar.png"></img><span>'+username+'</span><i class="fa pull-right"></i></a></li>'));
 
+    fetch("/api/users/"+username, {
+      method: 'GET'
+    }).then(res => res.json())
+    .catch(error => console.error('Error:', error))
+    .then(response => {
+        console.log('Success:', response)
+        if (response.user != undefined) {
+          $("#avatar-"+username).empty();
+          $("#avatar-"+username).append('<img class="small-avatar" src="/images/'+response.user.avatar+'"><span>'+username+'</span><i class="fa pull-right"></i>');
+        }
+    });
   }
   const emptyUsersList = () => {
     $('.players-list').empty();

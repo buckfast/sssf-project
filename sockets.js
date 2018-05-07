@@ -117,7 +117,7 @@ module.exports.listen = (http, session) => {
         socket.handshake.session.roomId = undefined;
         socket.handshake.session.username = user.username;
         socket.handshake.session.save();
-        socket.emit("onConnection", user.username);
+        socket.emit("onConnection", { name: user.username});
       });
     } else {
       if (socket.handshake.session.username == undefined) {
@@ -125,10 +125,11 @@ module.exports.listen = (http, session) => {
         socket.handshake.session.roomId = undefined;
         socket.handshake.session.username = name;
         socket.handshake.session.save();
-        socket.emit("onConnection", name);
+        socket.emit("onConnection", { name: name});
       }
     }
-    socket.emit("onConnection", socket.handshake.session.username);
+
+    socket.emit("onConnection", {name: socket.handshake.session.username});
 
 
 
@@ -145,7 +146,9 @@ module.exports.listen = (http, session) => {
       //console.log("use disconnecting");
       const room = getRoom(socket);
       if (games[room] != undefined) {
-        games[room].game.killPlayer(socket.id);
+        if (games[room].game != undefined) {
+          games[room].game.killPlayer(socket.id);
+        }
       }
 
       leaveRoom(socket, (room) => {

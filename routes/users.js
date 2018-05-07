@@ -14,6 +14,6 @@ router.get('/:id/', usersController.user_id_get);
 router.get('/:id/edit',usersController.loggedInAs, usersController.user_id_edit_get);
 router.post('/:id/edit',usersController.loggedInAs, usersController.upload.single("image"), usersController.user_id_edit_post);
 // router.put('/:id/', usersController.user_id_put);
-// router.delete('/:id/', usersController.user_id_delete);
+router.delete('/:id/edit', usersController.user_id_edit_delete);
 
 module.exports = router;

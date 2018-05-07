@@ -4,15 +4,33 @@ $(() => {
 
   let socket = io();
   let username = "";
-  socket.on("onConnection", (name) => {
-    username = name;
-    document.getElementById("gamename").value = name+"'s game";
-    document.getElementsByClassName("statusText")[0].innerHTML = name;
+  socket.on("onConnection", (data) => {
+    username = data.name;
+    document.getElementById("gamename").value = data.name+"'s game";
+    document.getElementsByClassName("statusText")[0].innerHTML = data.name;
 
     // $("#createroom").click(() => {
     //   socket.emit("room_create", $('#gamename').val());
-    // });
+    // });        if (response.error != undefined) {
+        const url = "/api/users/"+data.name;
+        fetch(url, {
+          method: 'GET'
+        }).then(res => res.json())
+        .catch(error => console.error('Error:', error))
+        .then(response => {
+            console.log('Success:', response)
+            $(".avatar").empty();
+            if (response.error != undefined) {
+              $(".avatar").append('<img alt="" src="/images/avatar.png" width="40px">');
+            } else {
+              $(".avatar").append('<img alt="" src="/images/'+response.user.avatar+'" width="40px">');
+            }
+        });
+
   })
+
+
+
 
   document.getElementById("createroom").addEventListener("click", (e) => {
     socket.emit("room_create", $('#gamename').val());
