@@ -98,7 +98,7 @@ const drawPlaced = (drawables) => {
 
 const drawWalls = (walls) => {
     for (let i=0; i<walls.length; i++) {
-      context.fillStyle = "rgba(231, 231, 231, 1)";
+      context.fillStyle = "rgba(221, 217, 214, 1)";
       context.fillRect(walls[i].x*TILE_SIZE+1-TILE_SIZE, walls[i].y*TILE_SIZE+1-TILE_SIZE, TILE_SIZE, TILE_SIZE);
     }
 }
@@ -110,11 +110,11 @@ const drawCannons = (cannons) => {
       // context.fillStyle = "rgba(255, 255, 255, 0.7)";
       // context.fillRect(t.x*TILE_SIZE-TILE_SIZE, t.y*TILE_SIZE-TILE_SIZE, TILE_SIZE, TILE_SIZE);
       context.beginPath();
-      context.arc(t.x*TILE_SIZE-TILE_SIZE, t.y*TILE_SIZE-TILE_SIZE, 16, 0, 2 * Math.PI, false);
-      context.fillStyle = '#ffffff';
+      context.arc(t.x*TILE_SIZE-TILE_SIZE, t.y*TILE_SIZE-TILE_SIZE, 15, 0, 2 * Math.PI, false);
+      context.fillStyle = '#6a6a73';
       context.fill();
       context.lineWidth = 4;
-      context.strokeStyle = '#b4574e';
+      context.strokeStyle = '#616167';
       context.stroke();
       context.closePath();
     //}
@@ -301,13 +301,13 @@ const colorize = (tiles, players, borders, deadIslands) => {
 
             }
 
-            for (let k=0; k<players.length; k++) {
-              if (tiles[i][j].inner[k] === true ) {
+
+              if (tiles[i][j].inner.some((e) => {return e==true})) {
                 //if (tiles[i][j].zone == 1) {
                   contextbg.fillStyle = "#e0a33a";
                   contextbg.fillRect(j*TILE_SIZE-TILE_SIZE+2, i*TILE_SIZE-TILE_SIZE+2, j+TILE_SIZE-2, i+TILE_SIZE-2);
               }
-            }
+
 
             if (tiles[i][j].castle == true) {
               for (let p=0; p<players.length; p++) {
