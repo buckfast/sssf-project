@@ -136,12 +136,12 @@ exports.user_id_edit_get = (req, res, next) => {
 
 exports.user_id_get = (req, res, next) => {
     //res.send("get user id "+req.params.id);
-    User.findOne({username: req.params.id},"username registered avatar aboutMe",(err, user) => {
+    User.findOne({username: req.params.id},"username registered avatar aboutMe gamesPlayed gamesWon",(err, user) => {
       if (err) {return (err);}
 
       if (user) {
         let date = dateformat.asString('dd.MM.yyyy', user.registered);
-        res.render("profile", {title: req.params.id, currentPage: "profile", profileUser: {username: user.username, registered: date, avatar: user.avatar, aboutMe: user.aboutMe}, user: req.user});
+        res.render("profile", {title: req.params.id, currentPage: "profile", profileUser: {username: user.username, registered: date, avatar: user.avatar, aboutMe: user.aboutMe, gamesPlayed: user.gamesPlayed, gamesWon: user.gamesWon}, user: req.user});
       } else {
         let err = new Error('Not Found');
         err.status = 404;
@@ -175,6 +175,8 @@ exports.user_id_edit_post = (req, res) => {
 
     let user = new User(
        {
+         gamesPlayed: req.user.gamesPlayed,
+         gamesWon: req.user.gamesWon,
          registered: req.user.registered,
          aboutMe: req.body.aboutme,
          avatar: avatar,
@@ -206,7 +208,7 @@ exports.user_id_edit_post = (req, res) => {
 };
 
 exports.user_id_edit_delete = (req, res, next) => {
-  
+  res.send("not implemented");
 }
 
 exports.user_id_post = (req, res, next) => {
@@ -217,13 +219,7 @@ exports.user_id_put = (req, res, next) => {
     res.send("update user id "+req.params.id);
 }
 
-/**
- * @api {delete} /users/:id Delete user
- * @apiName DeleteUser
- * @apiGroup Users
- * @apiDescription Deletes user
- * @apiError UserNotFound The <code>id</code> of the User was not found
- */
+
 exports.user_id_delete = (req, res, next) => {
     res.send("delete user id "+req.params.id);
 }

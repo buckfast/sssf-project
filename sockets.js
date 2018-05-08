@@ -277,7 +277,7 @@ module.exports.listen = (http, session) => {
             },
             (state) => {
               if (state == 0) {
-                io.in(room).emit("tiles", {"tiles":game.tiles, "players":game.players, 'borders': undefined, 'deadIslands': game.deadIslandIds});
+                io.in(room).emit("tiles", {"tiles":game.tiles, "players":game.players, 'borders': game.borders, 'deadIslands': game.deadIslandIds});
               }
             },
             (stateText) => {
@@ -295,7 +295,7 @@ module.exports.listen = (http, session) => {
 
           );
 
-          io.in(room).emit("game_start", {'tiles': game.tiles, 'drawables': game.drawables, 'players': game.players, 'borders': undefined, 'deadIslands':game.deadIslandIds, "stateText": game.stateTexts[game.state]});
+          io.in(room).emit("game_start", {'tiles': game.tiles, 'drawables': game.drawables, 'players': game.players, 'borders': game.borders, 'deadIslands':game.deadIslandIds, "stateText": game.stateTexts[game.state]});
     })
 
 

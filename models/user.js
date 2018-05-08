@@ -11,7 +11,9 @@ const UserSchema = new Schema({
   passwordHash: {type: String, required: true, set: password},
   registered: {type: Date, default: "01.01.2153"},
   aboutMe: {type: String, required: false, max: 500, default: ""},
-  avatar: {type: String, required: true, default: "avatar.png"}
+  avatar: {type: String, required: true, default: "avatar.png"},
+  gamesPlayed: {type: Number, required: false, default: 0},
+  gamesWon: {type: Number, required: false, default: 0},
 
 });
 

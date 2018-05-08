@@ -30,6 +30,9 @@ $(() => {
   })
 
 
+  // document.getElementById("rulesButton").addEventListener("click", (e) => {
+  //     $("#rulesModal").modal("show");
+  // })
 
 
   document.getElementById("createroom").addEventListener("click", (e) => {

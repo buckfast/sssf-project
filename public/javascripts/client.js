@@ -221,7 +221,7 @@ const initPlaceables = (drawables) => {
 const colorize = (tiles, players, borders, deadIslands) => {
   console.log("asdsd",players);
   contextbg.clearRect(0, 0, canvas.width, canvas.height);
-  console.log(borders);
+  console.log("borders", borders);
 
   let odd = [];
   for (let i=0; i<players.length; i++) {
@@ -333,6 +333,19 @@ const colorize = (tiles, players, borders, deadIslands) => {
       // contextbg.fillStyle = "rgb(0, 0, 0)";
       // contextbg.fill();
       // contextbg.closePath();
+    }
+
+    for (let i=0; i<Object.keys(borders).length; i++) {
+      for (let key in borders[i]) {
+      	for (let k=0; k<borders[i][key].length; k++) {
+      		contextbg.beginPath();
+      		contextbg.rect(borders[i][key][k].x*TILE_SIZE+2-TILE_SIZE, borders[i][key][k].y*TILE_SIZE+2-TILE_SIZE,TILE_SIZE-3,TILE_SIZE-3);
+      		contextbg.fillStyle = "rgba(2, 50, 51, 0.27)";
+      		contextbg.fill();
+      		contextbg.closePath();
+
+      	}
+      }
     }
 
 

@@ -40,6 +40,7 @@ class Game {
 
 this.drawables = [];
 this.cannonballs =[];
+this.borders = {};
 
 		this.TILE_SIZE = tileSize;
 		this.WIDTH = width/this.TILE_SIZE;
@@ -369,6 +370,10 @@ this.cannonballs =[];
 		for (let i=0; i<this.islands.length; i++) {
 			this.islands[i].superBorders = {};
 			this.islands[i].totalTiles = this.floodCheckNeighbours(this.islands[i].center, this.islands[i].id, 'F', 5000, tiles);
+
+			for (let i=0; i<this.islands.length; i++) {
+				this.borders[i] = this.islands[i].superBorders;
+			}
 
 			let x = this.islands[i].center['x'];
 			let y = this.islands[i].center['y'];

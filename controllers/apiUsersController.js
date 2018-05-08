@@ -55,7 +55,7 @@ exports.users_get  = (req,res,next) => {
       }
     });
   } else if (Object.keys(req.query).length === 0) {
-      User.find({}, 'username _id regidstered aboutMe avatar', (err, users) => {
+      User.find({}, 'username _id registered aboutMe avatar', (err, users) => {
         let usersobj = {};
         users.forEach((user) => {
           usersobj[user._id] = user;
