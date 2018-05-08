@@ -8,8 +8,25 @@ const multer = require("multer");
 const path = require('path');
 
 
+exports.loggedInAs = (req, res, next) => {
+    if (req.isAuthenticated() && typeof req.user !== "undefined" && req.user.username === req.params.id) {
+      next();
+    }
+    else {
+      //res.redirect(303,"/")
+      res.json({error: "not authenticated"});
+    }
+}
+
 exports.logout_post = (req,res,next) => {
-  res.send("logout user");
+  if (res.user) {
+    req.logout();
+    delete req.session.username;
+    res.json({logout: 'succesfull'})
+  } else {
+    res.json({logout: 'not authenticated'})
+
+  }
 }
 
 
@@ -19,12 +36,76 @@ exports.users_get  = (req,res,next) => {
 
 
 exports.login_post = (req,res,next) => {
-  res.send("login user");
+  passport.authenticate('local', (err, user, info) => {
+    if(err) { return next(err)}
+    if (!user) {
+      return res.json({
+        formData: {username: req.body.username}, errors: [{param: "username", msg: info.message}]
+      });
+    }
+
+    req.logIn(user, (err) => {
+      if (err) {return next(err);}
+      return res.json({
+        formData: {username: req.body.username}, errors: null
+      });
+    });
+  }) (req, res, next);
 }
 
-exports.signup_post = (req,res,next) => {
-  res.send("signup user");
-}
+exports.signup_post = [
+  body('username', 'Username required').isLength({min: 1}).trim(),
+  body('username', 'Username must be 3-16 characters').isLength({min: 3, max: 16}).trim(),
+  body('password', 'Password must be at least 5 characters').isLength({min: 5}).trim(),
+  body("password", "Passwords do not match").custom((value, {req, loc, path}) => {
+    if (value !== req.body.password2) {
+      throw new Error("Passwords don't match");
+    } else {
+      return value;
+    }
+  }),
+  body("username", "Invalid username").custom((value, {req, loc, path}) => {
+    const regex = /^[0-9A-Za-z!@#$%&*()_\-+={[}\]|\:;<,>.?\/\\~`]+[0-9A-Za-z!@#$%&*()_\-+={[}\]|\:;<,>.?\/\\~`]*$/g
+    if (!regex.test(value)) {
+      throw new Error("Invalid username");
+    } else {
+      return value;
+    }
+  }),
+  sanitizeBody('username').trim().escape(),
+
+(req,res,next) => {
+  const errors = validationResult(req);
+  //console.log(errors.array());
+  if (!errors.isEmpty()) {
+    res.json({formData: {username: req.body.username}, errors: errors.array()});
+    return;
+  } else {
+    User.findOne({username: req.body.username}, (err, user) => { // TODO: make this a custom validation
+      if (err)  {
+         return (err);
+       }
+      if (!user) {
+        console.log("tehaas ukko");
+          const user = new User({username: req.body.username, passwordHash: req.body.password, registered: new Date()});
+          user.save()
+            .then(user => {
+              req.login(user, err => {
+                if (err) next(err);
+                //else res.redirect("/");
+                res.json({formData: {username: req.body.username, registered: user.registered, id: user._id}, errors: null});
+              });
+            })
+            .catch(err => {
+              res.json({formData: {username: req.body.username}, errors: err});
+            });
+        } else {
+          res.json({formData: {username: req.body.username}, errors: [{param: "username", msg: "Username is taken"}]});
+        }
+    });
+  }
+  }
+]
 
 exports.user_id_get = (req,res,next) => {
   User.findOne({'username': req.params.id}, 'username _id registered aboutMe avatar', (err, user) => {
@@ -38,34 +119,76 @@ exports.user_id_get = (req,res,next) => {
 }
 
 
-exports.loggedInAs = (req,res,next) => {
-  res.send("is logged in");
-}
-
-
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'public/images');
   },
   filename: (req, file, cb) => {
+    console.log(file);
     cb(null, Date.now()+path.extname(file.originalname));
   }
 })
 
 exports.upload = multer({storage: storage});
 
-exports.user_id_post = (req,res,next) => {
-  res.send("update user "+req.params.id);
-}
+exports.user_id_post = (req, res, next) => {
+  console.log(req.file);
+
+  console.log(req.body.aboutme)
+
+  const update = (filename) => {
+    let avatar;
+    if (filename != undefined) {
+      avatar = 'avatar'+filename;
+    } else {
+      avatar = req.user.avatar;
+    }
+
+    let user = new User(
+       {
+         registered: req.user.registered,
+         aboutMe: req.body.aboutme,
+         avatar: avatar,
+         _id:req.user._id,
+       }
+     );
+     User.findByIdAndUpdate(req.user._id, user, {}, (err, data) => {
+       if (err) { res.json({error: err})}
+       let updatedElements = {};
+       if (req.body.aboutme != undefined) {updatedElements["aboutme"] = req.body.aboutme};
+       if (filename!=undefined) {updatedElements["avatar"] = avatar}
+       res.json({updatedElements: updatedElements});
+    });
+  }
+
+  if (req.file != undefined) {
+    sharp('public/images/'+req.file.filename)
+      .resize(100, 100)
+      .toFile('public/images/avatar'+req.file.filename, (err) => {
+        if (err) {res.json({error: err})}
+
+        // fs.unlink('public/images/'+req.file.filename, (err) => {
+        //   if (err) {throw err;}
+        //   console.log('Deleted original: '+req.file.filename);
+        // });
+
+        update(req.file.filename)
+      });
+  } else {
+    update(undefined);
+  }
+};
 
 exports.user_id_delete = (req,res,next) => {
+  const username = req.user.username;
+  const id = req.user._id;
   User.findOneAndRemove({_id: req.user._id}, (err) => {
       if (err) {
-        res.json({error: err});
+        res.json({error: "not allowed"});
       }
       console.log("deleted");
       req.logout();
-      res.json({deleted: true});
+      res.json({deleted: true, username: username, id: id});
     });
 }
 
