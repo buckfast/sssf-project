@@ -287,3 +287,29 @@ ul.users-list li {
   margin: 0;
   padding: 0;
   bottom: 0; }
+
+.user-figure {
+  font-family: 'Open Sans', Arial, sans-serif;
+  position: relative;
+  display: inline-block;
+  margin: 14px 4px;
+  min-width: 180px;
+  max-width: 280px;
+  color: #000;
+  text-align: left;
+  font-size: 16px;
+  background: #eee;
+  border-radius: 0px; }
+
+.user-figcap {
+  margin-top: 12px;
+  height: 100%;
+  margin-left: 10px; }
+
+.user-figure img {
+  width: 40px;
+  margin: 2px;
+  float: right;
+  backface-visibility: hidden;
+  vertical-align: top;
+  border-radius: 0px; }

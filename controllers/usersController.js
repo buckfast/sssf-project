@@ -112,7 +112,7 @@ exports.signup_post = [
  */
 exports.users_get = (req, res, next) => {
     if (req.query.name == undefined) {
-        res.send("get users list");
+        res.render("users", {title: "users", currentPage: "users", user: req.user});
     } else {
       if (req.query.name) {
         res.send("search users by name "+req.query.name);
