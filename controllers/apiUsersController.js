@@ -13,7 +13,6 @@ exports.loggedInAs = (req, res, next) => {
       next();
     }
     else {
-      //res.redirect(303,"/")
       res.json({error: "not authenticated"});
     }
 }
@@ -31,7 +30,43 @@ exports.logout_post = (req,res,next) => {
 
 
 exports.users_get  = (req,res,next) => {
-  res.send("get all users");
+  if (req.query.id) {
+    User.findOne({'_id': req.query.id}, 'username _id registered aboutMe avatar', (err, user) => {
+      if (err) {
+        res.json({error: "not found"});
+        return;
+       };
+      if (user) {
+        res.json({user});
+      } else {
+        res.json({error: "not found"});
+      }
+    });
+  } else if (req.query.name) {
+    User.findOne({'username': req.query.name}, 'username _id registered aboutMe avatar', (err, user) => {
+      if (err) {
+        res.json({error: err});
+        return;
+      };
+      if (user) {
+        res.json({user});
+      } else {
+        res.json({error: "not found"});
+      }
+    });
+  } else if (Object.keys(req.query).length === 0) {
+      User.find({}, 'username _id regidstered aboutMe avatar', (err, users) => {
+        let usersobj = {};
+        users.forEach((user) => {
+          usersobj[user._id] = user;
+        });
+        res.json(usersobj);
+      });
+    } else {
+      res.json({error: "unknown query"})
+  }
+
+
 }
 
 
@@ -108,6 +143,7 @@ exports.signup_post = [
 ]
 
 exports.user_id_get = (req,res,next) => {
+
   User.findOne({'username': req.params.id}, 'username _id registered aboutMe avatar', (err, user) => {
     if (err) {res.json({error: err})};
     if (user) {
