@@ -17,8 +17,30 @@ $(() => {
   })
 
   socket.on("room_joined", (data) => {
+    if (data.error == 0 ) {
+      $("#gamecontent").hide();
+      $(".content").append("<br/><p>the game has already started. redirecting...</p>");
+      setTimeout(() => {
+        document.location.href = '/play'
+      }, 2000);
+
+    } else if (data.error == 1) {
+      $("#gamecontent").hide();
+      $(".content").append("<br/><p>super error. redirecting...</p>");
+      setTimeout(() => {
+        document.location.href = '/play'
+      }, 2000);
+    } else if (data.error == 2) {
+      $("#gamecontent").hide();
+      $(".content").append("<br/><p>invalid room. redirecting...</p>");
+      setTimeout(() => {
+        document.location.href = '/play'
+      }, 2000);
+    } else if (data.error == undefined) {
       $(".gamestage").find(".lobby-head").append('<h4>'+data.roomName+'</h4>');
       username = data.username;
+      init();
+    }
   });
 
   socket.on("room_joined_and_created", (data) => {
@@ -36,14 +58,14 @@ $(() => {
 
       $(".gamestage").find(".lobby-head").append("<h4>"+data.roomName+"</h4>");
 
-      addUserToList(data.username+" (you)");
-
+      addUserToList(data.username, true);
+      init(true);
   });
 
 
 
-  const addUserToList = (username) => {
-    $(".players-list").append($('<li class="list-player"><a href="/users/'+username+'" id="avatar-'+username+'"><img class="small-avatar" src="/images/avatar.png"></img><span>'+username+'</span><i class="fa pull-right"></i></a></li>'));
+  const addUserToList = (username, you) => {
+    $(".players-list").append($('<li class="list-player"><a href="/users/'+username+'" id="avatar-'+username+'"><img class="small-avatar" src="/images/avatar.png"></img><span>'+username+(you ?' (you)' : '')+'</span><i class="fa pull-right"></i></a></li>'));
 
     fetch("/api/users/"+username, {
       method: 'GET'
@@ -53,7 +75,7 @@ $(() => {
         console.log('Success:', response)
         if (response.user != undefined) {
           $("#avatar-"+username).empty();
-          $("#avatar-"+username).append('<img class="small-avatar" src="/images/'+response.user.avatar+'"><span>'+username+'</span><i class="fa pull-right"></i>');
+          $("#avatar-"+username).append('<img class="small-avatar" src="/images/'+response.user.avatar+'"><span>'+username+(you ?' (you)' : '')+'</span><i class="fa pull-right"></i>');
         }
     });
   }
@@ -65,7 +87,7 @@ $(() => {
     emptyUsersList();
     if (msg!=null) {
     for (let i=0; i<msg.length; i++) {
-      addUserToList(msg[i]+(msg[i] == username ? " (you)" : ""));
+      addUserToList(msg[i], (msg[i] == username ? true : false));
     }
   }
   });
@@ -114,7 +136,10 @@ $(() => {
     canvasui.addEventListener("click", () => {
       clicked(socket);
     });
-    banner(data.stateText,5000);
+    banner("Get ready!",5000);
+    setTimeout(()=> {
+      banner(data.stateText,5000);
+    }, 5000);
   })
 
   socket.on("drawPlaced", (drawables) => {
@@ -160,6 +185,4 @@ $(() => {
     socket.emit("leave_room");
     document.location.href = '/play'
   }
-
-  init();
 });

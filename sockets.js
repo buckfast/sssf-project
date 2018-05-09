@@ -196,9 +196,6 @@ module.exports.listen = (http, session) => {
         socket.handshake.session.save();
 
           socket.emit('room_creating', {roomNumber: id, name: msg});
-
-
-
           games[id] = {game: undefined, players: [], name: msg, started: false};
 
           //roomNumber++;
@@ -239,8 +236,14 @@ module.exports.listen = (http, session) => {
                     }
                   }
                 });
+              } else {
+                socket.emit("room_joined", {error: 1});
               }
+            } else {
+              socket.emit("room_joined", {error: 0});
             }
+          } else {
+            socket.emit("room_joined", {error: 2});
           }
         }
 

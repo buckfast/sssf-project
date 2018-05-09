@@ -905,9 +905,10 @@ this.centers = [];
 					this.stateChanges++;
 					if (this.stateChanges == 10 || (this.POINTS - this.deadIslandIds.length) < 2) {
 
-						console.log("koko peli loppu");
-						console.log(this.stateChanges);
-						console.log((this.POINTS - this.deadIslandIds.length));
+						// console.log("koko peli loppu");
+						// console.log(this.stateChanges);
+						// console.log((this.POINTS - this.deadIslandIds.length));
+						
 						gameEndCallback();
 						this.killGameLoop();
 					} else {
@@ -920,7 +921,7 @@ this.centers = [];
 				}, (this.stateRoundCounts[this.state]*1000+1000));
 		}
 
-		this.countdown(5, 1000, 5000, gameLoop, stateChanger);
+		this.countdown(10, 1000, 10000, gameLoop, stateChanger);
 	}
 }
 

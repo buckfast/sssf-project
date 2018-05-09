@@ -41,7 +41,7 @@ class Placeables {
 		const cannonTiles = this.cannonTypes[0].place(cursorPos, this.tiles);
 		//console.log(cannonTiles);
 		if (cannonTiles != undefined) {
-			this.island.placeCannon({type: 0, tiles: cannonTiles, timer: 0, health: 7});
+			this.island.placeCannon({type: 0, tiles: cannonTiles, timer: 0, health: 6});
 		}
 	}
 

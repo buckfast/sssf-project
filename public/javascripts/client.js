@@ -107,43 +107,68 @@ const drawCannonballs=(balls)=> {
 const drawPlaced = (drawables) => {
   context.clearRect(0, 0, canvas.width, canvas.height);
   for (let i=0; i<drawables.length; i++) {
-    drawWalls(drawables[i]["walls"]);
+    drawWallShadows(drawables[i]["walls"]);
     drawCannons(drawables[i]["cannons"]);
+    drawWalls(drawables[i]["walls"]);
   }
 }
 
-
-const drawWalls = (walls) => {
+const drawWallShadows = (walls) => {
   if (currentState == 2) {
     for (let i=0; i<walls.length; i++) {
       context.fillStyle = "rgba(139, 139, 139, 1)";
       context.fillRect(walls[i].x*TILE_SIZE+1-TILE_SIZE, walls[i].y*TILE_SIZE+1-TILE_SIZE+5, TILE_SIZE, TILE_SIZE);
-      context.fillStyle = "rgba(221, 217, 214, 1)";
-      context.fillRect(walls[i].x*TILE_SIZE+1-TILE_SIZE, walls[i].y*TILE_SIZE+1-TILE_SIZE-5, TILE_SIZE, TILE_SIZE);
     }
-  } else {
+  }
+}
+const drawWalls = (walls) => {
+  if (currentState != 2) {
     for (let i=0; i<walls.length; i++) {
       context.fillStyle = "rgba(221, 217, 214, 1)";
       context.fillRect(walls[i].x*TILE_SIZE+1-TILE_SIZE, walls[i].y*TILE_SIZE+1-TILE_SIZE, TILE_SIZE, TILE_SIZE);
     }
+  } else {
+    for (let i=0; i<walls.length; i++) {
+      context.fillStyle = "rgba(221, 217, 214, 1)";
+      context.fillRect(walls[i].x*TILE_SIZE+1-TILE_SIZE, walls[i].y*TILE_SIZE+1-TILE_SIZE-5, TILE_SIZE, TILE_SIZE);
+    }
   }
 }
 const drawCannons = (cannons) => {
-  for (let key in cannons) {
-    let t = cannons[key].tiles[3]
-    //for (let j=0; j<cannons[key].tiles.length; j++) {
-      //let t = cannons[key].tiles[j];
-      // context.fillStyle = "rgba(255, 255, 255, 0.7)";
-      // context.fillRect(t.x*TILE_SIZE-TILE_SIZE, t.y*TILE_SIZE-TILE_SIZE, TILE_SIZE, TILE_SIZE);
+  if (currentState == 2) {
+    for (let key in cannons) {
+      let t = cannons[key].tiles[3];
+
       context.beginPath();
-      context.arc(t.x*TILE_SIZE-TILE_SIZE, t.y*TILE_SIZE-TILE_SIZE, 15, 0, 2 * Math.PI, false);
-      context.fillStyle = '#6a6a73';
+      context.arc(t.x*TILE_SIZE-TILE_SIZE+1, t.y*TILE_SIZE-TILE_SIZE+2, 12, 0, 2 * Math.PI, false);
+      context.fillStyle = '#45454a';
       context.fill();
       context.lineWidth = 4;
-      context.strokeStyle = '#616167';
+      context.strokeStyle = '#45454a';
       context.stroke();
       context.closePath();
-    //}
+
+        context.beginPath();
+        context.arc(t.x*TILE_SIZE-TILE_SIZE+1, t.y*TILE_SIZE-TILE_SIZE-2, 12, 0, 2 * Math.PI, false);
+        context.fillStyle = '#6a6a73';
+        context.fill();
+        context.lineWidth = 4;
+        context.strokeStyle = '#616167';
+        context.stroke();
+        context.closePath();
+    }
+  } else {
+    for (let key in cannons) {
+      let t = cannons[key].tiles[3];
+        context.beginPath();
+        context.arc(t.x*TILE_SIZE-TILE_SIZE+1, t.y*TILE_SIZE-TILE_SIZE+1, 12, 0, 2 * Math.PI, false);
+        context.fillStyle = '#6a6a73';
+        context.fill();
+        context.lineWidth = 4;
+        context.strokeStyle = '#616167';
+        context.stroke();
+        context.closePath();
+    }
   }
 }
 
@@ -164,11 +189,11 @@ const banner = (text, ms) => {
   	y += vel;
     contextui.clearRect(0, 0, canvas.width, canvas.height);
 
-
-
-
     contextui.fillStyle = "rgba(159, 172, 115, 1)";
     contextui.fillRect(0, y-45, WIDTH*TILE_SIZE, 64);
+    contextui.fillStyle = "rgba(133, 144, 94, 1)";
+    contextui.fillRect(0, y+22, WIDTH*TILE_SIZE, 2);
+    contextui.fillRect(0, y-50, WIDTH*TILE_SIZE, 2);
 
     contextui.fillStyle = "#000000";
     contextui.font = "bold 45px Courier New";
@@ -233,7 +258,7 @@ const drawPlaceable = (coords) => {
   //console.log("\n");
 }
 
-const init = () => {
+const init = (host) => {
   canvas = document.getElementById("canvas");
   context = canvas.getContext("2d");
 
@@ -254,8 +279,33 @@ const init = () => {
   };
 
   contextbg.clearRect(0, 0, canvas.width, canvas.height);
-  contextbg.fillStyle = "#c5cd65";
-  contextbg.fillRect(0, 0, canvas.width, canvas.height);
+  const colors = ["#cecfc5","#d0ccc6","#c1c9c0","#dadada"];
+  for (let i=0; i<HEIGHT; i++) {
+      for (let j=0; j<WIDTH; j++) {
+
+        contextbg.fillStyle = colors[((i*j)+j)%4];
+        contextbg.fillRect(j*TILE_SIZE, i*TILE_SIZE, TILE_SIZE, TILE_SIZE);
+      }
+  }
+  let text ="";
+  if (host) {
+    text= "press 'start game' to start the game (min. 2 players)";
+  } else {
+    text="waiting for the host to start the game...";
+  }
+  contextbg.fillStyle = "#000000";
+  contextbg.font = "bold 27px Courier New";
+  let padding = (canvas.width-contextbg.measureText(text).width)/2;
+
+  contextbg.fillText(text, padding, ((HEIGHT*TILE_SIZE)/2)+2-5);
+
+  contextbg.fillStyle = "#ffffff";
+  contextbg.font = "bold 27px Courier New";
+  padding = (canvas.width-contextbg.measureText(text).width)/2;
+  contextbg.fillText(text, padding, ((HEIGHT*TILE_SIZE)/2)-5);
+  // contextbg.clearRect(0, 0, canvas.width, canvas.height);
+  // contextbg.fillStyle = "#c5cd65";
+  // contextbg.fillRect(0, 0, canvas.width, canvas.height);
 
   banner("sföfglh welcome", 5000);
 }
