@@ -41,6 +41,7 @@ class Game {
 this.drawables = [];
 this.cannonballs =[];
 this.borders = {};
+this.centers = [];
 
 		this.TILE_SIZE = tileSize;
 		this.WIDTH = width/this.TILE_SIZE;
@@ -600,16 +601,13 @@ this.borders = {};
 
 						this.islands[i].setCastleTiles();
 						this.islands[i].initWalls(tiles);
+
+						 let obj = {name: Object.values(this.players[i])[0], center: this.islands[i].center};
+						 this.centers.push(obj);
 					}
 
-	// 				for (let i=0; i<points; i++) {
-	// islands[i].initWalls(tiles);
-	// }
 
-				// for (let i=0; i<points; i++) {
-				// 	let center = islands[i].center;
-				//
-				// }
+
 			}
 
 			if (s<2) {

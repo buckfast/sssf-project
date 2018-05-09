@@ -1,30 +1,34 @@
 "use strict";
-  let hPressed = false;
-  let gPressed = false;
+let hPressed = false;
+let gPressed = false;
 
 
-    let cursorPos = {};
-    let canvas = undefined;
-    let context = undefined;
+let cursorPos = {};
+let canvas = undefined;
+let context = undefined;
 
-    let canvasbg = undefined;
-    let contextbg = undefined;
+let canvasbg = undefined;
+let contextbg = undefined;
 
-    let canvasfg = undefined;
-    let contextfg = undefined;
+let canvasfg = undefined;
+let contextfg = undefined;
 
-    let canvasui = undefined;
-    let contextui = undefined;
+let canvasuibg = undefined;
+let contextuibg = undefined;
 
-    const TILE_SIZE = 18;
-    const HEIGHT = 540/TILE_SIZE+2;
-    const WIDTH = 900/TILE_SIZE+2;
-    let currentPlaceableCoords = undefined;
+let canvasui = undefined;
+let contextui = undefined;
 
 
+const TILE_SIZE = 18;
+const HEIGHT = 540/TILE_SIZE+2;
+const WIDTH = 900/TILE_SIZE+2;
+let currentPlaceableCoords = undefined;
 
-const run = () => {
+let islandCenters;
 
+const run = (centers) => {
+  islandCenters = centers;
 
   const getCursorPosition = (event) => {
   	const rect = canvasui.getBoundingClientRect();
@@ -32,6 +36,7 @@ const run = () => {
   		y: event.clientY - rect.top,
   		};
   }
+
 
   canvasui.addEventListener('mousemove', (event) => {
   	cursorPos = getCursorPosition(event);
@@ -68,6 +73,7 @@ const drawCountdown = (count) => {
 const clearCountdown = () => {
   contextui.clearRect(0, 0, canvasui.width, canvasui.height);
 }
+
 
 const drawCannonballs=(balls)=> {
   contextfg.clearRect(0, 0, canvasfg.width, canvasfg.height);
@@ -201,8 +207,15 @@ const init = () => {
   canvasfg = document.getElementById("foreground-canvas");
   contextfg = canvasfg.getContext("2d");
 
+  canvasuibg = document.getElementById("uibg-canvas");
+  contextuibg = canvasuibg.getContext("2d");
+
   canvasui = document.getElementById("ui-canvas");
   contextui = canvasui.getContext("2d");
+
+  canvasui.onmousedown = () => {
+    return false;
+  };
 
   contextbg.clearRect(0, 0, canvas.width, canvas.height);
   contextbg.fillStyle = "#c5cd65";
@@ -218,15 +231,31 @@ const initPlaceables = (drawables) => {
     drawCannons(drawables[i]["cannons"]);
   }
 }
-const colorize = (tiles, players, borders, deadIslands) => {
-  console.log("asdsd",players);
+const colorize = (tiles, players, borders, deadIslands, centers) => {
+  contextuibg.clearRect(0, 0, canvas.width, canvas.height);
+  for (let i=0; i<centers.length; i++) {
+
+
+        contextuibg.font = "bold 18px Arial";
+        contextuibg.lineWidth = 1;
+        contextuibg.strokeStyle = "rgba(0, 0, 0, 0.56)";
+        let padding = (contextuibg.measureText(centers[i].name).width)/2;
+        contextuibg.strokeText(centers[i].name,centers[i].center.x*TILE_SIZE-padding, centers[i].center.y*TILE_SIZE-(12));
+
+    contextuibg.fillStyle = "rgba(255, 255, 255, 0.66)";
+    contextuibg.font = "bold 18px Arial";
+     padding = (contextuibg.measureText(centers[i].name).width)/2;
+    contextuibg.fillText(centers[i].name,centers[i].center.x*TILE_SIZE-padding, centers[i].center.y*TILE_SIZE-(12));
+
+  }
+
   contextbg.clearRect(0, 0, canvas.width, canvas.height);
+
   console.log("borders", borders);
 
   let odd = [];
   for (let i=0; i<players.length; i++) {
     odd.push({row: 0, tile: 0});
-    players[i]["nameTagDrawn"] = false;
   }
   console.log("deadislands",deadIslands);
   let c1_1 = "#629a56";
@@ -310,15 +339,15 @@ const colorize = (tiles, players, borders, deadIslands) => {
 
 
             if (tiles[i][j].castle == true) {
-              for (let p=0; p<players.length; p++) {
-                if (tiles[i][j].zone == (p+1) && players[p].nameTagDrawn==false) {
-                  contextbg.fillStyle = "#000000";
-                  contextbg.font = "15px Arial";
-                  console.log(players[p][Object.keys(players[p])[0]])
-                  contextbg.fillText(players[p][Object.keys(players[p])[0]],j*TILE_SIZE-(TILE_SIZE*3), i*TILE_SIZE-TILE_SIZE);
-                  players[p].nameTagDrawn = true;
-                }
-              }
+              // for (let p=0; p<players.length; p++) {
+              //   if (tiles[i][j].zone == (p+1) && players[p].nameTagDrawn==false) {
+              //     contextuibg.fillStyle = "#ffffff";
+              //     contextuibg.font = "20px Arial";
+              //     console.log(players[p][Object.keys(players[p])[0]])
+              //     contextuibg.fillText(players[p][Object.keys(players[p])[0]],j*TILE_SIZE-(TILE_SIZE*3), i*TILE_SIZE-TILE_SIZE);
+              //     players[p].nameTagDrawn = true;
+              //   }
+              // }
               contextbg.fillStyle = "#404040";
               contextbg.fillRect(j*TILE_SIZE-TILE_SIZE, i*TILE_SIZE-TILE_SIZE, j+TILE_SIZE, i+TILE_SIZE);
             }

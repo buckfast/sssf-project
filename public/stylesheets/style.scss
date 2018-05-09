@@ -45,7 +45,8 @@ ul li:nth-last-child(-n+2) { float: right;}
 
       }
   canvas { position: absolute; }
-  #ui-canvas { z-index: 3 }
+  #ui-canvas { z-index: 4 }
+  #uibg-canvas { z-index: 3 }
   #foreground-canvas { z-index: 2 }
 
   #canvas { z-index: 1 }

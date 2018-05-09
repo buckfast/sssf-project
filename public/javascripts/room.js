@@ -105,8 +105,10 @@ $(() => {
 
   socket.on("game_start", (data) => {
     $("#startgame").hide();
-    run();
-    colorize(data.tiles, data.players, data.borders, data.deadIslands);
+
+    console.log("jou",data.centers);
+    run(data.centers);
+    colorize(data.tiles, data.players, data.borders, data.deadIslands, data.centers);
     initPlaceables(data.drawables);
     sendInput(socket);
     canvasui.addEventListener("click", () => {
@@ -146,7 +148,7 @@ $(() => {
 
   socket.on("tiles", (data) => {
     console.log("players",data.players);
-    colorize(data.tiles, data.players, data.borders,data.deadIslands);
+    colorize(data.tiles, data.players, data.borders,data.deadIslands, data.centers);
   });
 
   const start = () => {

@@ -39,6 +39,9 @@ canvas {
   position: absolute; }
 
 #ui-canvas {
+  z-index: 4; }
+
+#uibg-canvas {
   z-index: 3; }
 
 #foreground-canvas {
