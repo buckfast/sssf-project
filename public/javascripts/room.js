@@ -36,7 +36,7 @@ $(() => {
 
       $(".gamestage").find(".lobby-head").append("<h4>"+data.roomName+"</h4>");
 
-      addUserToList(data.username)
+      addUserToList(data.username+" (you)");
 
   });
 
@@ -65,7 +65,7 @@ $(() => {
     emptyUsersList();
     if (msg!=null) {
     for (let i=0; i<msg.length; i++) {
-      addUserToList(msg[i]);
+      addUserToList(msg[i]+(msg[i] == username ? " (you)" : ""));
     }
   }
   });
@@ -133,9 +133,10 @@ $(() => {
   socket.on("roundCountdown", (count) => {
     drawCountdown(count);
   })
-  socket.on("stateChanger", (stateText) => {
+  socket.on("stateChanger", (data) => {
     clearCountdown();
-    banner(stateText, 5000);
+    banner(data.stateText, 5000);
+    changeStateTo(data.state);
   })
 
   socket.on("drawPlaceable", (placeable) => {
@@ -147,7 +148,8 @@ $(() => {
   })
 
   socket.on("tiles", (data) => {
-    console.log("players",data.players);
+    //console.log("players",data.players);
+    clearCountdown();
     colorize(data.tiles, data.players, data.borders,data.deadIslands, data.centers);
   });
 

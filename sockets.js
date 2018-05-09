@@ -278,11 +278,13 @@ module.exports.listen = (http, session) => {
             (state) => {
               if (state == 0) {
                 io.in(room).emit("tiles", {"tiles":game.tiles, "players":game.players, 'borders': game.borders, 'deadIslands': game.deadIslandIds, "centers": game.centers}); // TODO: "omit socketid in game.players"
+
               }
+              io.in(room).emit("updateDrawable", {drawables:game.drawables});
             },
-            (stateText) => {
+            (stateText, state) => {
                 io.in(room).emit("drawPlaceable", undefined);
-                io.in(room).emit("stateChanger", stateText);
+                io.in(room).emit("stateChanger", {stateText: stateText, state: state});
 
             },
             (count) => {
@@ -312,15 +314,18 @@ module.exports.listen = (http, session) => {
       }
     })
 
-    socket.on("click", (pos) => {
-      if (games[getRoom(socket)] != undefined) {
-        console.log("click", pos);
-        if (games[getRoom(socket)].game.alive[socket.id]) {
-          let obj = games[getRoom(socket)].game.clicked(socket.id, pos);
-          io.in(getRoom(socket)).emit("updateDrawable", obj);
+    const updateAllDrawables = (room, socket) => {
+      if (games[room] != undefined) {
+        if (games[room].game.alive[socket.id]) {
+          let obj = games[room].game.clicked(socket.id/*, pos*/);
+          io.in(room).emit("updateDrawable", obj);
           //io.in(getRoom(socket)).emit("tiles", {"tiles":games[getRoom(socket)].tiles, "playerCount":games[getRoom(socket)].POINTS});
         }
       }
+    }
+
+    socket.on("click", (pos) => {
+      updateAllDrawables(getRoom(socket), socket);
     })
   });
 

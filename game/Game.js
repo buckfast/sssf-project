@@ -766,7 +766,7 @@ this.centers = [];
 	}
 
 
-	clicked(socketid, pos) {
+	clicked(socketid/*, pos*/) {
 		//client pos not used
 		if (!this.stateChange) {
 			if (this.state == 0) {
@@ -913,7 +913,7 @@ this.centers = [];
 					} else {
 						let tempState = this.state+1;
 						tempState = tempState%3;
-						stateChangerCallback(this.stateTexts[tempState]);
+						stateChangerCallback(this.stateTexts[tempState], tempState);
 
 						this.countdown(5, 1000, 5000, nextState, stateChanger);
 					}

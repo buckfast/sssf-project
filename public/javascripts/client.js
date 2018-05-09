@@ -27,6 +27,8 @@ let currentPlaceableCoords = undefined;
 
 let islandCenters;
 
+let currentState = 1;
+
 const run = (centers) => {
   islandCenters = centers;
 
@@ -63,12 +65,20 @@ const run = (centers) => {
   }, false);
 }
 
+const changeStateTo = (state) => {
+  currentState = state;
+}
 
 const drawCountdown = (count) => {
   contextui.clearRect(0, 0, canvasui.width, canvasui.height);
-  contextui.font = '32px arial';
+
+  contextui.font = "bold 32px Courier New";
+  contextui.fillStyle = 'black';
+  contextui.fillText(count, canvasui.width/2-24, 42);
+
+  contextui.font = 'bold 32px Courier New';
   contextui.fillStyle = 'white';
-  contextui.fillText(count, canvasui.width/2-32, 40);
+  contextui.fillText(count, canvasui.width/2-24, 40);
 }
 const clearCountdown = () => {
   contextui.clearRect(0, 0, canvasui.width, canvasui.height);
@@ -102,11 +112,21 @@ const drawPlaced = (drawables) => {
   }
 }
 
+
 const drawWalls = (walls) => {
+  if (currentState == 2) {
+    for (let i=0; i<walls.length; i++) {
+      context.fillStyle = "rgba(139, 139, 139, 1)";
+      context.fillRect(walls[i].x*TILE_SIZE+1-TILE_SIZE, walls[i].y*TILE_SIZE+1-TILE_SIZE+5, TILE_SIZE, TILE_SIZE);
+      context.fillStyle = "rgba(221, 217, 214, 1)";
+      context.fillRect(walls[i].x*TILE_SIZE+1-TILE_SIZE, walls[i].y*TILE_SIZE+1-TILE_SIZE-5, TILE_SIZE, TILE_SIZE);
+    }
+  } else {
     for (let i=0; i<walls.length; i++) {
       context.fillStyle = "rgba(221, 217, 214, 1)";
       context.fillRect(walls[i].x*TILE_SIZE+1-TILE_SIZE, walls[i].y*TILE_SIZE+1-TILE_SIZE, TILE_SIZE, TILE_SIZE);
     }
+  }
 }
 const drawCannons = (cannons) => {
   for (let key in cannons) {
@@ -133,8 +153,8 @@ const setCurrentPlaceable = (wallBlock) => {
 
 const banner = (text, ms) => {
 
-  let y = 0;
-  let speed = canvas.height/(ms/1000)+10;
+  let y = -16;
+  let speed = canvas.height/(ms/1000)+20;
   let deltaTime;
   let then = Date.now();
   let animationFrameLoop;
@@ -143,10 +163,23 @@ const banner = (text, ms) => {
   	let vel = speed * deltaTime;
   	y += vel;
     contextui.clearRect(0, 0, canvas.width, canvas.height);
-    contextui.fillStyle = "#ffffff";
-    contextui.font = "45px Arial";
 
+
+
+
+    contextui.fillStyle = "rgba(159, 172, 115, 1)";
+    contextui.fillRect(0, y-45, WIDTH*TILE_SIZE, 64);
+
+    contextui.fillStyle = "#000000";
+    contextui.font = "bold 45px Courier New";
     let padding = (canvas.width-contextui.measureText(text).width)/2;
+
+    contextui.fillText(text, padding, y+2);
+
+    contextui.fillStyle = "#ffffff";
+    contextui.font = "bold 45px Courier New";
+    padding = (canvas.width-contextui.measureText(text).width)/2;
+
 
     contextui.fillText(text, padding, y);
   };
@@ -165,7 +198,10 @@ const banner = (text, ms) => {
   };
 
   const pause = () => {
+
   	cancelAnimationFrame(animationFrameLoop);
+    contextui.clearRect(0, 0, canvas.width, canvas.height);
+
   };
 
   loop();
@@ -221,7 +257,7 @@ const init = () => {
   contextbg.fillStyle = "#c5cd65";
   contextbg.fillRect(0, 0, canvas.width, canvas.height);
 
-  banner("sföfglh", 5000);
+  banner("sföfglh welcome", 5000);
 }
 
 const initPlaceables = (drawables) => {
@@ -236,14 +272,14 @@ const colorize = (tiles, players, borders, deadIslands, centers) => {
   for (let i=0; i<centers.length; i++) {
 
 
-        contextuibg.font = "bold 18px Arial";
-        contextuibg.lineWidth = 1;
-        contextuibg.strokeStyle = "rgba(0, 0, 0, 0.56)";
+        contextuibg.font = "bold 18px Courier New";
+        contextuibg.lineWidth = 2;
+        contextuibg.strokeStyle = "rgba(0, 0, 0, 0.44)";
         let padding = (contextuibg.measureText(centers[i].name).width)/2;
         contextuibg.strokeText(centers[i].name,centers[i].center.x*TILE_SIZE-padding, centers[i].center.y*TILE_SIZE-(12));
 
     contextuibg.fillStyle = "rgba(255, 255, 255, 0.66)";
-    contextuibg.font = "bold 18px Arial";
+    contextuibg.font = "bold 18px Courier New";
      padding = (contextuibg.measureText(centers[i].name).width)/2;
     contextuibg.fillText(centers[i].name,centers[i].center.x*TILE_SIZE-padding, centers[i].center.y*TILE_SIZE-(12));
 
