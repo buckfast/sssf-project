@@ -25,6 +25,8 @@ class Island {
 		this.cannonToFire = 0;
 		this.cannonballs = [];
 
+		this.cannonsAvailable = 0;
+
 		this.score = 0;
 
 	}
@@ -254,6 +256,7 @@ class Island {
 	placeCannon(obj) {
 		const id = this.updateTilePlaceableStatus(obj.tiles, "cannon", true, false);
 		this.cannons[id] = obj;
+
 	}
 
 	clearInnerAreas() {

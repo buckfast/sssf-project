@@ -8,7 +8,7 @@ const fs = require('fs');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const sassMiddleware = require('node-sass-middleware');
-const http = require('http');
+
 const index = require('./routes/index');
 const users = require('./routes/users');
 const game = require('./routes/game');
@@ -16,6 +16,8 @@ const stats = require('./routes/stats');
 
 
 const apiUsers = require('./routes/apiUsers');
+
+
 
 const requestedPath = require("./middlewares/path");
 const timestamp = require("./middlewares/timestamp");
@@ -31,11 +33,13 @@ const LocalStrategy = require('passport-local').Strategy;
 const session = require("express-session");
 
 
+
 const app = express();
 
-app.enable('trust proxy');
+
 
 app.use(helmet());
+
 
 //var mongoDB = 'mongodb://127.0.0.1/assignment';
 mongoose.connect('mongodb://'+process.env.DB_USER+':'+process.env.DB_PASS+'@'+process.env.DB_HOST+':'+'27017/project');
@@ -54,9 +58,7 @@ app.use(
   sess
 );
 
-const server  = require('https').createServer(app);
-//const io      = require('socket.io').listen(server);
-const io = require('./sockets').listen(server, sess);
+
 
 //passport
 let User = require('./models/user');
@@ -151,24 +153,11 @@ app.use((err, req, res, next) => {
 
 //const http = require('http').Server(app);
 
+const server  = require('http').createServer(app);
+//const io      = require('socket.io').listen(server);
 
-app.use ((req, res, next) => {
-  if (req.secure) {
-    // request was via https, so do no special handling
-    next();
-  } else {
-    // request was via http, so redirect to https
-    res.redirect('https://' + req.headers.host + req.url);
-  }
-});
-
-//app.listen(3000);
+const io = require('./sockets').listen(server, sess);
 
 server.listen(3000, () => {
   console.log('server started');
 });
-
-// http.createServer( (req, res) => {
-//     res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
-//     res.end();
-// }).listen(80);

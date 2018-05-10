@@ -54,6 +54,7 @@ this.centers = [];
 		this.stateRoundCounts = [20, 12, 15];
 		this.stateChange = true;
 		this.stateTexts = ["Build and Repair", "Place Cannons", "Prepare for Battle"];
+		this.maxCannons = [3,5,8];
 
 		this.tiles = null;
 
@@ -790,6 +791,11 @@ this.centers = [];
 	}
 
 
+	setCannonsAvailable(amount) {
+		for (let i=0; i<this.islands.length; i++) {
+			this.islands[i].cannonsAvailable = amount;
+		}
+	}
 
 	updateUserControls(socketid, newControls) {
 		//console.log(newControls);
@@ -863,8 +869,10 @@ this.centers = [];
 		}
 
 		const nextState= () => {
+
 			this.state += 1;
 			this.state = this.state%3;
+			console.log("ok state "+this.state);
 			if (this.state == 0) {
 				for (let i=0; i<this.islands.length; i++) {
 					this.islands[i].clearInnerAreas();
@@ -905,8 +913,19 @@ this.centers = [];
 						stateChangeCallback(this.state);
 						//console.log("alive",this.alive);
 					}
-
 					this.stateChanges++;
+
+					let tempState = this.state+1;
+					tempState = tempState%3;
+					if (tempState == 1) {
+						if (this.stateChanges > 3 && this.stateChanges <= 6) {
+							this.setCannonsAvailable(this.maxCannons[1]);
+						}
+						if (this.stateChanges > 6) {
+							this.setCannonsAvailable(this.maxCannons[2]);
+						}
+					}
+
 					if (this.stateChanges == 10 || (this.POINTS - this.deadIslandIds.length) < 2) {
 
 						// console.log("koko peli loppu");
@@ -924,8 +943,7 @@ this.centers = [];
 						gameEndCallback(scores, Object.values(this.players[scores[0][0]])[0]);
 						this.killGameLoop();
 					} else {
-						let tempState = this.state+1;
-						tempState = tempState%3;
+
 						stateChangerCallback(this.stateTexts[tempState], tempState);
 
 						this.countdown(5, 1000, 5000, nextState, stateChanger);
@@ -933,6 +951,7 @@ this.centers = [];
 				}, (this.stateRoundCounts[this.state]*1000+1000));
 		}
 
+		this.setCannonsAvailable(this.maxCannons[0]);
 		this.countdown(10, 1000, 10000, gameLoop, stateChanger);
 	}
 }

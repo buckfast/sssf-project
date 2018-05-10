@@ -39,11 +39,14 @@ class Placeables {
 	}
 
 	placeCannon(cursorPos) {
-		const cannonTiles = this.cannonTypes[0].place(cursorPos, this.tiles);
-		//console.log(cannonTiles);
-		if (cannonTiles != undefined) {
-			this.island.placeCannon({type: 0, tiles: cannonTiles, timer: 0, health: 6});
-			this.island.score+=40;
+		if (this.island.cannonsAvailable > 0) {
+			const cannonTiles = this.cannonTypes[0].place(cursorPos, this.tiles);
+			//console.log(cannonTiles);
+			if (cannonTiles != undefined) {
+				this.island.placeCannon({type: 0, tiles: cannonTiles, timer: 0, health: 6});
+				this.island.score+=40;
+				this.island.cannonsAvailable--;
+			}
 		}
 	}
 

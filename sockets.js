@@ -188,6 +188,7 @@ module.exports.listen = (http, session) => {
     });
 
     socket.on("room_create", (msg) => {
+
         const id = "room_"+shortid.generate();
 
         socket.handshake.session.host = true;
@@ -223,7 +224,7 @@ module.exports.listen = (http, session) => {
                if (!getRoomUsernames(room).includes(socket.handshake.session.username)) {
                 usersInRoom(io, room, (err, users) => {
                   if (err==null) {
-                    if (users.length > 0) {
+                    if (users.length > 0 && users.length<4) {
                       joinRoom(socket, room, (err, room) => {
                         if (err == null) {
                           console.log(getRoomUsernames(room));
@@ -233,17 +234,19 @@ module.exports.listen = (http, session) => {
                           io.in(room).emit("room_users_update", getRoomUsernames(room));
                         }
                       });
+                    } else {
+                      socket.emit("room_joined", {error: 3, message: "the room is full. redirecting..."});
                     }
                   }
                 });
               } else {
-                socket.emit("room_joined", {error: 1});
+                socket.emit("room_joined", {error: 1, message: "already in room. redirecting..."});
               }
             } else {
-              socket.emit("room_joined", {error: 0});
+              socket.emit("room_joined", {error: 0, message: "the game has already started. redirecting..."});
             }
           } else {
-            socket.emit("room_joined", {error: 2});
+            socket.emit("room_joined", {error: 2, message: "invalid room. redirecting..."});
           }
         }
 

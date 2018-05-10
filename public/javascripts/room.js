@@ -19,20 +19,25 @@ $(() => {
   socket.on("room_joined", (data) => {
     if (data.error == 0 ) {
       $("#gamecontent").hide();
-      $(".content").append("<br/><p>the game has already started. redirecting...</p>");
+      $(".content").append("<br/><p>"+data.message+"</p>");
       setTimeout(() => {
         document.location.href = '/play'
       }, 2000);
-
     } else if (data.error == 1) {
       $("#gamecontent").hide();
-      $(".content").append("<br/><p>already in room. redirecting...</p>");
+      $(".content").append("<br/><p>"+data.message+"</p>");
       setTimeout(() => {
         document.location.href = '/play'
       }, 2000);
     } else if (data.error == 2) {
       $("#gamecontent").hide();
-      $(".content").append("<br/><p>invalid room. redirecting...</p>");
+      $(".content").append("<br/><p>"+data.message+"</p>");
+      setTimeout(() => {
+        document.location.href = '/play'
+      }, 2000);
+    } else if (data.error == 3) {
+      $("#gamecontent").hide();
+      $(".content").append("<br/><p>"+data.message+"</p>");
       setTimeout(() => {
         document.location.href = '/play'
       }, 2000);
