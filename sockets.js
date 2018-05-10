@@ -293,15 +293,15 @@ module.exports.listen = (http, session) => {
             (count) => {
                 io.in(room).emit("roundCountdown", count);
             },
-            () => {
+            (scores, winnerName) => {
               io.in(room).emit("drawPlaceable", undefined);
-
-              
 
               for (let i=0; i<games[room].players.length; i++) {
                 let user = games[room].players[i];
+                console.log(winnerName);
+                let isWinner = Object.values(user)[0] === winnerName;
 
-                User.findOneAndUpdate({username: Object.values(user)[0]}, {$inc : {'gamesPlayed' : 1}}, (err, user) => {
+                User.findOneAndUpdate({username: Object.values(user)[0]}, {$inc : {'gamesPlayed':1, 'gamesWon':(isWinner?1:0)}}, (err, user) => {
                   if (err) {
                       console.log("error :)");
                       return err;
@@ -311,6 +311,7 @@ module.exports.listen = (http, session) => {
                     }
                 })
               }
+              io.in(room).emit("gameEnd", {"centers": game.centers, "scores": scores, "text": "And the winner is..."});
             }
 
           );

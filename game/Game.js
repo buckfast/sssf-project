@@ -701,12 +701,16 @@ this.centers = [];
 				//console.log(hitTile.placeable);
 				if (hitTile.placeable.type == "wall") {
 					this.islands[hitTile.zone-1].removeWallTile(hitTile); // TODO: update maxcoords
+					this.islands[hitTile.zone-1].score-=10;
+					this.islands[i].score+=35;
 				} else if (hitTile.placeable.type == "cannon") {
-					this.islands[hitTile.zone-1].removeCannon(hitTile);
+					if (this.islands[hitTile.zone-1].removeCannon(hitTile)) {
+						this.islands[hitTile.zone-1].score-=25;
+						this.islands[i].score+=80;
+					};
 				}
 				this.updateDrawables(hitCallback);
-				console.log("osuu tie");
-
+				//console.log("osuu!");
 			});
 		}
 	}
@@ -894,6 +898,7 @@ this.centers = [];
 								this.alive[this.socketofIslandIndex[i]] = false;
 								if (!this.deadIslandIds.includes(i)) {
 									this.deadIslandIds.push(i);
+									this.islands[i].score*=0.6;
 								}
 							}
 						}
@@ -905,10 +910,18 @@ this.centers = [];
 					if (this.stateChanges == 10 || (this.POINTS - this.deadIslandIds.length) < 2) {
 
 						// console.log("koko peli loppu");
-						// console.log(this.stateChanges);
-						// console.log((this.POINTS - this.deadIslandIds.length));
 
-						gameEndCallback();
+						let scores = [];
+						for (let i=0; i<this.islands.length; i++) {
+							scores.push([i, Math.floor(this.islands[i].score)]);
+						}
+
+						scores.sort((a, b) => {
+							return b[1] - a[1];
+						});
+						//console.log(scores);
+
+						gameEndCallback(scores, Object.values(this.players[scores[0][0]])[0]);
 						this.killGameLoop();
 					} else {
 						let tempState = this.state+1;

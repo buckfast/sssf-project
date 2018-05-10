@@ -25,6 +25,8 @@ class Island {
 		this.cannonToFire = 0;
 		this.cannonballs = [];
 
+		this.score = 0;
+
 	}
 
 	static sortBySize(a, b) {
@@ -111,10 +113,12 @@ class Island {
 			//console.log(nthProp(this.cannons, this.cannonToFire));
 
 			let currentCannon = u.nthProp(this.cannons, this.cannonToFire);
-			while (this.tiles[currentCannon.tiles[0].y][currentCannon.tiles[0].x].inner[(this.id-1)] == false) {
-				this.cannonToFire++;
-				this.cannonToFire = this.cannonToFire%cannons;
-				currentCannon = u.nthProp(this.cannons, this.cannonToFire);
+			if (currentCannon != undefined) {
+				while (this.tiles[currentCannon.tiles[0].y][currentCannon.tiles[0].x].inner[(this.id-1)] == false) {
+					this.cannonToFire++;
+					this.cannonToFire = this.cannonToFire%cannons;
+					currentCannon = u.nthProp(this.cannons, this.cannonToFire);
+				}
 			}
       if (currentCannon != undefined && currentCannon.timer == 0) {
 			    let ball = new Cannonball({x:currentCannon.tiles[3].x, y:currentCannon.tiles[3].y}, u.clone(cursorPos), this.tileSize);
@@ -175,6 +179,9 @@ class Island {
 	    for (let i=0; i<tiles.length; i++) {
 	      tiles[i].placeable = undefined;
 	    }
+			return true;
+		} else {
+			return false;
 		}
   }
 
@@ -287,9 +294,6 @@ class Island {
 		let ylength = (this.maxCoords.y+2) - (this.minCoords.y-1);
 		let xlength = (this.maxCoords.x+2) - (this.minCoords.x-1);
 		let innerAreaFound = (totalFlooded+this.walls.length) < (ylength*xlength);
-
-
-
 
 		for (let i=this.minCoords.y-1; i<this.maxCoords.y+2; i++) {
 			for (let j=this.minCoords.x-1; j<this.maxCoords.x+2; j++) {

@@ -33,6 +33,7 @@ class Placeables {
 			innerAreaFound = this.island.findInnerAreas(this.tiles);
 			//colorais(this.tiles);
 			this.currentWallBlock = this.getRandomBlock();
+			this.island.score+=15;
 		}
 		return innerAreaFound;
 	}
@@ -42,6 +43,7 @@ class Placeables {
 		//console.log(cannonTiles);
 		if (cannonTiles != undefined) {
 			this.island.placeCannon({type: 0, tiles: cannonTiles, timer: 0, health: 6});
+			this.island.score+=40;
 		}
 	}
 

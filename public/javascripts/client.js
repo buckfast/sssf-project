@@ -69,16 +69,59 @@ const changeStateTo = (state) => {
   currentState = state;
 }
 
+const showScores = (scores, centers) => {
+  contextuibg.clearRect(0, 0, canvasuibg.width, canvasuibg.height);
+  console.log(scores);
+
+  const colors = ["rgba(112, 176, 99, 0.8)", "rgba(194, 100, 153, 0.8)", "rgba(143, 194, 194, 0.8)", "rgba(211, 219, 109, 0.8)", "rgba(110, 108, 198, 0.8)"];
+
+  for (let i=0; i<scores.length; i++) {
+    let edgePadding = 0;
+
+    // if ((centers[i].center.x*TILE_SIZE-(7*TILE_SIZE)-(3*TILE_SIZE)) < 0) {
+    //   edgePadding = Math.abs((centers[i].center.x*TILE_SIZE-(7*TILE_SIZE)-(3*TILE_SIZE)));
+    // } else if ((centers[i].center.x*TILE_SIZE+(7*TILE_SIZE)+(3*TILE_SIZE)) > WIDTH*TILE_SIZE) {
+    //   edgePadding = -(centers[i].center.x*TILE_SIZE+(7*TILE_SIZE)+(3*TILE_SIZE));
+    // }
+    const curIndex = scores[i][0];
+
+    contextuibg.fillStyle = "rgba(70, 70, 70, 0.56)";
+    contextuibg.fillRect(centers[curIndex].center.x*TILE_SIZE-(7*TILE_SIZE)+edgePadding-4,centers[curIndex].center.y*TILE_SIZE-(3*TILE_SIZE)-4, 14*TILE_SIZE+8, 4*TILE_SIZE+8);
+    contextuibg.fillStyle = colors[curIndex];
+    contextuibg.fillRect(centers[curIndex].center.x*TILE_SIZE-(7*TILE_SIZE)+edgePadding,centers[curIndex].center.y*TILE_SIZE-(3*TILE_SIZE), 14*TILE_SIZE, 4*TILE_SIZE);
+    let textLine1 = "";
+    if (i==0) {
+       textLine1 = "Winner!";
+    } else {
+      textLine1 = (i+1)+"# place"
+    }
+    const textLine2 = centers[curIndex].name;
+    const textLine3 = "score: "+scores[i][1];
+    contextuibg.fillStyle = "rgba(255, 255, 255, 1)";
+    let padding = 0;
+    contextuibg.font = "bold 36px Courier New";
+    padding = (contextuibg.measureText(textLine1).width)/2;
+    contextuibg.fillText(textLine1, centers[curIndex].center.x*TILE_SIZE-padding+edgePadding, centers[curIndex].center.y*TILE_SIZE-(TILE_SIZE*1.5));
+
+    contextuibg.font = "bold 18px Courier New";
+    padding = (contextuibg.measureText(textLine2).width)/2;
+    contextuibg.fillText(textLine2, centers[curIndex].center.x*TILE_SIZE-padding+edgePadding, centers[curIndex].center.y*TILE_SIZE-(TILE_SIZE*0.25));
+
+    padding = (contextuibg.measureText(textLine3).width)/2;
+    contextuibg.fillText(textLine3, centers[curIndex].center.x*TILE_SIZE-padding+edgePadding, centers[curIndex].center.y*TILE_SIZE+(TILE_SIZE*0.75));
+  }
+}
+
 const drawCountdown = (count) => {
   contextui.clearRect(0, 0, canvasui.width, canvasui.height);
 
   contextui.font = "bold 32px Courier New";
   contextui.fillStyle = 'black';
-  contextui.fillText(count, canvasui.width/2-24, 42);
+  contextui.fillText(count, 32, 42);
 
   contextui.font = 'bold 32px Courier New';
   contextui.fillStyle = 'white';
-  contextui.fillText(count, canvasui.width/2-24, 40);
+  contextui.fillText(count, 32, 40);
 }
 const clearCountdown = () => {
   contextui.clearRect(0, 0, canvasui.width, canvasui.height);
@@ -191,9 +234,10 @@ const banner = (text, ms) => {
 
     contextui.fillStyle = "rgba(159, 172, 115, 1)";
     contextui.fillRect(0, y-45, WIDTH*TILE_SIZE, 64);
-    contextui.fillStyle = "rgba(133, 144, 94, 1)";
-    contextui.fillRect(0, y+22, WIDTH*TILE_SIZE, 2);
-    contextui.fillRect(0, y-50, WIDTH*TILE_SIZE, 2);
+    contextui.fillStyle = "rgba(139, 150, 100, 1)";
+    contextui.fillRect(0, y+18, WIDTH*TILE_SIZE, 4);
+    contextui.fillStyle = "rgba(139, 150, 100, 1)";
+    contextui.fillRect(0, y-45, WIDTH*TILE_SIZE, 4);
 
     contextui.fillStyle = "#000000";
     contextui.font = "bold 45px Courier New";
@@ -223,10 +267,8 @@ const banner = (text, ms) => {
   };
 
   const pause = () => {
-
   	cancelAnimationFrame(animationFrameLoop);
     contextui.clearRect(0, 0, canvas.width, canvas.height);
-
   };
 
   loop();
@@ -279,7 +321,7 @@ const init = (host) => {
   };
 
   contextbg.clearRect(0, 0, canvas.width, canvas.height);
-  const colors = ["#cecfc5","#d0ccc6","#c1c9c0","#dadada"];
+  const colors = ["#bebfb7","#bebbb5","#aeb8ad","#cbc8c8"];
   for (let i=0; i<HEIGHT; i++) {
       for (let j=0; j<WIDTH; j++) {
 
@@ -297,7 +339,7 @@ const init = (host) => {
   contextbg.font = "bold 27px Courier New";
   let padding = (canvas.width-contextbg.measureText(text).width)/2;
 
-  contextbg.fillText(text, padding, ((HEIGHT*TILE_SIZE)/2)+2-5);
+  contextbg.fillText(text, padding, ((HEIGHT*TILE_SIZE)/2)+3-5);
 
   contextbg.fillStyle = "#ffffff";
   contextbg.font = "bold 27px Courier New";

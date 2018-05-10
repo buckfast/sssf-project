@@ -142,6 +142,13 @@ $(() => {
     }, 5000);
   })
 
+  socket.on("gameEnd", (data) => {
+    banner(data.text,5000);
+    setTimeout(()=> {
+      showScores(data.scores, data.centers);
+    }, 5000);
+  });
+
   socket.on("drawPlaced", (drawables) => {
     drawPlaced(drawables);
   })
