@@ -26,7 +26,7 @@ $(() => {
 
     } else if (data.error == 1) {
       $("#gamecontent").hide();
-      $(".content").append("<br/><p>super error. redirecting...</p>");
+      $(".content").append("<br/><p>already in room. redirecting...</p>");
       setTimeout(() => {
         document.location.href = '/play'
       }, 2000);
@@ -130,7 +130,7 @@ $(() => {
 
     console.log("jou",data.centers);
     run(data.centers);
-    colorize(data.tiles, data.players, data.borders, data.deadIslands, data.centers);
+    colorize(data.tiles, data.players, data.borders, data.deadIslands, data.centers, username);
     initPlaceables(data.drawables);
     sendInput(socket);
     canvasui.addEventListener("click", () => {
@@ -175,7 +175,7 @@ $(() => {
   socket.on("tiles", (data) => {
     //console.log("players",data.players);
     clearCountdown();
-    colorize(data.tiles, data.players, data.borders,data.deadIslands, data.centers);
+    colorize(data.tiles, data.players, data.borders,data.deadIslands, data.centers, username);
   });
 
   const start = () => {

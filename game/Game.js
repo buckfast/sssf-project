@@ -812,8 +812,7 @@ this.centers = [];
 
 	killPlayer(socketid) {
 		this.alive[socketid] = false;
-
-		console.log(this.alive);
+		//console.log(this.alive);
 	}
 
 	countdown(count, interval, totalTime, func, func2) {
@@ -899,7 +898,7 @@ this.centers = [];
 							}
 						}
 						stateChangeCallback(this.state);
-						console.log("alive",this.alive);
+						//console.log("alive",this.alive);
 					}
 
 					this.stateChanges++;
@@ -908,7 +907,7 @@ this.centers = [];
 						// console.log("koko peli loppu");
 						// console.log(this.stateChanges);
 						// console.log((this.POINTS - this.deadIslandIds.length));
-						
+
 						gameEndCallback();
 						this.killGameLoop();
 					} else {

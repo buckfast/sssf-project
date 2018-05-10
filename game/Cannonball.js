@@ -22,8 +22,8 @@ class Cannonball {
 	}
 
 	collision(posx, posy) {
-		if (posx-8 < this.cursorPos.x && posx+8 > this.cursorPos.x &&
-				posy-8 < this.cursorPos.y && posy+8 > this.cursorPos.y) {
+		if (posx-2 < this.cursorPos.x && posx+2 > this.cursorPos.x &&
+				posy-2 < this.cursorPos.y && posy+2 > this.cursorPos.y) {
 
 				// const posx_world = Math.floor(posx/TILE_SIZE)+1;
 				// const posy_world = Math.floor(posy/TILE_SIZE)+1;

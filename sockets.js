@@ -296,6 +296,21 @@ module.exports.listen = (http, session) => {
             () => {
               io.in(room).emit("drawPlaceable", undefined);
 
+              
+
+              for (let i=0; i<games[room].players.length; i++) {
+                let user = games[room].players[i];
+
+                User.findOneAndUpdate({username: Object.values(user)[0]}, {$inc : {'gamesPlayed' : 1}}, (err, user) => {
+                  if (err) {
+                      console.log("error :)");
+                      return err;
+                    }
+                    if (user) {
+                      console.log(user.username+" gamesPlayed updated");
+                    }
+                })
+              }
             }
 
           );

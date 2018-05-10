@@ -143,9 +143,7 @@ exports.user_id_get = (req, res, next) => {
         let date = dateformat.asString('dd.MM.yyyy', user.registered);
         res.render("profile", {title: req.params.id, currentPage: "profile", profileUser: {username: user.username, registered: date, avatar: user.avatar, aboutMe: user.aboutMe, gamesPlayed: user.gamesPlayed, gamesWon: user.gamesWon}, user: req.user});
       } else {
-        let err = new Error('Not Found');
-        err.status = 404;
-        next(err);
+        res.send("user not found");
       }
     });
 }

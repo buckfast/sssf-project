@@ -317,7 +317,7 @@ const initPlaceables = (drawables) => {
     drawCannons(drawables[i]["cannons"]);
   }
 }
-const colorize = (tiles, players, borders, deadIslands, centers) => {
+const colorize = (tiles, players, borders, deadIslands, centers, username) => { // TODO: get own island's id and optimize rendering
   contextuibg.clearRect(0, 0, canvas.width, canvas.height);
   for (let i=0; i<centers.length; i++) {
 
@@ -333,7 +333,58 @@ const colorize = (tiles, players, borders, deadIslands, centers) => {
      padding = (contextuibg.measureText(centers[i].name).width)/2;
     contextuibg.fillText(centers[i].name,centers[i].center.x*TILE_SIZE-padding, centers[i].center.y*TILE_SIZE-(12));
 
+    if (Object.values(players[i])[0] == username) {
+      if (deadIslands.includes(i)) {
+
+        let edgePadding = 0;
+
+        if ((centers[i].center.x*TILE_SIZE-(7*TILE_SIZE)-(3*TILE_SIZE)) < 0) {
+          edgePadding = Math.abs((centers[i].center.x*TILE_SIZE-(7*TILE_SIZE)-(3*TILE_SIZE)));
+        } else if ((centers[i].center.x*TILE_SIZE+(7*TILE_SIZE)+(3*TILE_SIZE)) > WIDTH*TILE_SIZE) {
+          edgePadding = -(centers[i].center.x*TILE_SIZE+(7*TILE_SIZE)+(3*TILE_SIZE));
+        }
+        contextuibg.fillStyle = "rgba(70, 70, 70, 0.56)";
+        contextuibg.fillRect(centers[i].center.x*TILE_SIZE-(7*TILE_SIZE)-(3*TILE_SIZE)+edgePadding,centers[i].center.y*TILE_SIZE-(3*TILE_SIZE), 3*TILE_SIZE, 2*TILE_SIZE+4);
+        contextuibg.fillStyle = "rgba(154, 154, 154, 0.69)";
+        contextuibg.fillRect(centers[i].center.x*TILE_SIZE-(7*TILE_SIZE)-(3*TILE_SIZE)+edgePadding,centers[i].center.y*TILE_SIZE-(3*TILE_SIZE), 3*TILE_SIZE, 2*TILE_SIZE);
+
+        contextuibg.fillStyle = "rgba(70, 70, 70, 0.56)";
+        contextuibg.fillRect(centers[i].center.x*TILE_SIZE+(7*TILE_SIZE)+edgePadding,centers[i].center.y*TILE_SIZE-(3*TILE_SIZE), 3*TILE_SIZE, 2*TILE_SIZE+4);
+        contextuibg.fillStyle = "rgba(154, 154, 154, 0.69)";
+        contextuibg.fillRect(centers[i].center.x*TILE_SIZE+(7*TILE_SIZE)+edgePadding,centers[i].center.y*TILE_SIZE-(3*TILE_SIZE), 3*TILE_SIZE, 2*TILE_SIZE);
+
+        contextuibg.fillStyle = "rgba(70, 70, 70, 0.56)";
+        contextuibg.fillRect(centers[i].center.x*TILE_SIZE-(7*TILE_SIZE)+edgePadding,centers[i].center.y*TILE_SIZE-(3*TILE_SIZE), 14*TILE_SIZE, 4*TILE_SIZE+4);
+        contextuibg.fillStyle = "rgba(154, 154, 154, 0.69)";
+        contextuibg.fillRect(centers[i].center.x*TILE_SIZE-(7*TILE_SIZE)+edgePadding,centers[i].center.y*TILE_SIZE-(3*TILE_SIZE), 14*TILE_SIZE, 4*TILE_SIZE);
+        const defeatText = "D E F E A T E D"
+        const defeatText2 = "wait for the game to";
+        const defeatText3 = "end to see your score";
+        contextuibg.fillStyle = "rgba(255, 255, 255, 1)";
+
+        contextuibg.font = "bold 36px Courier New";
+        padding = (contextuibg.measureText(defeatText).width)/2;
+        contextuibg.fillText(defeatText, centers[i].center.x*TILE_SIZE-padding+edgePadding, centers[i].center.y*TILE_SIZE-(TILE_SIZE*1.5));
+
+        contextuibg.font = "bold 18px Courier New";
+        padding = (contextuibg.measureText(defeatText2).width)/2;
+        contextuibg.fillText(defeatText2, centers[i].center.x*TILE_SIZE-padding+edgePadding, centers[i].center.y*TILE_SIZE-(TILE_SIZE*0.25));
+
+        padding = (contextuibg.measureText(defeatText3).width)/2;
+        contextuibg.fillText(defeatText3, centers[i].center.x*TILE_SIZE-padding+edgePadding, centers[i].center.y*TILE_SIZE+(TILE_SIZE*0.75));
+      }
+    }
   }
+
+  // for (let i=0; i<players.length; i++) {
+  //   if (Object.values(players[i])[0] == username) {
+  //     if (deadIslands.includes(i)) {
+  //       contextui.fillStyle = "rgba(222, 222, 222, 1)";
+  //       console.log(centers[i]);
+  //       contextui.fillRect(centers[i].center.x*TILE_SIZE-100,centers[i].center.y*TILE_SIZE, 200, 100);
+  //     }
+  //   }
+  // }
 
   contextbg.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -425,15 +476,6 @@ const colorize = (tiles, players, borders, deadIslands, centers) => {
 
 
             if (tiles[i][j].castle == true) {
-              // for (let p=0; p<players.length; p++) {
-              //   if (tiles[i][j].zone == (p+1) && players[p].nameTagDrawn==false) {
-              //     contextuibg.fillStyle = "#ffffff";
-              //     contextuibg.font = "20px Arial";
-              //     console.log(players[p][Object.keys(players[p])[0]])
-              //     contextuibg.fillText(players[p][Object.keys(players[p])[0]],j*TILE_SIZE-(TILE_SIZE*3), i*TILE_SIZE-TILE_SIZE);
-              //     players[p].nameTagDrawn = true;
-              //   }
-              // }
               contextbg.fillStyle = "#404040";
               contextbg.fillRect(j*TILE_SIZE-TILE_SIZE, i*TILE_SIZE-TILE_SIZE, j+TILE_SIZE, i+TILE_SIZE);
             }
@@ -462,6 +504,8 @@ const colorize = (tiles, players, borders, deadIslands, centers) => {
       	}
       }
     }
+
+
 
 
 }
