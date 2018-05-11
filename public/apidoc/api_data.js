@@ -1,0 +1,214 @@
+define({ "api": [
+  {
+    "type": "delete",
+    "url": "/users/:name/",
+    "title": "Delete user",
+    "name": "DeleteUser",
+    "group": "Users",
+    "description": "<p>Delete user</p>",
+    "version": "0.0.0",
+    "filename": "./controllers/apiUsersController.js",
+    "groupTitle": "Users"
+  },
+  {
+    "type": "post",
+    "url": "/users/:name/",
+    "title": "Create user",
+    "name": "EditUser",
+    "group": "Users",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "aboutMe",
+            "description": ""
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": true,
+            "field": "avatar",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "description": "<p>Edit user information</p>",
+    "version": "0.0.0",
+    "filename": "./controllers/apiUsersController.js",
+    "groupTitle": "Users"
+  },
+  {
+    "type": "get",
+    "url": "/users/find",
+    "title": "Find User information",
+    "name": "FindUsers",
+    "group": "Users",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "minplayed",
+            "description": "<p>users with this many played games</p>"
+          }
+        ]
+      }
+    },
+    "description": "<p>Gets users matching the criteria</p>",
+    "version": "0.0.0",
+    "filename": "./controllers/apiUsersController.js",
+    "groupTitle": "Users"
+  },
+  {
+    "type": "get",
+    "url": "/users/:name",
+    "title": "Request User information",
+    "name": "GetUser",
+    "group": "Users",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "name",
+            "description": "<p>Users name</p>"
+          }
+        ]
+      }
+    },
+    "description": "<p>Gets user by name</p>",
+    "version": "0.0.0",
+    "filename": "./controllers/apiUsersController.js",
+    "groupTitle": "Users"
+  },
+  {
+    "type": "get",
+    "url": "/users/",
+    "title": "Request User information",
+    "name": "GetUsers",
+    "group": "Users",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "name",
+            "description": "<p>query by name</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": "<p>query by id</p>"
+          }
+        ]
+      }
+    },
+    "description": "<p>Gets user by the param. Gets all users when params not used</p>",
+    "version": "0.0.0",
+    "filename": "./controllers/apiUsersController.js",
+    "groupTitle": "Users"
+  },
+  {
+    "type": "get",
+    "url": "/users",
+    "title": "List all users",
+    "name": "GetUsers",
+    "group": "Users",
+    "description": "<p>Lists all users</p>",
+    "version": "0.0.0",
+    "filename": "./controllers/usersController.js",
+    "groupTitle": "Users"
+  },
+  {
+    "type": "post",
+    "url": "/users/login",
+    "title": "Log in user",
+    "name": "LogIn",
+    "group": "Users",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "username",
+            "description": ""
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "password",
+            "description": ""
+          }
+        ]
+      }
+    },
+    "description": "<p>Logs in</p>",
+    "version": "0.0.0",
+    "filename": "./controllers/apiUsersController.js",
+    "groupTitle": "Users"
+  },
+  {
+    "type": "post",
+    "url": "/logout",
+    "title": "Log out user",
+    "name": "LogOut",
+    "group": "Users",
+    "description": "<p>Logs out</p>",
+    "version": "0.0.0",
+    "filename": "./controllers/apiUsersController.js",
+    "groupTitle": "Users"
+  },
+  {
+    "type": "post",
+    "url": "/users/signup",
+    "title": "Sign up user",
+    "name": "SignUp",
+    "group": "Users",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "username",
+            "description": ""
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "password",
+            "description": ""
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "password2",
+            "description": "<p>password confirmation</p>"
+          }
+        ]
+      }
+    },
+    "description": "<p>Creates a new user</p>",
+    "version": "0.0.0",
+    "filename": "./controllers/apiUsersController.js",
+    "groupTitle": "Users"
+  }
+] });

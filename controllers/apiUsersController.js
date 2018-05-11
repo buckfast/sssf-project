@@ -20,7 +20,7 @@ exports.loggedInAs = (req, res, next) => {
 /**
  * @api {post} /logout Log out user
  * @apiName LogOut
- * @apiGroup User
+ * @apiGroup Users
  * @apiDescription Logs out
  */
 exports.logout_post = (req,res,next) => {
@@ -37,7 +37,7 @@ exports.logout_post = (req,res,next) => {
 /**
  * @api {get} /users/ Request User information
  * @apiName GetUsers
- * @apiGroup User
+ * @apiGroup Users
  * @apiParam {String} name query by name
  * @apiParam {String} id query by id
  * @apiDescription Gets user by the param. Gets all users when params not used
@@ -85,7 +85,7 @@ exports.users_get  = (req,res,next) => {
 /**
  * @api {post} /users/login Log in user
  * @apiName LogIn
- * @apiGroup User
+ * @apiGroup Users
  * @apiParam {String} username
  * @apiParam {String} password
  * @apiDescription Logs in
@@ -109,9 +109,9 @@ exports.login_post = (req,res,next) => {
 }
 
 /**
- * @api {post} /users/signup Create user
+ * @api {post} /users/signup Sign up user
  * @apiName SignUp
- * @apiGroup User
+ * @apiGroup Users
  * @apiParam {String} username
  * @apiParam {String} password
  * @apiParam {String} password2 password confirmation
@@ -174,7 +174,7 @@ exports.signup_post = [
 /**
  * @api {get} /users/:name Request User information
  * @apiName GetUser
- * @apiGroup User
+ * @apiGroup Users
  * @apiParam {String} name Users name
  * @apiDescription Gets user by name
  */
@@ -206,9 +206,9 @@ exports.upload = multer({storage: storage});
 /**
  * @api {post} /users/:name/ Create user
  * @apiName EditUser
- * @apiGroup User
+ * @apiGroup Users
  * @apiParam {String} aboutMe
- * @apiParam {file} [avatar]
+ * @apiParam {String} [avatar]
  * @apiDescription Edit user information
  */
 exports.user_id_post = (req, res, next) => {
@@ -262,7 +262,7 @@ exports.user_id_post = (req, res, next) => {
 /**
  * @api {delete} /users/:name/ Delete user
  * @apiName DeleteUser
- * @apiGroup User
+ * @apiGroup Users
  * @apiDescription Delete user
  */
 exports.user_id_delete = (req,res,next) => {
@@ -281,7 +281,7 @@ exports.user_id_delete = (req,res,next) => {
 /**
  * @api {get} /users/find Find User information
  * @apiName FindUsers
- * @apiGroup User
+ * @apiGroup Users
  * @apiParam {String} minplayed users with this many played games
  * @apiDescription Gets users matching the criteria
  */
