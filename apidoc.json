@@ -1,5 +1,7 @@
 {
-    "name": "Project API documentation",
-    "version": "0.0.1",
-    "description": "API documentation"
+    "name": "Game API documentation",
+    "version": "1.0.0",
+    "template": {
+        "forceLanguage": "en"
+    }
 }

@@ -17,21 +17,34 @@ exports.loggedInAs = (req, res, next) => {
     }
 }
 
+/**
+ * @api {post} /logout Log out user
+ * @apiName LogOut
+ * @apiGroup User
+ * @apiDescription Logs out
+ */
 exports.logout_post = (req,res,next) => {
   if (res.user) {
     req.logout();
     delete req.session.username;
-    res.json({logout: 'succesfull'})
+    res.json({logout: 'succesful'})
   } else {
     res.json({logout: 'not authenticated'})
 
   }
 }
 
-
+/**
+ * @api {get} /users/ Request User information
+ * @apiName GetUsers
+ * @apiGroup User
+ * @apiParam {String} name query by name
+ * @apiParam {String} id query by id
+ * @apiDescription Gets user by the param. Gets all users when params not used
+ */
 exports.users_get  = (req,res,next) => {
   if (req.query.id) {
-    User.findOne({'_id': req.query.id}, 'username _id registered aboutMe avatar', (err, user) => {
+    User.findOne({'_id': req.query.id}, 'username _id registered aboutMe avatar gamesPlayed gamesWon', (err, user) => {
       if (err) {
         res.json({error: "not found"});
         return;
@@ -43,7 +56,7 @@ exports.users_get  = (req,res,next) => {
       }
     });
   } else if (req.query.name) {
-    User.findOne({'username': req.query.name}, 'username _id registered aboutMe avatar', (err, user) => {
+    User.findOne({'username': req.query.name}, 'username _id registered aboutMe avatar gamesPlayed gamesWon', (err, user) => {
       if (err) {
         res.json({error: err});
         return;
@@ -55,7 +68,7 @@ exports.users_get  = (req,res,next) => {
       }
     });
   } else if (Object.keys(req.query).length === 0) {
-      User.find({}, 'username _id registered aboutMe avatar', (err, users) => {
+      User.find({}, 'username _id registered aboutMe avatar gamesPlayed gamesWon', (err, users) => {
         let usersobj = {};
         users.forEach((user) => {
           usersobj[user._id] = user;
@@ -69,7 +82,14 @@ exports.users_get  = (req,res,next) => {
 
 }
 
-
+/**
+ * @api {post} /users/login Log in user
+ * @apiName LogIn
+ * @apiGroup User
+ * @apiParam {String} username
+ * @apiParam {String} password
+ * @apiDescription Logs in
+ */
 exports.login_post = (req,res,next) => {
   passport.authenticate('local', (err, user, info) => {
     if(err) { return next(err)}
@@ -88,6 +108,15 @@ exports.login_post = (req,res,next) => {
   }) (req, res, next);
 }
 
+/**
+ * @api {post} /users/signup Create user
+ * @apiName SignUp
+ * @apiGroup User
+ * @apiParam {String} username
+ * @apiParam {String} password
+ * @apiParam {String} password2 password confirmation
+ * @apiDescription Creates a new user
+ */
 exports.signup_post = [
   body('username', 'Username required').isLength({min: 1}).trim(),
   body('username', 'Username must be 3-16 characters').isLength({min: 3, max: 16}).trim(),
@@ -142,9 +171,15 @@ exports.signup_post = [
   }
 ]
 
+/**
+ * @api {get} /users/:name Request User information
+ * @apiName GetUser
+ * @apiGroup User
+ * @apiParam {String} name Users name
+ * @apiDescription Gets user by name
+ */
 exports.user_id_get = (req,res,next) => {
-
-  User.findOne({'username': req.params.id}, 'username _id registered aboutMe avatar', (err, user) => {
+  User.findOne({'username': req.params.id}, 'username _id registered aboutMe avatar gamesPlayed gamesWon', (err, user) => {
     if (err) {res.json({error: err})};
     if (user) {
       res.json({user});
@@ -167,6 +202,15 @@ const storage = multer.diskStorage({
 
 exports.upload = multer({storage: storage});
 
+
+/**
+ * @api {post} /users/:name/ Create user
+ * @apiName EditUser
+ * @apiGroup User
+ * @apiParam {String} aboutMe
+ * @apiParam {file} [avatar]
+ * @apiDescription Edit user information
+ */
 exports.user_id_post = (req, res, next) => {
   console.log(req.file);
 
@@ -215,6 +259,12 @@ exports.user_id_post = (req, res, next) => {
   }
 };
 
+/**
+ * @api {delete} /users/:name/ Delete user
+ * @apiName DeleteUser
+ * @apiGroup User
+ * @apiDescription Delete user
+ */
 exports.user_id_delete = (req,res,next) => {
   const username = req.user.username;
   const id = req.user._id;
@@ -228,6 +278,19 @@ exports.user_id_delete = (req,res,next) => {
     });
 }
 
+/**
+ * @api {get} /users/find Find User information
+ * @apiName FindUsers
+ * @apiGroup User
+ * @apiParam {String} minplayed users with this many played games
+ * @apiDescription Gets users matching the criteria
+ */
 exports.find_get = (req,res,next) => {
-  res.send("find users");
+  User.find({gamesPlayed: {$gt: req.query.minplayed-1}}, "username _id registered aboutMe avatar gamesPlayed gamesWon", (err, users)=>{
+    if (err) {
+      res.json({error: "not found"});
+    }
+    res.json(users);
+  })
+
 }
