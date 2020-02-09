@@ -15,7 +15,7 @@ module.exports.listen = (http, session) => {
 
 
   const usersInRoom = (io, room, cb) => {
-    io.of('/').in(room).clients( (err, data) => {
+    io.of('/').in(room).clients((err, data) => {
       if (err) {
         cb(err);
       } else {
@@ -30,7 +30,7 @@ module.exports.listen = (http, session) => {
       const playerIndex = games[room].players.findIndex((obj) => {
         return Object.values(obj)[0] == socket.handshake.session.username;
       })
-      if (playerIndex!=-1) {
+      if (playerIndex != -1) {
         games[room].players.splice(playerIndex, 1);
       }
     }
@@ -40,22 +40,22 @@ module.exports.listen = (http, session) => {
   let leaveRoom = (socket, cb) => {
     removePlayerOnLeave(socket);
     for (let key in socket.rooms) {
-        if (key != socket.id) {
-          socket.leave(key, () => {
-            console.log("left "+key);
-            //socket.handshake.session.roomId=undefined;
+      if (key != socket.id) {
+        socket.leave(key, () => {
+          console.log("left " + key);
+          //socket.handshake.session.roomId=undefined;
 
-            typeof cb === 'function' && cb(key);
-          });
-        }
+          typeof cb === 'function' && cb(key);
+        });
+      }
     }
   }
 
   let getRoom = (socket) => {
     for (let key in socket.rooms) {
-        if (key != socket.id) {
-          return key;
-        }
+      if (key != socket.id) {
+        return key;
+      }
     }
   }
 
@@ -72,13 +72,13 @@ module.exports.listen = (http, session) => {
       if (err && typeof cb === 'function') {
         cb(err);
       }
-      if (err== null) {
+      if (err == null) {
         //console.log("username",socket.handshake.session.username);
         if (roomNumber != "lobby" && games[roomNumber] != undefined) {
           let obj = {};
           obj[socket.id] = socket.handshake.session.username;
           games[roomNumber].players.push(obj);
-          socket.handshake.session.roomId=roomNumber;
+          socket.handshake.session.roomId = roomNumber;
           socket.handshake.session.save();
 
           typeof cb === 'function' && cb(null, roomNumber);
@@ -113,23 +113,23 @@ module.exports.listen = (http, session) => {
     if (socket.handshake.session.passport != undefined && Object.keys(socket.handshake.session.passport).length > 0) {
       //logged in
       User.findById(socket.handshake.session.passport.user, (err, user) => {
-        if (err) {return err};
+        if (err) { return err };
         socket.handshake.session.roomId = undefined;
         socket.handshake.session.username = user.username;
         socket.handshake.session.save();
-        socket.emit("onConnection", { name: user.username});
+        socket.emit("onConnection", { name: user.username });
       });
     } else {
       if (socket.handshake.session.username == undefined) {
-        let name = "anon_"+shortid.generate().substring(0,5);
+        let name = "anon_" + shortid.generate().substring(0, 5);
         socket.handshake.session.roomId = undefined;
         socket.handshake.session.username = name;
         socket.handshake.session.save();
-        socket.emit("onConnection", { name: name});
+        socket.emit("onConnection", { name: name });
       }
     }
 
-    socket.emit("onConnection", {name: socket.handshake.session.username});
+    socket.emit("onConnection", { name: socket.handshake.session.username });
 
 
 
@@ -154,19 +154,19 @@ module.exports.listen = (http, session) => {
       leaveRoom(socket, (room) => {
         io.in(room).emit("room_users_update", getRoomUsernames(room));
       });
-      if (room!="lobby") {
-        usersInRoom(io,room, (err, users)=>{
+      if (room != "lobby") {
+        usersInRoom(io, room, (err, users) => {
           if (err == null) {
             if (users.length == 0) {
               if (games[room].game != undefined) {
                 games[room].game.killGameLoop();
                 games[room] = undefined;
                 delete games[room];
-                console.log("delete game: "+room);
+                console.log("delete game: " + room);
               }
               else {
                 delete games[room];
-                console.log("delete room: "+room);
+                console.log("delete room: " + room);
               }
               io.emit("room_delete", room);
 
@@ -182,144 +182,144 @@ module.exports.listen = (http, session) => {
 
     socket.on('message', (msg) => {
       console.log(socket.handshake.session.roomId);
-      socket.to(socket.handshake.session.roomId).emit("message", socket.handshake.session.username+": "+msg);
+      socket.to(socket.handshake.session.roomId).emit("message", socket.handshake.session.username + ": " + msg);
 
 
     });
 
     socket.on("room_create", (msg) => {
 
-        const id = "room_"+shortid.generate();
+      const id = "room_" + shortid.generate();
 
-        socket.handshake.session.host = true;
-        socket.handshake.session.roomId = id;
-        socket.handshake.session.roomName = msg;
-        socket.handshake.session.save();
+      socket.handshake.session.host = true;
+      socket.handshake.session.roomId = id;
+      socket.handshake.session.roomName = msg;
+      socket.handshake.session.save();
 
-          socket.emit('room_creating', {roomNumber: id, name: msg});
-          games[id] = {game: undefined, players: [], name: msg, started: false};
+      socket.emit('room_creating', { roomNumber: id, name: msg });
+      games[id] = { game: undefined, players: [], name: msg, started: false };
 
-          //roomNumber++;
+      //roomNumber++;
     });
 
     socket.on("room_join", (room) => {
-        if (socket.handshake.session.host) {
-          socket.handshake.session.host = false;
-          socket.handshake.session.save();
+      if (socket.handshake.session.host) {
+        socket.handshake.session.host = false;
+        socket.handshake.session.save();
 
-          joinRoom(socket, room, (err, room) => {
-            if (err == null) {
-              console.log("created new room: "+socket.handshake.session.roomId);
-              const data = {roomNumber: socket.handshake.session.roomId, roomName: socket.handshake.session.roomName, username: socket.handshake.session.username};
-              io.emit('room_created', data);
-              socket.emit("room_joined_and_created", data);
-            }
+        joinRoom(socket, room, (err, room) => {
+          if (err == null) {
+            console.log("created new room: " + socket.handshake.session.roomId);
+            const data = { roomNumber: socket.handshake.session.roomId, roomName: socket.handshake.session.roomName, username: socket.handshake.session.username };
+            io.emit('room_created', data);
+            socket.emit("room_joined_and_created", data);
+          }
 
-          });
+        });
 
 
-        } else {
-          if (games[room]!=undefined) {
-              if (!games[room].started) {
-               if (!getRoomUsernames(room).includes(socket.handshake.session.username)) {
-                usersInRoom(io, room, (err, users) => {
-                  if (err==null) {
-                    if (users.length > 0 && users.length<4) {
-                      joinRoom(socket, room, (err, room) => {
-                        if (err == null) {
-                          console.log(getRoomUsernames(room));
-                          socket.handshake.session.roomId = room;
-                          const data = {roomNumber: socket.handshake.session.roomId, roomName: games[room].name, username: socket.handshake.session.username};
-                          socket.emit('room_joined', data);
-                          io.in(room).emit("room_users_update", getRoomUsernames(room));
-                        }
-                      });
-                    } else {
-                      socket.emit("room_joined", {error: 3, message: "the room is full. redirecting..."});
-                    }
+      } else {
+        if (games[room] != undefined) {
+          if (!games[room].started) {
+            if (!getRoomUsernames(room).includes(socket.handshake.session.username)) {
+              usersInRoom(io, room, (err, users) => {
+                if (err == null) {
+                  if (users.length > 0 && users.length < 4) {
+                    joinRoom(socket, room, (err, room) => {
+                      if (err == null) {
+                        console.log(getRoomUsernames(room));
+                        socket.handshake.session.roomId = room;
+                        const data = { roomNumber: socket.handshake.session.roomId, roomName: games[room].name, username: socket.handshake.session.username };
+                        socket.emit('room_joined', data);
+                        io.in(room).emit("room_users_update", getRoomUsernames(room));
+                      }
+                    });
+                  } else {
+                    socket.emit("room_joined", { error: 3, message: "the room is full. redirecting..." });
                   }
-                });
-              } else {
-                socket.emit("room_joined", {error: 1, message: "already in room. redirecting..."});
-              }
+                }
+              });
             } else {
-              socket.emit("room_joined", {error: 0, message: "the game has already started. redirecting..."});
+              socket.emit("room_joined", { error: 1, message: "already in room. redirecting..." });
             }
           } else {
-            socket.emit("room_joined", {error: 2, message: "invalid room. redirecting..."});
+            socket.emit("room_joined", { error: 0, message: "the game has already started. redirecting..." });
           }
+        } else {
+          socket.emit("room_joined", { error: 2, message: "invalid room. redirecting..." });
         }
+      }
 
     });
 
     socket.on("start_game", () => {
-          const room = getRoom(socket);
+      const room = getRoom(socket);
 
-          if (games[room].players.length < 2 || games[room].started) {
-            return -1;
-          }
+      if (games[room].players.length < 2 || games[room].started) {
+        return -1;
+      }
 
-          games[room].started=true;
-          let players = JSON.parse(JSON.stringify(games[room].players));
-          const game = new Game(players, 900, 540, 18);
-          games[room].game = game;
+      games[room].started = true;
+      let players = JSON.parse(JSON.stringify(games[room].players));
+      const game = new Game(players, 900, 540, 18);
+      games[room].game = game;
 
-          game.run(
-            (err, socketid, placeable) => {
-              if (err == null) {
-                //console.log(socketid);
-                if (game.alive[socketid] == true) {
-                  io.to(socketid).emit("drawPlaceable", placeable);
-                }
-              }
-            },
-            (cannonballs) => {
-              if (cannonballs != null) {
-                io.in(room).emit("drawCannonballs", cannonballs);
-              }
-            },
-            (drawable) => {
-                io.in(room).emit("updateDrawable", drawable);
-            },
-            (state) => {
-              if (state == 0) {
-                io.in(room).emit("tiles", {"tiles":game.tiles, "players":game.players, 'borders': game.borders, 'deadIslands': game.deadIslandIds, "centers": game.centers}); // TODO: "omit socketid in game.players"
-
-              }
-              io.in(room).emit("updateDrawable", {drawables:game.drawables});
-            },
-            (stateText, state) => {
-                io.in(room).emit("drawPlaceable", undefined);
-                io.in(room).emit("stateChanger", {stateText: stateText, state: state});
-
-            },
-            (count) => {
-                io.in(room).emit("roundCountdown", count);
-            },
-            (scores, winnerName) => {
-              io.in(room).emit("drawPlaceable", undefined);
-
-              for (let i=0; i<games[room].players.length; i++) {
-                let user = games[room].players[i];
-                console.log(winnerName);
-                let isWinner = Object.values(user)[0] === winnerName;
-
-                User.findOneAndUpdate({username: Object.values(user)[0]}, {$inc : {'gamesPlayed':1, 'gamesWon':(isWinner?1:0)}}, (err, user) => {
-                  if (err) {
-                      console.log("error :)");
-                      return err;
-                    }
-                    if (user) {
-                      console.log(user.username+" gamesPlayed updated");
-                    }
-                })
-              }
-              io.in(room).emit("gameEnd", {"centers": game.centers, "scores": scores, "text": "And the winner is..."});
+      game.run(
+        (err, socketid, placeable) => {
+          if (err == null) {
+            //console.log(socketid);
+            if (game.alive[socketid] == true) {
+              io.to(socketid).emit("drawPlaceable", placeable);
             }
+          }
+        },
+        (cannonballs) => {
+          if (cannonballs != null) {
+            io.in(room).emit("drawCannonballs", cannonballs);
+          }
+        },
+        (drawable) => {
+          io.in(room).emit("updateDrawable", drawable);
+        },
+        (state) => {
+          if (state == 0) {
+            io.in(room).emit("tiles", { "tiles": game.tiles, "players": game.players, 'borders': game.borders, 'deadIslands': game.deadIslandIds, "centers": game.centers }); // TODO: "omit socketid in game.players"
 
-          );
+          }
+          io.in(room).emit("updateDrawable", { drawables: game.drawables });
+        },
+        (stateText, state) => {
+          io.in(room).emit("drawPlaceable", undefined);
+          io.in(room).emit("stateChanger", { stateText: stateText, state: state });
 
-          io.in(room).emit("game_start", {'tiles': game.tiles, 'drawables': game.drawables, 'players': game.players, 'borders': game.borders, 'deadIslands':game.deadIslandIds, "stateText": game.stateTexts[game.state], "centers": game.centers});
+        },
+        (count) => {
+          io.in(room).emit("roundCountdown", count);
+        },
+        (scores, winnerName) => {
+          io.in(room).emit("drawPlaceable", undefined);
+
+          for (let i = 0; i < games[room].players.length; i++) {
+            let user = games[room].players[i];
+            console.log(winnerName);
+            let isWinner = Object.values(user)[0] === winnerName;
+
+            User.findOneAndUpdate({ username: Object.values(user)[0] }, { $inc: { 'gamesPlayed': 1, 'gamesWon': (isWinner ? 1 : 0) } }, (err, user) => {
+              if (err) {
+                console.log("error :)");
+                return err;
+              }
+              if (user) {
+                console.log(user.username + " gamesPlayed updated");
+              }
+            })
+          }
+          io.in(room).emit("gameEnd", { "centers": game.centers, "scores": scores, "text": "And the winner is..." });
+        }
+
+      );
+
+      io.in(room).emit("game_start", { 'tiles': game.tiles, 'drawables': game.drawables, 'players': game.players, 'borders': game.borders, 'deadIslands': game.deadIslandIds, "stateText": game.stateTexts[game.state], "centers": game.centers });
     })
 
 
@@ -329,7 +329,7 @@ module.exports.listen = (http, session) => {
 
     socket.on("control", (controls) => {
       //console.log(control);
-      if (games[getRoom(socket)] != undefined && games[getRoom(socket)].game!=undefined) {
+      if (games[getRoom(socket)] != undefined && games[getRoom(socket)].game != undefined) {
         if (games[getRoom(socket)].game.alive[socket.id]) {
           games[getRoom(socket)].game.updateUserControls(socket.id, controls);
         }

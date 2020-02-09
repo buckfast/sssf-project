@@ -1,5 +1,5 @@
-class Tile{
-	constructor(x,y,zone) {
+class Tile {
+	constructor(x, y, zone) {
 		this.x = x;
 		this.y = y;
 		this.zone = zone;

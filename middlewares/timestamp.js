@@ -1,5 +1,5 @@
-module.exports = (req,res,next) => {
+module.exports = (req, res, next) => {
   req.requestTime = Date.now();
-  console.log("timestamp: "+req.requestTime);
+  console.log("timestamp: " + req.requestTime);
   next();
 }

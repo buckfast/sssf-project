@@ -42,7 +42,9 @@ app.use(helmet());
 
 
 //var mongoDB = 'mongodb://127.0.0.1/assignment';
-mongoose.connect('mongodb://'+process.env.DB_USER+':'+process.env.DB_PASS+'@'+process.env.DB_HOST+':'+'27017/project');
+//mongoose.connect('mongodb://'+process.env.DB_USER+':'+process.env.DB_PASS+'@'+process.env.DB_HOST+':'+'27017/project');
+const mongoUrl = process.env.MONGODB_URI;
+mongoose.connect(mongoUrl, { useUnifiedTopology: true, useNewUrlParser: true });
 mongoose.Promise = global.Promise;
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'mongodb error:'));
@@ -74,10 +76,10 @@ passport.deserializeUser((userId, done) => {
 });
 
 const local = new LocalStrategy((username, password, done) => {
-  User.findOne({username})
+  User.findOne({ username })
     .then((user) => {
       if (!user || !user.validPassword(password, user.passwordHash)) {
-        done(null, false, {message: "Invalid credentials"});
+        done(null, false, { message: "Invalid credentials" });
       } else {
         done(null, user);
       }
@@ -119,8 +121,8 @@ app.use(sassMiddleware({
 
 
 app.use((req, res, next) => {
-    req.io = io;
-    next();
+  req.io = io;
+  next();
 });
 
 app.use('/', index);
@@ -153,11 +155,11 @@ app.use((err, req, res, next) => {
 
 //const http = require('http').Server(app);
 
-const server  = require('http').createServer(app);
+const server = require('http').createServer(app);
 //const io      = require('socket.io').listen(server);
 
 const io = require('./sockets').listen(server, sess);
 
-server.listen(3000, () => {
+server.listen(3001, () => {
   console.log('server started');
 });

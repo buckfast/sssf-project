@@ -5,5 +5,5 @@ exports.index_get = (req, res, next) => {
     // if (req.user.username !== undefined) {
     //     username = req.user.username;
     // }
-    res.render('index', {title: 'home', currentPage: "index", user: req.user});
+    res.render('index', { title: 'home', currentPage: "index", user: req.user });
 }

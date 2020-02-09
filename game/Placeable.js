@@ -1,13 +1,13 @@
 class Placeable {
 	constructor(name, coords, width, rotations, center, id, tileSize, mWidth, mHeight) {
-		this.name=name;
+		this.name = name;
 		this.coords = coords;
 		this.currentRotation = 0;
 		this.width = width;
 		this.rotations = rotations;
-		this.center =  center;
+		this.center = center;
 		this.currentTiles = [];
-    this.islandID = id;
+		this.islandID = id;
 		this.tileSize = tileSize;
 		this.mWidth = mWidth;
 		this.mHeight = mHeight;
@@ -17,7 +17,7 @@ class Placeable {
 	//draw(context,cursorPosition) {
 	getBlockTilePositions(cursorPosition) {
 		let blockTilePositions = [];
-		for (let i=0; i<this.coords[this.currentRotation].length; i++) {
+		for (let i = 0; i < this.coords[this.currentRotation].length; i++) {
 			if (this.coords[this.currentRotation][i] == 1) {
 				//let pos = this.calculateTileWorldPosition(i, cursorPosition);
 
@@ -45,9 +45,9 @@ class Placeable {
 		let w = (this.center.x - x) * -1;
 		let h = (this.center.y - y) * -1;
 
-		let posx = Math.floor(cursorPosition.x/this.tileSize)*this.tileSize+(w*this.tileSize);
-		let posy = Math.floor(cursorPosition.y/this.tileSize)*this.tileSize+(h*this.tileSize);
-		return {x: posx, y:posy};
+		let posx = Math.floor(cursorPosition.x / this.tileSize) * this.tileSize + (w * this.tileSize);
+		let posy = Math.floor(cursorPosition.y / this.tileSize) * this.tileSize + (h * this.tileSize);
+		return { x: posx, y: posy };
 	}
 }
 
