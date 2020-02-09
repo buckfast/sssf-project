@@ -7,6 +7,7 @@ const logger = require('morgan');
 const fs = require('fs');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+const cors = require('cors')
 const sassMiddleware = require('node-sass-middleware');
 
 const index = require('./routes/index');
@@ -36,8 +37,7 @@ const session = require("express-session");
 
 const app = express();
 
-
-
+app.use(cors());
 app.use(helmet());
 
 
