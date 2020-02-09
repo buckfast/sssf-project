@@ -160,6 +160,7 @@ const server = require('http').createServer(app);
 
 const io = require('./sockets').listen(server, sess);
 
-server.listen(3001, () => {
+const PORT = process.env.PORT || 3001
+server.listen(PORT, () => {
   console.log('server started');
 });
