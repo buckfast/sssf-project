@@ -33,7 +33,7 @@
     "serve-favicon": "~2.4.5",
     "sharp": "^0.24.0",
     "shortid": "^2.2.8",
-    "socket.io": "^2.1.0",
+    "socket.io": "^2.4.0",
     "socket.io-session-middleware": "^0.1.0"
   }
 }
